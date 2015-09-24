@@ -1,0 +1,21 @@
+verbose: false
+instrumentation:
+    compact: false
+    preserve-comments: true
+reporting:
+    watermarks:
+        statements: [95, 97]
+        lines: [95, 97]
+        functions: [95, 97]
+        branches: [95, 97]
+check:
+    global:
+        statements: 95
+        lines: 95
+        branches: 95
+        functions: 95
+    each:
+        statements: 95
+        lines: 95
+        branches: 95
+        functions: 95
