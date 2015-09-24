@@ -1,0 +1,38 @@
+{
+  "name": "sockrpg",
+  "version": "0.1.0",
+  "description": "SockRPG: A Forum built by role players, for roleplayers",
+  "repository": "https://github.com/SockDrawer/SockRPG",
+  "license": "MIT",
+  "author": "Accalia Elementia <accalia@sockdrawer.io> (https://github.com/AccaliaDeElementia)",
+  "contributors": [
+    "RaceProUK <raceprouk@sockdrawer.io> (https://github.com/RaceProUK)",
+    "Yamikuronue <yamikuronue> (https://github.com/yamikuronue)",
+    "Kaelas17 <Kaelas17> (https://github.com/Kaelas17)",
+    "Cloak15 <Cloak15> (https://github.com/Cloak15)"
+  ],
+  "bugs": {
+    "url": "https://github.com/SockDrawer/SockRPG/issues",
+    "email": "support@sockdrawer.io"
+  },
+  "engines": {
+    "node": ">=4.0"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
+    "coveralls": "^2.11.4",
+    "eslint": "^1.4.1",
+    "istanbul": "^0.3.19",
+    "mocha": "^2.3.2",
+    "sinon": "^1.16.1"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "eslint . && istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R dot && istanbul check-coverage",
+    "istanbul": "eslint .; istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R nyan",
+    "mocha": "eslint .; mocha --recursive -R nyan"
+  }
+}
