@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+- 'node'
+- '4.0'
+- '4.1'
+before_script:
+- rm -rf ./coverage
+after_script:
+- test -e ./coverage/lcov.info && < ./coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js
+notifications:
+  webhooks:
+    urls:
+    - secure: sxbLkqPv6k10aORkBLai3+Y+4oDqAde2KxlMI4PSg8neDF7wDGOjFnIffkzYXDerJbGS88/9sLCvwDXI0at1rwAQVaA8ygdWVKTMljeoV9tNBLKpnavuKhN+O0ziwOyOn5nCW144V78lM3uLJh+KLcJ2XCKNdnlmCuW7Td3gGbS++8uTzjbBkVMEg/p/OpIj7nb4v9DM89TqU85Bvod8Pc+1slkCDzbkLWP0VQkv3K2UrrlBs63g0wIXurtButoXMqm04N3So9pUaIHCYojp9VFUIzTaz4tPHtirh0XicDS02LhFDZdBa6gObHlnjOBg+kRZLiLYHMzld8707Ta//v+fEh0Oove5kafH9JEJxLvBOiZwFm7ssJTAp+p6P9+vRTBpJ7A50cBBq5j/cLHGMd6KNB/qvyXXeNtfFxQQeFJElTrZSc9FYdDQbhwyNRKmHf3TjY07a/ld7srI5dvE5tskGdYgIUBfAytIB9bYHM8W/Kg57xGUgS2v1Bk6JB1BbUcVwRMnciXMRZcAu7co3G4qx1sA7pfPRzxOSU6UcmBj1HjtTrnuirMwiFFbxzLKQ8iCQeZkWlSaP3CJhF/LCoyxIiI2EBA7xiaU+j52Wcvr6vEIwSVpctC6Jov3uF9mHPYT4qaEffLLZGlViWFxQ0vFn7Wj9s7izOuvGz29VIg=
+env:
+  global:
+    service_name: travis-ci
