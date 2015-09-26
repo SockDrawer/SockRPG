@@ -8,4 +8,6 @@
 [![Stories In Progress](https://badge.waffle.io/SockDrawer/SockRPG.png?label=ready&title=In Progress)](https://waffle.io/SockDrawer/SockRPG)
 
 
-SockRPG: A Forum built by role players, for roleplayers
+SockRPG: A Forum built by role players, for roleplayers.
+
+Nowhere near complete!
