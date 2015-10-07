@@ -5,7 +5,7 @@
 
 
 [![Stories in Ready](https://badge.waffle.io/SockDrawer/SockRPG.png?label=ready&title=Ready)](https://waffle.io/SockDrawer/SockRPG)
-[![Stories In Progress](https://badge.waffle.io/SockDrawer/SockRPG.png?label=ready&title=In Progress)](https://waffle.io/SockDrawer/SockRPG)
+[![Stories In Progress](https://badge.waffle.io/SockDrawer/SockRPG.png?label=in%20progress&title=In Progress)](https://waffle.io/SockDrawer/SockRPG)
 
 
 SockRPG: A Forum built by role players, for roleplayers.
