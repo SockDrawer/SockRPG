@@ -18,15 +18,15 @@
   "engines": {
     "node": ">=4.0"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "chai": "^3.2.0",
+    "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
     "coveralls": "^2.11.4",
     "eslint": "^1.4.1",
     "istanbul": "^0.3.19",
-    "mocha": "^2.3.2",
+    "mocha": "^2.3.3",
+    "request": "^2.65.0",
     "sinon": "^1.16.1"
   },
   "scripts": {
