@@ -5,7 +5,7 @@ const dao = require('./dao.js'); //This can be renamed later
 const controller = {
 	getAllGames: (res) => {
 		//For this sprint, all users can see all games
-		dao.getAllGames().then((data) => {
+		return dao.getAllGames().then((data) => {
 			for (let i = 0; i < data.length; i++) {
 				data[i].canonical = `/api/game/${data[i].id}`;
 			}
@@ -19,10 +19,10 @@ const controller = {
 	getGame: (req, res) => {
 		if (!req.params.id) {
 			res.status(501).send({error: 'Missing ID'});
-			return;
+			return Promise.resolve();
 		}
 
-		dao.getGame(req.params.id).then((data) => {
+		return dao.getGame(req.params.id).then((data) => {
 			if (Array.isArray(data)) {
 				data = data[0]; //Only the first game
 			}
@@ -42,7 +42,7 @@ const controller = {
 
 	getAllBoards: (res) => {
 		//For this sprint, all users can see all games
-		dao.getAllBoards().then((data) => {
+		return dao.getAllBoards().then((data) => {
 			for (let i = 0; i < data.length; i++) {
 				data[i].canonical = `/api/board/${data[i].id}`;
 			}
@@ -56,10 +56,10 @@ const controller = {
 	getBoard: (req, res) => {
 		if (!req.params.id) {
 			res.status(501).send({error: 'Missing ID'});
-			return;
+			return Promise.resolve();
 		}
 
-		dao.getBoard(req.params.id).then((data) => {
+		return dao.getBoard(req.params.id).then((data) => {
 			if (Array.isArray(data)) {
 				data = data[0]; //Only the first board
 			}

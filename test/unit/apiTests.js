@@ -22,7 +22,7 @@ describe('Game API controller', () => {
 	});
 	
 	describe('/api/games', () => {
-		it('should return a list of games', (done) => {
+		it('should return a list of games', () => {
 			const data = [{
 				ID: '1',
 				Name: 'test game',
@@ -50,18 +50,17 @@ describe('Game API controller', () => {
 					data[0].canonical = '/game/1';
 					data[1].canonical = '/game/2';
 					assert.deepEqual(data, response);
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getAllGames(mockResponse);
+			return api.getAllGames(mockResponse);
 		});
 
-		it('should respond with an error when the DB errors', (done) => {
+		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Database error: oops i asploded'
+				error: 'Database error: Error: oops i asploded'
 			}
 					
 			sandbox.stub(dao, 'getAllGames').rejects('oops i asploded');
@@ -73,19 +72,17 @@ describe('Game API controller', () => {
 				},
 				send: (response) => {
 					assert.ok(response);
-					/*This makes the test time out for some reason?*/
-					//assert.deepEqual(expected, response);
-					done();
+					assert.deepEqual(expected, response);
 					return mockResponse;
 				}
 			};
 			
-			api.getAllGames(mockResponse);
+			return api.getAllGames(mockResponse);
 		});
 	});
 
 	describe('/api/boards', () => {
-		it('should return a list of boards', (done) => {
+		it('should return a list of boards', () => {
 			const data = [{
 				ID: '1',
 				Name: 'test board',
@@ -111,18 +108,17 @@ describe('Game API controller', () => {
 					data[0].canonical = '/board/1';
 					data[1].canonical = '/board/2';
 					assert.deepEqual(data, response);
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getAllBoards(mockResponse);
+			return api.getAllBoards(mockResponse);
 		});
 
-		it('should respond with an error when the DB errors', (done) => {
+		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Database error: oops i asploded'
+				error: 'Database error: Error: oops i asploded'
 			}
 					
 			sandbox.stub(dao, 'getAllBoards').rejects('oops i asploded');
@@ -135,19 +131,17 @@ describe('Game API controller', () => {
 				},
 				send: (response) => {
 					assert.ok(response);
-					/*This makes the test time out for some reason?*/
-				//	assert.equal(expected.error, response.error);
-					done();
-					return mockResponse;
+					assert.deepEqual(expected, response);
+				return mockResponse;
 				}
 			};
 			
-			api.getAllBoards(mockResponse);
+			return api.getAllBoards(mockResponse);
 		});
 	});
 
 	describe('/api/game/{ID}', () => {
-		it('should return a game if one exists', (done) => {
+		it('should return a game if one exists', () => {
 			const data = {
 				ID: '1',
 				Name: 'test game',
@@ -173,15 +167,14 @@ describe('Game API controller', () => {
 				send: (response) => {
 					data.canonical = '/game/1';
 					assert.deepEqual(data, response);
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getGame(mockRequest, mockResponse);
+			return api.getGame(mockRequest, mockResponse);
 		});
 
-		it('should return only the first game if one exists', (done) => {
+		it('should return only the first game if one exists', () => {
 			const data = [{
 				ID: '1',
 				Name: 'test game',
@@ -215,15 +208,14 @@ describe('Game API controller', () => {
 				send: (response) => {
 					data[0].canonical = '/game/1';
 					assert.deepEqual(data[0], response);
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getGame(mockRequest, mockResponse);
+			return api.getGame(mockRequest, mockResponse);
 		});
 
-		it('should return a 404 if no game exists', (done) => {
+		it('should return a 404 if no game exists', () => {
 			sandbox.stub(dao, 'getGame').resolves(undefined);
 			
 			const mockRequest = {
@@ -235,23 +227,21 @@ describe('Game API controller', () => {
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(404, code, 'Should return a 404 if anything');
-					done();
 					return mockResponse;
 				},
 				send: (response) => {
 					assert.notOk(true, "Should not send data");
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getGame(mockRequest, mockResponse);
+			return api.getGame(mockRequest, mockResponse);
 		});
 
-		it('should respond with an error when the DB errors', (done) => {
+		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Database error: oops i asploded'
+				error: 'Database error: Error: oops i asploded'
 			}
 					
 			sandbox.stub(dao, 'getGame').rejects('oops i asploded');
@@ -269,19 +259,17 @@ describe('Game API controller', () => {
 				},
 				send: (response) => {
 					assert.ok(response);
-					/*This makes the test time out for some reason?*/
-					//assert.deepEqual(expected, response);
-					done();
+					assert.deepEqual(expected, response);
 					return mockResponse;
 				}
 			};
 			
-			api.getGame(mockRequest, mockResponse);
+			return api.getGame(mockRequest, mockResponse);
 		});
 	});
 
 	describe('/api/board/{ID}', () => {
-		it('should return a board if one exists', (done) => {
+		it('should return a board if one exists', () => {
 			const data = {
 				ID: '1',
 				Name: 'test board',
@@ -307,15 +295,14 @@ describe('Game API controller', () => {
 				send: (response) => {
 					data.canonical = '/board/1';
 					assert.deepEqual(data, response);
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getBoard(mockRequest, mockResponse);
+			return api.getBoard(mockRequest, mockResponse);
 		});
 
-		it('should return only the first board board if one exists', (done) => {
+		it('should return only the first board board if one exists', () => {
 			const data = [{
 				ID: '1',
 				Name: 'test board',
@@ -349,15 +336,14 @@ describe('Game API controller', () => {
 				send: (response) => {
 					data[0].canonical = '/board/1';
 					assert.deepEqual(data[0], response);
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getBoard(mockRequest, mockResponse);
+			return api.getBoard(mockRequest, mockResponse);
 		});
 
-	it('should return a 404 if no board exists', (done) => {
+	it('should return a 404 if no board exists', () => {
 			sandbox.stub(dao, 'getBoard').resolves(undefined);
 			
 			const mockRequest = {
@@ -369,23 +355,21 @@ describe('Game API controller', () => {
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(404, code, 'Should return a 404 if anything');
-					done();
 					return mockResponse;
 				},
 				send: (response) => {
 					assert.notOk(true, "Should not send data");
-					done();
 					return mockResponse;
 				}
 			};
 			
-			api.getBoard(mockRequest, mockResponse);
+			return api.getBoard(mockRequest, mockResponse);
 		});
 
-		it('should respond with an error when the DB errors', (done) => {
+		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Database error: oops i asploded'
+				error: 'Database error: Error: oops i asploded'
 			}
 					
 			sandbox.stub(dao, 'getBoard').rejects('oops i asploded');
@@ -403,14 +387,12 @@ describe('Game API controller', () => {
 				},
 				send: (response) => {
 					assert.ok(response);
-					/*This makes the test time out for some reason?*/
-					//assert.deepEqual(expected, response);
-					done();
+					assert.deepEqual(expected, response);
 					return mockResponse;
 				}
 			};
 			
-			api.getBoard(mockRequest, mockResponse);
+			return api.getBoard(mockRequest, mockResponse);
 		});
 	});
 });
