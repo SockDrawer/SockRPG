@@ -55,7 +55,7 @@ describe('Game API controller', () => {
 				}
 			};
 			
-			api.getAllGames({}, mockResponse);
+			api.getAllGames(mockResponse);
 		});
 	});
 });
