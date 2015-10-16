@@ -14,6 +14,19 @@ const controller = {
 			//TODO: logging errors
 			res.status(500).send({error: `Database error: ${err}`});
 		});
+	},
+
+	getAllBoards: (res) => {
+		//For this sprint, all users can see all games
+		dao.getAllBoards().then((data) => {
+			for (let i = 0; i < data.length; i++) {
+				data[i].canonical = `/api/board/${data[i].id}`;
+			}
+			res.send(data);
+		}).catch((err) => {
+			//TODO: logging errors
+			res.status(500).send({error: `Database error: ${err}`});
+		});
 	}
 };
 
