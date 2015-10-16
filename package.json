@@ -27,7 +27,8 @@
     "istanbul": "^0.3.19",
     "mocha": "^2.3.3",
     "request": "^2.65.0",
-    "sinon": "^1.16.1"
+    "sinon": "^1.17.1",
+    "sinon-as-promised": "^4.0.0"
   },
   "scripts": {
     "lint": "eslint .",
