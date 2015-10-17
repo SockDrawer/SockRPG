@@ -9,18 +9,18 @@ const dao = require(Path.resolve(__dirname, '../../src/dao.js'));
 
 describe('Game API controller', () => {
 	let sandbox;
-	
+
 	before(() => {
 	});
 
 	beforeEach(() => {
 		sandbox = Sinon.sandbox;
 	});
-	
+
 	afterEach( () => {
 		sandbox.restore();
 	});
-	
+
 	describe('/api/games', () => {
 		it('should return a list of games', () => {
 			const data = [{
@@ -30,8 +30,7 @@ describe('Game API controller', () => {
 				GameMasters: null,
 				Tags: [],
 				IC: null
-			},
-			{
+			}, {
 				ID: '2',
 				Name: 'test game 2',
 				Adult: false,
@@ -39,7 +38,7 @@ describe('Game API controller', () => {
 				Tags: [],
 				IC: null
 			}];
-			
+
 			sandbox.stub(dao, 'getAllGames').resolves(data);
 			const mockResponse = {
 				status: (code) => {
@@ -53,7 +52,7 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getAllGames(mockResponse);
 		});
 
@@ -61,22 +60,21 @@ describe('Game API controller', () => {
 
 			const expected = {
 				error: 'Database error: Error: oops i asploded'
-			}
-					
+			};
+
 			sandbox.stub(dao, 'getAllGames').rejects('oops i asploded');
 
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(500, code, 'Should return a 500 error');
 					return mockResponse;
-				},
-				send: (response) => {
+				}, send: (response) => {
 					assert.ok(response);
 					assert.deepEqual(expected, response);
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getAllGames(mockResponse);
 		});
 	});
@@ -89,15 +87,14 @@ describe('Game API controller', () => {
 				Adult: false,
 				Tags: [],
 				IC: null
-			},
-			{
+			}, {
 				ID: '2',
 				Name: 'test board 2',
 				Adult: false,
 				Tags: [],
 				IC: null
 			}];
-			
+
 			sandbox.stub(dao, 'getAllBoards').resolves(data);
 			const mockResponse = {
 				status: (code) => {
@@ -111,7 +108,7 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getAllBoards(mockResponse);
 		});
 
@@ -119,10 +116,10 @@ describe('Game API controller', () => {
 
 			const expected = {
 				error: 'Database error: Error: oops i asploded'
-			}
-					
+			};
+
 			sandbox.stub(dao, 'getAllBoards').rejects('oops i asploded');
-			var start = new Date();
+			const start = new Date();
 
 			const mockResponse = {
 				status: (code) => {
@@ -132,10 +129,10 @@ describe('Game API controller', () => {
 				send: (response) => {
 					assert.ok(response);
 					assert.deepEqual(expected, response);
-				return mockResponse;
+					return mockResponse;
 				}
 			};
-			
+
 			return api.getAllBoards(mockResponse);
 		});
 	});
@@ -150,27 +147,26 @@ describe('Game API controller', () => {
 				Tags: [],
 				IC: null
 			};
-			
+
 			sandbox.stub(dao, 'getGame').resolves(data);
-			
+
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(200, code, 'Should return a 200 ok if anything');
 					return mockResponse;
-				},
-				send: (response) => {
+				}, send: (response) => {
 					data.canonical = '/game/1';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getGame(mockRequest, mockResponse);
 		});
 
@@ -182,8 +178,7 @@ describe('Game API controller', () => {
 				GameMasters: null,
 				Tags: [],
 				IC: null
-			},
-			{
+			}, {
 				ID: '2',
 				Name: 'evil game',
 				Adult: true,
@@ -191,14 +186,14 @@ describe('Game API controller', () => {
 				Tags: [],
 				IC: null
 			}];
-			
+
 			sandbox.stub(dao, 'getGame').resolves(data);
-			
+
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
@@ -211,18 +206,18 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getGame(mockRequest, mockResponse);
 		});
 
 		it('should return a 404 if no game exists', () => {
 			sandbox.stub(dao, 'getGame').resolves(undefined);
-			
+
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
@@ -230,11 +225,11 @@ describe('Game API controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					assert.notOk(true, "Should not send data");
+					assert.notOk(true, 'Should not send data');
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getGame(mockRequest, mockResponse);
 		});
 
@@ -242,15 +237,15 @@ describe('Game API controller', () => {
 
 			const expected = {
 				error: 'Database error: Error: oops i asploded'
-			}
-					
+			};
+
 			sandbox.stub(dao, 'getGame').rejects('oops i asploded');
 
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
@@ -263,7 +258,7 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getGame(mockRequest, mockResponse);
 		});
 	});
@@ -278,14 +273,14 @@ describe('Game API controller', () => {
 				Tags: [],
 				IC: null
 			};
-			
+
 			sandbox.stub(dao, 'getBoard').resolves(data);
-			
+
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
@@ -298,7 +293,7 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getBoard(mockRequest, mockResponse);
 		});
 
@@ -310,8 +305,7 @@ describe('Game API controller', () => {
 				GameMasters: null,
 				Tags: [],
 				IC: null
-			},
-			{
+			}, {
 				ID: '2',
 				Name: 'evil board',
 				Adult: true,
@@ -319,14 +313,14 @@ describe('Game API controller', () => {
 				Tags: [],
 				IC: null
 			}];
-			
+
 			sandbox.stub(dao, 'getBoard').resolves(data);
-			
+
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
@@ -339,18 +333,18 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getBoard(mockRequest, mockResponse);
 		});
 
-	it('should return a 404 if no board exists', () => {
+		it('should return a 404 if no board exists', () => {
 			sandbox.stub(dao, 'getBoard').resolves(undefined);
-			
+
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
@@ -358,11 +352,11 @@ describe('Game API controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					assert.notOk(true, "Should not send data");
+					assert.notOk(true, 'Should not send data');
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getBoard(mockRequest, mockResponse);
 		});
 
@@ -370,15 +364,15 @@ describe('Game API controller', () => {
 
 			const expected = {
 				error: 'Database error: Error: oops i asploded'
-			}
-					
+			};
+
 			sandbox.stub(dao, 'getBoard').rejects('oops i asploded');
 
 			const mockRequest = {
 				params: {
 					id: 1
 				}
-			}
+			};
 
 			const mockResponse = {
 				status: (code) => {
@@ -391,7 +385,7 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}
 			};
-			
+
 			return api.getBoard(mockRequest, mockResponse);
 		});
 	});
