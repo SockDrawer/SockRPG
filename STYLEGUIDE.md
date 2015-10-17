@@ -19,13 +19,14 @@ All rules and commandments will be enforced with ESLint rules where possible.
 1. Keep thy lines at 120 characters or less.
 1. Thy strings are to be fenced in single quotes only.
 1. The keyword var shall be struck from thy vocabulary; only const and let are permitted.
-1. Each of thy code files must start with ‘use strict’, and end with a single \n.
+1. Each of thy code files must start with ‘use strict’, and end with a single `\n`.
 1. Thy opening braces shall always accompany the same line as their owning statement.
 1. Thou must use camelCase for thy function names, variables, constants, and properties.
 1. Thou must use PascalCase for thy class names.
+1. Thou shalt not begin thy names with impersonal pronouns, lest they be smited.
 1. Thy constants must not be in all-capitals.
-1. Thou is forbidden to use == and !=.
-1. Never extend a built-in prototype.
+1. Thou art forbidden to use == and !=.
+1. Thou art forbidden to extend a built-in prototype.
 1. When thou comments, thou shalt comment in nought but English.
 1. Thou must comment functions and objects declared at module level with the glory of JSDoc.
 1. Thou shalt leave no more than one blank line between code blocks.
