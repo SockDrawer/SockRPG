@@ -45,7 +45,7 @@ module.exports = {
  */
 function initialise() {
 	return initialised
-		? new Promise((resolve) => resolve())
+		? Promise.resolve()
 		: db.initialise().then(() => {
 			initialised = true;
 		});
@@ -58,7 +58,7 @@ function initialise() {
  */
 function teardown() {
 	return !initialised
-		? new Promise((resolve) => resolve())
+		? Promise.resolve()
 		: db.close().then(() => {
 			initialised = false;
 		});
