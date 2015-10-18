@@ -30,8 +30,8 @@ describe('DAO', () => {
 	after(() => {
 	});
 
-	describe('should export DB management function', () => {
-		const fns = ['initialise', 'teardown', 'isInitialised', 'addUser', 'updateUser'];
+	describe('should export DAO management function', () => {
+		const fns = ['initialise', 'teardown', 'isInitialised'];
 		fns.forEach((fn) => {
 			it(fn, () => expect(dao[fn]).to.be.a('function'));
 		});
