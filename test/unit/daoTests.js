@@ -13,6 +13,9 @@ chai.use(chaiAsPromised);
 //Module to test
 const dao = require('../../src/dao.js');
 
+//Test data
+const dbConfig = {sqlite: ':memory:'};
+
 describe('DAO', () => {
 	let sandbox;
 
@@ -64,13 +67,13 @@ describe('DAO', () => {
 		});
 
 		it('should initialise successfully', () => {
-			return dao.initialise().then(() => {
+			return dao.initialise(dbConfig).then(() => {
 				return dao.isInitialised();
 			}).should.become(true);
 		});
 
 		it('should not crash on multiple initialisations', () => {
-			return dao.initialise().should.eventually.be.fulfilled;
+			return dao.initialise(dbConfig).should.eventually.be.fulfilled;
 		});
 
 		it('should be torn down successfully', () => {
@@ -86,7 +89,7 @@ describe('DAO', () => {
 
 	describe('Users', () => {
 		before(() => {
-			return dao.initialise();
+			return dao.initialise(dbConfig);
 		});
 
 		after(() => {
@@ -169,7 +172,7 @@ describe('DAO', () => {
 		let userID;
 
 		before(() => {
-			return dao.initialise().then(() => {
+			return dao.initialise(dbConfig).then(() => {
 				return dao.addUser({
 					Username: 'BoardTester'
 				}).then((user) => {
@@ -276,7 +279,7 @@ describe('DAO', () => {
 		let userID, boardID;
 
 		before(() => {
-			return dao.initialise().then(() => {
+			return dao.initialise(dbConfig).then(() => {
 				return dao.addUser({
 					Username: 'ChildBoardTester'
 				}).then((user) => {
@@ -364,7 +367,7 @@ describe('DAO', () => {
 		let userID;
 
 		before(() => {
-			return dao.initialise().then(() => {
+			return dao.initialise(dbConfig).then(() => {
 				return dao.addUser({
 					Username: 'GameTester'
 				}).then((user) => {
@@ -459,7 +462,7 @@ describe('DAO', () => {
 		let userID, gameID;
 
 		before(() => {
-			return dao.initialise().then(() => {
+			return dao.initialise(dbConfig).then(() => {
 				return dao.addUser({
 					Username: 'ChildGameTester'
 				}).then((user) => {

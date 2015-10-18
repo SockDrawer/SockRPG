@@ -41,12 +41,20 @@ module.exports = {
 /**
  * Initialise the DAO. *Must be called before any other function.*
  *
+ * @param {Object} config The necessary information to set up the database
+ * @param {String} config.sqlite The location of the SQLite file to use; if it doesn't exist, create it
+ * @param {Object} config.postgres The necessary information to connect to a PostgreSQL database
+ * @param {String} config.postgres.host The host running the PostGreSQL server
+ * @param {String} config.postgres.name The name of the database to connect to
+ * @param {String} config.postgres.username The username of the user to connect as
+ * @param {String} config.postgres.password The password of the user to connect as
+ *
  * @returns {Promise} A Promise that is resolved when the DAO is initialised.
  */
-function initialise() {
+function initialise(config) {
 	return initialised
 		? Promise.resolve()
-		: db.initialise().then(() => {
+		: db.initialise(config).then(() => {
 			initialised = true;
 		});
 }
