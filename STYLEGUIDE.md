@@ -11,6 +11,7 @@ All rules and commandments will be enforced with ESLint rules where possible.
 1. One shall be the number of tabs in thine indent, and the number of tabs in thine indent shall be one. Two shalt not count, nor shalt zero, except on thy way to one. And three is right out.
 1. Spaces are an abomination unto thy indent; only tabs are permitted.
 1. Operators of a logical and mathematical nature shall be flanked by a single space each side; this also applies to the arrow in thy arrow functions.
+1. Thy arrow functions must envelop their argument list in parentheses.
 1. A keyword must be followed by a space; however, thy function names must not.
 1. There shall be a single space between thy closing parenthesis and opening brace for both functions and control flow structures.
 1. Leavers of trailing whitespace shall be smote with great prejudice.
