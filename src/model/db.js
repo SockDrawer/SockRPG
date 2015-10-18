@@ -49,17 +49,96 @@ module.exports = {
 /**
  * Initialise the database. *Must be called before any other function.*
  *
+ * @param {Object} config The necessary information to set up the database
+ * @param {String} config.sqlite The location of the SQLite file to use; if it doesn't exist, create it
+ * @param {Object} config.postgres The necessary information to connect to a PostgreSQL database
+ * @param {String} config.postgres.host The host running the PostGreSQL server
+ * @param {String} config.postgres.name The name of the database to connect to
+ * @param {String} config.postgres.username The username of the user to connect as
+ * @param {String} config.postgres.password The password of the user to connect as
+ *
  * @returns {Promise} A Promise that is resolved when the database is initialised.
  */
-function initialise() {
-	//Create the DB
-	db = new Sequelize('SockRPG', null, null, {
-		host: 'localhost',
-		dialect: 'sqlite',
-		storage: ':memory:',
-		logging: undefined
-	});
+function initialise(config) {
+	const err = checkConfig(config);
+	if (err) {
+		return Promise.reject(err);
+	}
 
+	//Create the DB
+	if (config.sqlite) {
+		db = new Sequelize('SockRPG', null, null, {
+			host: 'localhost',
+			dialect: 'sqlite',
+			storage: config.sqlite,
+			logging: undefined
+		});
+	}
+	if (config.postgres) {
+		const settings = config.postgres;
+		db = new Sequelize(settings.name, settings.username, settings.password, {
+			host: settings.host,
+			dialect: 'postgres',
+			logging: undefined
+		});
+	}
+
+	createModel();
+	//It's alive!
+	return db.sync();
+}
+
+/**
+ * Validate the configuration. *For internal use only.*
+ *
+ * @param {Object} config The config object passed to `initialise()`
+ *
+ * @returns {Error} An error describing the issue with the config, or `null` if it is valid
+ */
+function checkConfig(config) {
+	if (!config || !config.sqlite && !config.postgres) {
+		return new Error('A database must be defined');
+	}
+	if (config.sqlite && config.postgres) {
+		return new Error('Only one database can be defined at once');
+	}
+	if (config.sqlite) {
+		return checkSQLite(config.sqlite);
+	}
+	return checkPostgres(config.postgres);
+}
+
+/**
+ * Validate the SQLite configuration. *For internal use only.*
+ *
+ * @param {Object} config The `sqlite` member of the config object passed to `initialise()`
+ *
+ * @returns {Error} An error describing the issue with the config, or `null` if it is valid
+ */
+function checkSQLite(config) {
+	if (typeof config !== 'string') {
+		return new Error('SQLite location must be a string');
+	}
+}
+
+/**
+ * Validate the PostgreSQL configuration. *For internal use only.*
+ *
+ * @param {Object} config The `postgres` member of the config object passed to `initialise()`
+ *
+ * @returns {Error} An error describing the issue with the config, or `null` if it is valid
+ */
+function checkPostgres(config) {
+	if (typeof config.name !== 'string' || typeof config.host !== 'string'
+		|| typeof config.username !== 'string' || typeof config.password !== 'string') {
+		return new Error('PostgreSQL settings must be strings');
+	}
+}
+
+/**
+ * Creates the database model. *For internal use only.*
+ */
+function createModel() {
 	//Define the tables
 	const User = require('./User')(db, specs);
 	const Board = require('./Board')(db, specs);
@@ -80,9 +159,6 @@ function initialise() {
 	module.exports.Users = User;
 	module.exports.Boards = Board;
 	module.exports.Games = Game;
-
-	//It's alive!
-	return db.sync();
 }
 
 /**
@@ -91,14 +167,14 @@ function initialise() {
  * @returns {Promise} A Promise that is resolved when the database is closed.
  */
 function close() {
-	//Remove table exports
-	module.exports.Users = undefined;
-	module.exports.Boards = undefined;
-	module.exports.Games = undefined;
-
-	//Good night, good night! Parting is such sweet sorrow,
-	//That I shall say good night till it be morrow.
 	return new Promise((resolve) => {
+		//Remove table exports
+		module.exports.Users = undefined;
+		module.exports.Boards = undefined;
+		module.exports.Games = undefined;
+
+		//Good night, good night! Parting is such sweet sorrow,
+		//That I shall say good night till it be morrow.
 		db.close();
 		resolve();
 	});
