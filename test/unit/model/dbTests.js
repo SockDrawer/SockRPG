@@ -136,13 +136,35 @@ describe('DB', () => {
 	});
 
 	describe('PostgreSQL', () => {
+		const pg = require('pg');
+		const dbname = 'TestSockRPG'.toLowerCase();
+		let pgClient;
+
+		before((done) => {
+			pg.connect({
+				user: 'postgres',
+				database: 'postgres'
+			}, (_, client) => {
+				pgClient = client;
+				pgClient.query(`CREATE DATABASE ${dbname};`, () => {
+					done();
+				});
+			});
+		});
+
+		after(() => {
+			pgClient.query(`DROP DATABASE ${dbname};`, () => {
+				pg.end();
+			});
+		});
+
 		it('should create the database', () => {
 			return db.initialise({
 				postgres: {
 					host: 'localhost',
-					name: 'SockRPG',
-					username: 'sockrpg',
-					password: '2067e4eb'
+					name: dbname,
+					username: 'postgres',
+					password: ''
 				}
 			}).should.be.fulfilled;
 		});

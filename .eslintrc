@@ -38,7 +38,7 @@
 			"min": 2,
 			"max": 15,
 			"properties": "always",
-			"exceptions": ["x", "y", "i"]
+			"exceptions": ["x", "y", "i", "j", "_"]
 		}],
 		"indent": [2, "tab"],
 		"linebreak-style": [2, "unix"],

@@ -70,8 +70,8 @@ function initialise(config) {
 		db = new Sequelize('SockRPG', null, null, {
 			host: 'localhost',
 			dialect: 'sqlite',
-			storage: config.sqlite,
-			logging: undefined
+			logging: undefined,
+			storage: config.sqlite
 		});
 	}
 	if (config.postgres) {
