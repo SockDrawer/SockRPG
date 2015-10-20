@@ -125,7 +125,7 @@ function getUserByName(name) {
 		}
 	}).then((user) => {
 		if (!user) {
-			throw new Error(`User with ID ${name} not found`);
+			throw new Error(`User with name ${name} not found`);
 		}
 		return user;
 	});
