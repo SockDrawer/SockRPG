@@ -19,7 +19,6 @@
     "node": ">=4.0"
   },
   "dependencies": {
-    "eslint": "^1.7.3",
     "pg": "^4.4.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.12.1",
@@ -29,8 +28,8 @@
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
     "coveralls": "^2.11.4",
-    "eslint": "^1.4.1",
     "istanbul": "^0.4.0",
+    "eslint": "^1.7.3"
     "mocha": "^2.3.3",
     "request": "^2.65.0",
     "sinon": "^1.17.1",
