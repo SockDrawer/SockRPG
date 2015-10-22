@@ -29,7 +29,7 @@
     "chai-as-promised": "^5.1.0",
     "coveralls": "^2.11.4",
     "istanbul": "^0.4.0",
-    "eslint": "^1.7.3"
+    "eslint": "^1.7.3",
     "mocha": "^2.3.3",
     "request": "^2.65.0",
     "sinon": "^1.17.1",
