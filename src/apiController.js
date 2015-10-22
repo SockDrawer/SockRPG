@@ -27,11 +27,11 @@ const dao = require('./dao.js');
 
 /**
  * Get all games in the esystem
- * @param {Request} req Express' request object. Expects an ID under the params key
+ * @param {Request} _ Express' request object. Expects an ID under the params key
  * @param {Response} res Express response object
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
-function getAllGames(req, res) {
+function getAllGames(_, res) {
 	//For this sprint, all users can see all games
 	return dao.getAllGames().then((data) => {
 		for (let i = 0; i < data.length; i++) {
@@ -76,10 +76,11 @@ function getGame(req, res) {
 
 /**
  * Get all boards in the system
+ * @param {Request} _ Express' request object. Expects an ID under the params key
  * @param {Response} res Express' response object.
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
-function getAllBoards(res) {
+function getAllBoards(_, res) {
 	//For this sprint, all users can see all games
 	return dao.getAllBoards().then((data) => {
 		for (let i = 0; i < data.length; i++) {
@@ -124,10 +125,11 @@ function getBoard(req, res) {
 
 /**
  * Get all users in the system
+ * @param {Request} _ Express' request object. Expects an ID under the params key
  * @param {Response} res Express' response object.
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
-function getAllUsers(res) {
+function getAllUsers(_, res) {
 	return dao.getAllUsers().then((data) => {
 		for (let i = 0; i < data.length; i++) {
 			data[i].canonical = `/api/user/${data[i].id}`;

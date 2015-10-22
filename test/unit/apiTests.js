@@ -53,7 +53,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllGames(mockResponse);
+			return api.getAllGames(undefined, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -75,7 +75,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllGames(mockResponse);
+			return api.getAllGames(undefined, mockResponse);
 		});
 	});
 
@@ -109,7 +109,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllBoards(mockResponse);
+			return api.getAllBoards(undefined, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -132,7 +132,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllBoards(mockResponse);
+			return api.getAllBoards(undefined, mockResponse);
 		});
 	});
 
@@ -474,7 +474,7 @@ describe('User API Controller', () => {
 				}
 			};
 
-			return api.getAllUsers(mockResponse);
+			return api.getAllUsers(undefined, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -496,7 +496,7 @@ describe('User API Controller', () => {
 				}
 			};
 
-			return api.getAllUsers(mockResponse);
+			return api.getAllUsers(undefined, mockResponse);
 		});
 	});
 	
