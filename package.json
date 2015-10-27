@@ -11,6 +11,8 @@
     "Kaelas17 <Kaelas17> (https://github.com/Kaelas17)",
     "Cloak15 <Cloak15> (https://github.com/Cloak15)"
   ],
+  "main": "./src/server.js",
+  "bin": "./src/server.js",
   "bugs": {
     "url": "https://github.com/SockDrawer/SockRPG/issues",
     "email": "support@sockdrawer.io"
@@ -19,6 +21,7 @@
     "node": ">=4.0"
   },
   "dependencies": {
+    "express": "^4.13.3",
     "pg": "^4.4.3",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.12.1",
@@ -36,6 +39,7 @@
     "sinon-as-promised": "^4.0.0"
   },
   "scripts": {
+    "start": "node ./src/server.js",
     "lint": "eslint .",
     "test": "eslint . && istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R dot",
     "istanbul": "eslint .; istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R nyan",

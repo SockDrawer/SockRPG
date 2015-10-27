@@ -171,7 +171,7 @@ When calling such a function, insert line breaks to keep lines within 120 charac
 New in ES6, arrow functions are extremely useful; however, as they cannot be named, their use should be restricted to short callbacks with few arguments.
 
 ##### Call chains
-Promise-heavy code is likely to feature call chains; when chaining methods, each call should start on a new line, indented one tab in the same manner the body of a loop is.
+Promise-heavy code is likely to feature call chains; when chaining methods, each call should start on a new line, indented one tab in the same manner the body of a loop is, and have a leading period.
 
 ##### To document or not to document?
 Is the function defined at module level? Yes? Document it.
