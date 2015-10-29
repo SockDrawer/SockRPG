@@ -22,8 +22,8 @@
   @function send - The function to send data to the client
   @function status - Set the status code for the response
 */
- 
-const dao = require('./dao.js');
+
+const dao = require('../dao.js');
 
 /**
  * Get all games in the esystem
@@ -161,16 +161,16 @@ function getUser(req, res) {
 
 		res.send(data);
 	};
-		
+
 	const handleError = (err) => {
 		//TODO: logging errors
 		res.status(500).send({error: err.toString()});
 	};
-					
+
 	//Check if the ID is a number
 	if (Number.parseInt(req.params.id, 10) == req.params.id) { //eslint-disable-line eqeqeq
 		return dao.getUser(req.params.id).then(handleData).catch(handleError);
-	
+
 	//Otherwise it's a name
 	} else if (req.params.id) {
 		return dao.getUserByName(req.params.id).then(handleData).catch(handleError);
@@ -189,9 +189,9 @@ const controller = {
 	getAllBoards: getAllBoards,
 
 	getBoard: getBoard,
-	
+
 	getAllUsers: getAllUsers,
-	
+
 	getUser: getUser
 };
 

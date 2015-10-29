@@ -4,8 +4,8 @@ const Chai = require('chai');
 const assert = Chai.assert;
 const Sinon = require('sinon');
 require('sinon-as-promised');
-const api = require(Path.resolve(__dirname, '../../src/apiController.js'));
-const dao = require(Path.resolve(__dirname, '../../src/dao.js'));
+const api = require(Path.resolve(__dirname, '../../../src/controllers/apiController.js'));
+const dao = require(Path.resolve(__dirname, '../../../src/dao.js'));
 
 describe('Game API controller', () => {
 	let sandbox;
@@ -231,7 +231,7 @@ describe('Game API controller', () => {
 
 			return api.getGame(mockRequest, mockResponse);
 		});
-		
+
 		it('should return a 501 if no ID passed in', () => {
 			sandbox.stub(dao, 'getGame').resolves(undefined);
 
@@ -380,7 +380,7 @@ describe('Game API controller', () => {
 
 			return api.getBoard(mockRequest, mockResponse);
 		});
-		
+
 		it('should return a 501 if no ID passed in', () => {
 			sandbox.stub(dao, 'getBoard').resolves(undefined);
 
@@ -447,7 +447,7 @@ describe('User API Controller', () => {
 	afterEach( () => {
 		sandbox.restore();
 	});
-	
+
 	describe('/api/users', () => {
 		it('should return a list of users', () => {
 			const data = [{
@@ -499,7 +499,7 @@ describe('User API Controller', () => {
 			return api.getAllUsers(undefined, mockResponse);
 		});
 	});
-	
+
 	describe('/api/user/{ID}', () => {
 		it('should return a user if one exists by ID', () => {
 			const data = {
@@ -531,7 +531,7 @@ describe('User API Controller', () => {
 
 			return api.getUser(mockRequest, mockResponse);
 		});
-		
+
 		it('should return a user if one exists by name', () => {
 			const data = {
 				ID: '1',
@@ -619,7 +619,7 @@ describe('User API Controller', () => {
 
 			return api.getUser(mockRequest, mockResponse);
 		});
-		
+
 		it('should return a 501 if no ID passed in', () => {
 			sandbox.stub(dao, 'getUser').resolves(undefined);
 
