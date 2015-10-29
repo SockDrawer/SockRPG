@@ -11,6 +11,9 @@
 const express = require('express');
 const app = express();
 
+//Controllers
+const cStatic = require('./controllers/staticController.js');
+
 app.route('/')
 	.get((req, res) => {
 		res.send('Dude, where\'s my forum?');
@@ -31,5 +34,9 @@ app.route('/example')
 	.delete((req, res) => {
 		res.send('Danger Will Robinson!');
 	});
+
+//Static content and uploads
+app.route('/static/*').get(cStatic.serve);
+app.route('/uploads/*').get(cStatic.serve);
 
 const server = app.listen(8080);
