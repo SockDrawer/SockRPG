@@ -11,8 +11,18 @@
 const express = require('express');
 const app = express();
 
+//Model
+const DAO = require('./dao.js');
+
+//For now, statid config
+//TODO: make this configurable
+DAO.initialise({
+	sqlite: ":memory:"
+});
+
 //Controllers
 const cStatic = require('./controllers/staticController.js');
+const cApi = require('./controllers/apiController.js');
 
 app.route('/')
 	.get((req, res) => {
@@ -38,5 +48,18 @@ app.route('/example')
 //Static content and uploads
 app.route('/static/*').get(cStatic.serve);
 app.route('/uploads/*').get(cStatic.serve);
+
+/*API*/
+app.route('/api/games')
+	.get(cApi.getAllGames)
+	.delete((_, res) => {res.status(405)})
+	.patch((_, res) => {res.status(405)})
+	.put((_, res) => {res.status(405)});
+	
+app.route('/api/game/:id')
+	.get(cApi.getGame)
+	.post((_, res) => {res.status(405)})
+	.patch((_, res) => {res.status(405)})
+	.delete((_, res) => {res.status(405)});
 
 const server = app.listen(8080);
