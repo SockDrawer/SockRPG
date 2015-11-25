@@ -10,7 +10,7 @@ const dao = require('../../src/dao.js');
 
 describe('Board API', () => {
 	let sandbox;
-	
+
 	before(() => {
 		//Start server
 		const server = require('../../src/server.js');
@@ -19,14 +19,14 @@ describe('Board API', () => {
 	beforeEach(() => {
 		sandbox = Sinon.sandbox;
 	});
-	
-	afterEach( () => {
+
+	afterEach(() => {
 		sandbox.restore();
 	});
 
 	describe('/api/boards', () => {
 		it('should return a list of boards on GET', (done) => {
-			
+
 			const data = [{
 				ID: '1',
 				Name: 'test board',
@@ -37,16 +37,16 @@ describe('Board API', () => {
 			}];
 
 			sandbox.stub(dao, 'getAllBoards').resolves(data);
-		
+
 			const expected = [{
-					ID: '1',
-					Canonical: '/api/board/1',
-					Name: 'test board',
-					Adult: false,
-					BoardMasters: null,
-					Tags: [],
-					IC: null
-				}];
+				ID: '1',
+				Canonical: '/api/board/1',
+				Name: 'test board',
+				Adult: false,
+				BoardMasters: null,
+				Tags: [],
+				IC: null
+			}];
 
 			request.get('http://localhost:8080/api/boards', (error, response, body) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
@@ -74,56 +74,56 @@ describe('Board API', () => {
 				assert.notOk(error, 'No error should be received');
 				const data = JSON.parse(body);
 				assert.property(data, 'id', 'ID was not returned');
-				
+
 			});
-			
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/board/1111',
-					method: 'DELETE'
+
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/board/1111',
+				method: 'DELETE'
 			});
-			request.end();			
+			req.end();
 		});
 
 		it('should reject Patch', () => {
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/boards',
-					method: 'PATCH'
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/boards',
+				method: 'PATCH'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Patch should not be accepted');
 			});
 		});
 
 		it('should reject Put', () => {
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/boards',
-					method: 'PUT'
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/boards',
+				method: 'PUT'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Put should not be accepted');
 			});
 		});
 
 		it('should reject Del', () => {
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/boards',
-					method: 'DELETE'
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/boards',
+				method: 'DELETE'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Delete should not be accepted');
 			});
 		});
@@ -140,7 +140,7 @@ describe('Board API', () => {
 				Tags: [],
 				IC: null
 			};
-			
+
 			const data = [{
 				ID: '1',
 				Name: 'test board',
@@ -149,7 +149,7 @@ describe('Board API', () => {
 				Tags: [],
 				IC: null
 			}];
-			
+
 			sandbox.stub(dao, 'getBoard').resolves(data);
 
 			request.get('http://localhost:8080/api/board/1', (error, response, body) => {
@@ -161,15 +161,15 @@ describe('Board API', () => {
 		});
 
 		it('should not return an invalid board', () => {
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/board/1111',
-					method: 'DELETE'
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/board/1111',
+				method: 'DELETE'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(404, response.statusCode, 'Invalid board should not be returned');
 			});
 		});
@@ -182,59 +182,59 @@ describe('Board API', () => {
 				Tags: [],
 				IC: null
 			};
-			
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/board/1111',
-					method: 'DELETE'
+
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/board/1111',
+				method: 'DELETE'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				assert.notOk(error, 'No error should be received');
+				
 			});
 		});
 
 		it('should reject Patch', () => {
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/board/1',
-					method: 'PATCH'
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/board/1',
+				method: 'PATCH'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Patch should not be accepted');
 			});
 		});
 
 		it('should reject Post', () => {
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/board/1',
-					method: 'POST'
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/board/1',
+				method: 'POST'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Post should not be accepted');
 			});
 		});
 
 		it('should reject Del', () => {
-			var request = http.request({
-					host: 'localhost',
-					port: '8080',
-					path:  '/api/board/1',
-					method: 'DELETE'
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/board/1',
+				method: 'DELETE'
 			});
-			request.end();
-			
-			return request.on('response', function(response) {
+			req.end();
+
+			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Delete should not be accepted');
 			});
 		});

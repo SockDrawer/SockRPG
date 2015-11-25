@@ -17,7 +17,7 @@ const DAO = require('./dao.js');
 //For now, statid config
 //TODO: make this configurable
 DAO.initialise({
-	sqlite: ":memory:"
+	sqlite: ':memory:'
 });
 
 //Controllers
@@ -52,14 +52,26 @@ app.route('/uploads/*').get(cStatic.serve);
 /*API*/
 app.route('/api/games')
 	.get(cApi.getAllGames)
-	.delete((_, res) => {res.status(405)})
-	.patch((_, res) => {res.status(405)})
-	.put((_, res) => {res.status(405)});
-	
+	.delete((_, res) => {
+		res.status(405);
+	})
+	.patch((_, res) => {
+		res.status(405);
+	})
+	.put((_, res) => {
+		res.status(405);
+	});
+
 app.route('/api/game/:id')
 	.get(cApi.getGame)
-	.post((_, res) => {res.status(405)})
-	.patch((_, res) => {res.status(405)})
-	.delete((_, res) => {res.status(405)});
+	.post((_, res) => {
+		res.status(405);
+	})
+	.patch((_, res) => {
+		res.status(405);
+	})
+	.delete((_, res) => {
+		res.status(405);
+	});
 
 const server = app.listen(8080);
