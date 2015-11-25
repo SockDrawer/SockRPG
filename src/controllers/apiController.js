@@ -84,7 +84,7 @@ function getAllBoards(_, res) {
 	//For this sprint, all users can see all games
 	return dao.getAllBoards().then((data) => {
 		for (let i = 0; i < data.length; i++) {
-			data[i].canonical = `/api/board/${data[i].id}`;
+			data[i].Canonical = `/api/board/${data[i].ID}`;
 		}
 		res.send(data);
 	}).catch((err) => {
@@ -114,7 +114,7 @@ function getBoard(req, res) {
 			res.status(404);
 			return;
 		}
-		data.canonical = `/api/board/${data.id}`;
+		data.Canonical = `/api/board/${data.ID}`;
 
 		res.send(data);
 	}).catch((err) => {

@@ -67,14 +67,14 @@ describe('Board API', () => {
 			sandbox.stub(dao, 'addBoard');
 
 			request.post({
-				url: 'http://localhost/api/boards',
-				formData: formData
+				url: 'http://localhost:8080/api/boards',
+				form: formData
 			}, (error, response, body) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 				assert.notOk(error, 'No error should be received');
 				const data = JSON.parse(body);
 				assert.property(data, 'id', 'ID was not returned');
-
+				done();
 			});
 
 			const req = http.request({
@@ -86,7 +86,7 @@ describe('Board API', () => {
 			req.end();
 		});
 
-		it('should reject Patch', () => {
+		it('should reject Patch', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -95,12 +95,13 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Patch should not be accepted');
+				done();
 			});
 		});
 
-		it('should reject Put', () => {
+		it('should reject Put', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -109,8 +110,9 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Put should not be accepted');
+				done();
 			});
 		});
 
@@ -160,7 +162,7 @@ describe('Board API', () => {
 			});
 		});
 
-		it('should not return an invalid board', () => {
+		it('should not return an invalid board', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -169,12 +171,13 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(404, response.statusCode, 'Invalid board should not be returned');
+				done();
 			});
 		});
 
-		it('should update a board on PUT', () => {
+		it('should update a board on PUT', (done) => {
 			const formData = {
 				Name: 'test board edited!',
 				Adult: false,
@@ -191,13 +194,13 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				
+				done();
 			});
 		});
 
-		it('should reject Patch', () => {
+		it('should reject Patch', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -206,12 +209,13 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Patch should not be accepted');
+				done();
 			});
 		});
 
-		it('should reject Post', () => {
+		it('should reject Post', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -220,12 +224,13 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Post should not be accepted');
+				done();
 			});
 		});
 
-		it('should reject Del', () => {
+		it('should reject Del', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -234,8 +239,9 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Delete should not be accepted');
+				done();
 			});
 		});
 	});

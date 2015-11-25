@@ -52,26 +52,30 @@ app.route('/uploads/*').get(cStatic.serve);
 /*API*/
 app.route('/api/games')
 	.get(cApi.getAllGames)
-	.delete((_, res) => {
-		res.status(405);
-	})
-	.patch((_, res) => {
-		res.status(405);
-	})
-	.put((_, res) => {
-		res.status(405);
-	});
+	.post((_, res) => res.status(405).end())
+	.patch((_, res) => res.status(405).end())
+	.delete((_, res) => res.status(405).end())
+	.put((_, res) => res.status(405).end());
 
 app.route('/api/game/:id')
 	.get(cApi.getGame)
-	.post((_, res) => {
-		res.status(405);
-	})
-	.patch((_, res) => {
-		res.status(405);
-	})
-	.delete((_, res) => {
-		res.status(405);
-	});
+	.post((_, res) => res.status(405).end())
+	.patch((_, res) => res.status(405).end())
+	.delete((_, res) => res.status(405).end())
+	.put((_, res) => res.status(405).end());
+
+app.route('/api/boards')
+	.get(cApi.getAllBoards)
+	.post((_, res) => res.status(405).end())
+	.patch((_, res) => res.status(405).end())
+	.delete((_, res) => res.status(405).end())
+	.put((_, res) => res.status(405).end());
+	
+app.route('/api/board/:id')
+	.get(cApi.getBoard)
+	.post((_, res) => res.status(405).end())
+	.patch((_, res) => res.status(405).end())
+	.delete((_, res) => res.status(405).end())
+	.put((_, res) => res.status(405).end());
 
 const server = app.listen(8080);
