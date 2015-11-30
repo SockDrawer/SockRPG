@@ -71,7 +71,9 @@ function initialise(config) {
 			host: 'localhost',
 			dialect: 'sqlite',
 			logging: undefined,
-			storage: config.sqlite
+			storage: config.sqlite,
+			timestamps: true,
+			paranoid: true
 		});
 	}
 	if (config.postgres) {
@@ -79,7 +81,9 @@ function initialise(config) {
 		db = new Sequelize(settings.name, settings.username, settings.password, {
 			host: settings.host,
 			dialect: 'postgres',
-			logging: undefined
+			logging: undefined,
+			timestamps: true,
+			paranoid: true
 		});
 	}
 
