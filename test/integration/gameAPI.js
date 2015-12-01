@@ -69,14 +69,14 @@ describe('Game API', () => {
 			request.post({
 				url: 'http://localhost:8080/api/games',
 				form: formData
-			}, (error, response, body) => {
+			}, (error, response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 				assert.notOk(error, 'No error should be received');
 				done();
 			});
 		});
 
-		it('should reject Patch', () => {
+		it('should reject Patch', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -85,12 +85,13 @@ describe('Game API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Patch should not be accepted');
+				done();
 			});
 		});
 
-		it('should reject Put', () => {
+		it('should reject Put', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -99,13 +100,14 @@ describe('Game API', () => {
 			});
 		
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Put should not be accepted');
+				done();
 			});
 			req.end();
 		});
 
-		it('should reject Del', () => {
+		it('should reject Del', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -114,8 +116,9 @@ describe('Game API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Delete should not be accepted');
+				done();
 			});
 		});
 	});
@@ -151,7 +154,7 @@ describe('Game API', () => {
 			});
 		});
 
-		it('should not return an invalid game', () => {
+		it('should not return an invalid game', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -160,8 +163,9 @@ describe('Game API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(404, response.statusCode, 'Invalid game should not be returned');
+				done();
 			});
 		});
 
@@ -183,7 +187,7 @@ describe('Game API', () => {
 					'Content-type': 'application/json'
 				}
 			});
-			req.write(JSON.stringify(formData) + "\n");
+			req.write(`${JSON.stringify(formData)}\n`);
 			req.end();
 
 			req.on('response', (response) => {
@@ -192,7 +196,7 @@ describe('Game API', () => {
 			});
 		});
 
-		it('should reject Patch', () => {
+		it('should reject Patch', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -201,12 +205,13 @@ describe('Game API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Patch should not be accepted');
+				done();
 			});
 		});
 
-		it('should reject Post', () => {
+		it('should reject Post', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -215,12 +220,13 @@ describe('Game API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Post should not be accepted');
+				done();
 			});
 		});
 
-		it('should reject Del', () => {
+		it('should reject Del', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -229,8 +235,9 @@ describe('Game API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Delete should not be accepted');
+				done();
 			});
 		});
 	});

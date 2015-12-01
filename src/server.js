@@ -53,7 +53,7 @@ app.route('/static/*').get(cStatic.serve);
 app.route('/uploads/*').get(cStatic.serve);
 
 
-let jsonParser = bodyParser.json({ type: 'application/json' });
+const jsonParser = bodyParser.json({type: 'application/json'});
 /*API*/
 app.route('/api/games')
 	.get(cApi.getAllGames)

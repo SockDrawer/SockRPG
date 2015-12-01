@@ -69,7 +69,7 @@ describe('Board API', () => {
 			request.post({
 				url: 'http://localhost:8080/api/boards',
 				form: formData
-			}, (error, response, body) => {
+			}, (error, response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 				assert.notOk(error, 'No error should be received');
 				done();
@@ -106,7 +106,7 @@ describe('Board API', () => {
 			});
 		});
 
-		it('should reject Del', () => {
+		it('should reject Del', (done) => {
 			const req = http.request({
 				host: 'localhost',
 				port: '8080',
@@ -115,8 +115,9 @@ describe('Board API', () => {
 			});
 			req.end();
 
-			return req.on('response', (response) => {
+			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Delete should not be accepted');
+				done();
 			});
 		});
 	});
@@ -186,7 +187,7 @@ describe('Board API', () => {
 					'Content-type': 'application/json'
 				}
 			});
-			req.write(JSON.stringify(formData) + "\n");
+			req.write(`${JSON.stringify(formData)}\n`);
 			req.end();
 
 			req.on('response', (response) => {

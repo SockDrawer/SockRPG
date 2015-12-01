@@ -260,7 +260,7 @@ const controller = {
 
 	getAllUsers: getAllUsers,
 
-	getUser: getUser,
+	getUser: getUser
 
 };
 
