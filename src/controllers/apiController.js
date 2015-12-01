@@ -62,7 +62,7 @@ function getGame(req, res) {
 		}
 
 		if (!data) {
-			res.status(404);
+			res.status(404).end();
 			return;
 		}
 		data.Canonical = `/api/game/${data.ID}`;
@@ -70,6 +70,38 @@ function getGame(req, res) {
 		res.send(data);
 	}).catch((err) => {
 		//TODO: logging errors
+		res.status(500).send({error: err.toString()});
+	});
+}
+
+/**
+ * Add a game to the collection.
+ * @param {Request} req Express' request object. Expects a body with a name parameter
+ * @param {Response} res Express' response object.
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function addGame(req, res) {
+	return dao.addGame(req.body).then((data) => {
+		res.status(200).end();
+	}).catch((err) => {
+		//TODO: logging errors
+		res.status(500).send({error: err.toString()});
+	});
+}
+
+/**
+ * Update a game
+ * @param {Request} req Express' request object. Expects a body with data and an ID under the params key
+ * @param {Response} res Express' response object.
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function updateGame(req, res) {
+	console.log(req.body);
+	return dao.updateGame(req.params.id, req.body).then((data) => {
+		res.status(200).end();
+	}).catch((err) => {
+		//TODO: logging errors
+		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -109,14 +141,44 @@ function getBoard(req, res) {
 		if (Array.isArray(data)) {
 			data = data[0]; //Only the first board
 		}
-
+		
 		if (!data) {
-			res.status(404);
+			res.status(404).end();
 			return;
 		}
 		data.Canonical = `/api/board/${data.ID}`;
 
 		res.send(data);
+	}).catch((err) => {
+		//TODO: logging errors
+		res.status(500).send({error: err.toString()});
+	});
+}
+
+/**
+ * Update a board
+ * @param {Request} req Express' request object. Expects a body with a name parameter
+ * @param {Response} res Express' response object.
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function addBoard(req, res) {
+	return dao.addBoard(req.body).then((data) => {
+		res.status(200).end();
+	}).catch((err) => {
+		//TODO: logging errors
+		res.status(500).send({error: err.toString()});
+	});
+}
+
+/**
+ * Add a board to the collection.
+ * @param {Request} req Express' request object. Expects a body with data and an ID under the params key
+ * @param {Response} res Express' response object.
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function updateBoard(req, res) {
+	return dao.updateBoard(req.params.id, req.body).then((data) => {
+		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
 		res.status(500).send({error: err.toString()});
@@ -185,14 +247,23 @@ const controller = {
 	getAllGames: getAllGames,
 
 	getGame: getGame,
+	
+	addGame: addGame,
+	
+	updateGame: updateGame,
 
 	getAllBoards: getAllBoards,
 
 	getBoard: getBoard,
+	
+	addBoard: addBoard,
+	
+	updateBoard: updateBoard,
 
 	getAllUsers: getAllUsers,
 
-	getUser: getUser
+	getUser: getUser,
+
 };
 
 module.exports = controller;

@@ -64,7 +64,7 @@ describe('Board API', () => {
 				Tags: [],
 				IC: null
 			};
-			sandbox.stub(dao, 'addBoard');
+			sandbox.stub(dao, 'addBoard').resolves(true);
 
 			request.post({
 				url: 'http://localhost:8080/api/boards',
@@ -72,18 +72,8 @@ describe('Board API', () => {
 			}, (error, response, body) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 				assert.notOk(error, 'No error should be received');
-				const data = JSON.parse(body);
-				assert.property(data, 'id', 'ID was not returned');
 				done();
 			});
-
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/board/1111',
-				method: 'DELETE'
-			});
-			req.end();
 		});
 
 		it('should reject Patch', (done) => {
@@ -167,14 +157,15 @@ describe('Board API', () => {
 				host: 'localhost',
 				port: '8080',
 				path: '/api/board/1111',
-				method: 'DELETE'
+				method: 'GET'
 			});
-			req.end();
-
+			
 			req.on('response', (response) => {
 				assert.equal(404, response.statusCode, 'Invalid board should not be returned');
 				done();
 			});
+			
+			req.end();
 		});
 
 		it('should update a board on PUT', (done) => {
@@ -190,7 +181,7 @@ describe('Board API', () => {
 				host: 'localhost',
 				port: '8080',
 				path: '/api/board/1111',
-				method: 'DELETE'
+				method: 'PUT'
 			});
 			req.end();
 

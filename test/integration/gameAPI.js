@@ -64,26 +64,16 @@ describe('Game API', () => {
 				Tags: [],
 				IC: null
 			};
-			sandbox.stub(dao, 'addBoard');
+			sandbox.stub(dao, 'addGame').resolves(true);
 
 			request.post({
-				url: 'http://localhost/api/games',
-				formData: formData
+				url: 'http://localhost:8080/api/games',
+				form: formData
 			}, (error, response, body) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 				assert.notOk(error, 'No error should be received');
-				const data = JSON.parse(body);
-				assert.property(data, 'id', 'ID was not returned');
-
+				done();
 			});
-
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/game/1111',
-				method: 'DELETE'
-			});
-			req.end();
 		});
 
 		it('should reject Patch', () => {
@@ -107,11 +97,12 @@ describe('Game API', () => {
 				path: '/api/games',
 				method: 'PUT'
 			});
-			req.end();
+		
 
 			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Put should not be accepted');
 			});
+			req.end();
 		});
 
 		it('should reject Del', () => {
@@ -123,7 +114,7 @@ describe('Game API', () => {
 			});
 			req.end();
 
-			return request.on('response', (response) => {
+			return req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Delete should not be accepted');
 			});
 		});
@@ -165,7 +156,7 @@ describe('Game API', () => {
 				host: 'localhost',
 				port: '8080',
 				path: '/api/game/1111',
-				method: 'DELETE'
+				method: 'GET'
 			});
 			req.end();
 
@@ -174,9 +165,9 @@ describe('Game API', () => {
 			});
 		});
 
-		it('should update a game on PUT', () => {
+		it('should update a game on PUT', (done) => {
 			const formData = {
-				Name: 'test game edited!',
+				GameID: 1111,
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
@@ -187,12 +178,14 @@ describe('Game API', () => {
 				host: 'localhost',
 				port: '8080',
 				path: '/api/game/1111',
-				method: 'DELETE'
+				method: 'PUT'
 			});
+			req.write(JSON.stringify(formData) + "\n");
 			req.end();
 
-			return req.on('response', (response) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
+			req.on('response', (response) => {
+				assert.equal(200, response.statusCode, 'Status code should be 200 OK.');
+				done();
 			});
 		});
 

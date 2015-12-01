@@ -10,6 +10,8 @@
 
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+
 
 //Model
 const DAO = require('./dao.js');
@@ -45,14 +47,17 @@ app.route('/example')
 		res.send('Danger Will Robinson!');
 	});
 
+
 //Static content and uploads
 app.route('/static/*').get(cStatic.serve);
 app.route('/uploads/*').get(cStatic.serve);
 
+
+let jsonParser = bodyParser.json({ type: 'application/json' });
 /*API*/
 app.route('/api/games')
 	.get(cApi.getAllGames)
-	.post((_, res) => res.status(405).end())
+	.post(jsonParser, cApi.addGame)
 	.patch((_, res) => res.status(405).end())
 	.delete((_, res) => res.status(405).end())
 	.put((_, res) => res.status(405).end());
@@ -62,11 +67,11 @@ app.route('/api/game/:id')
 	.post((_, res) => res.status(405).end())
 	.patch((_, res) => res.status(405).end())
 	.delete((_, res) => res.status(405).end())
-	.put((_, res) => res.status(405).end());
+	.put(jsonParser, cApi.updateGame);
 
 app.route('/api/boards')
 	.get(cApi.getAllBoards)
-	.post((_, res) => res.status(405).end())
+	.post(jsonParser, cApi.addBoard)
 	.patch((_, res) => res.status(405).end())
 	.delete((_, res) => res.status(405).end())
 	.put((_, res) => res.status(405).end());
@@ -76,6 +81,6 @@ app.route('/api/board/:id')
 	.post((_, res) => res.status(405).end())
 	.patch((_, res) => res.status(405).end())
 	.delete((_, res) => res.status(405).end())
-	.put((_, res) => res.status(405).end());
+	.put(jsonParser, cApi.updateBoard);
 
 const server = app.listen(8080);

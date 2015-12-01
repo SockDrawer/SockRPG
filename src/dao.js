@@ -214,11 +214,6 @@ function getBoard(id) {
 		where: {
 			GameID: null
 		}
-	}).then((board) => {
-		if (!board) {
-			throw new Error(`Board with ID ${id} not found`);
-		}
-		return board;
 	});
 }
 
@@ -331,11 +326,6 @@ function getGame(id) {
 			}
 		},
 		include: [db.Games]
-	}).then((game) => {
-		if (!game) {
-			throw new Error(`Game with ID ${id} not found`);
-		}
-		return game;
 	});
 }
 
@@ -371,7 +361,7 @@ function addGame(game) {
 function updateGame(id, game) {
 	return new Promise((resolve, reject) => {
 		if (!game.GameID && !game.Game) {
-			reject(new Error('Games cannot be updated using this method; please use updateBoard() instead'));
+			reject(new Error('Boards cannot be updated using this method; please use updateBoard() instead'));
 		} else {
 			resolve();
 		}
