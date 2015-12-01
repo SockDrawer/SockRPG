@@ -16,7 +16,7 @@ const bodyParser = require('body-parser');
 //Model
 const DAO = require('./dao.js');
 
-//For now, statid config
+//For now, static config
 //TODO: make this configurable
 DAO.initialise({
 	sqlite: ':memory:'
@@ -58,29 +58,38 @@ const jsonParser = bodyParser.json({type: 'application/json'});
 app.route('/api/games')
 	.get(cApi.getAllGames)
 	.post(jsonParser, cApi.addGame)
-	.patch((_, res) => res.status(405).end())
-	.delete((_, res) => res.status(405).end())
-	.put((_, res) => res.status(405).end());
+	.patch(return405)
+	.delete(return405)
+	.put(return405);
 
 app.route('/api/game/:id')
 	.get(cApi.getGame)
-	.post((_, res) => res.status(405).end())
-	.patch((_, res) => res.status(405).end())
-	.delete((_, res) => res.status(405).end())
+	.post(return405)
+	.patch(return405)
+	.delete(return405)
 	.put(jsonParser, cApi.updateGame);
 
 app.route('/api/boards')
 	.get(cApi.getAllBoards)
 	.post(jsonParser, cApi.addBoard)
-	.patch((_, res) => res.status(405).end())
-	.delete((_, res) => res.status(405).end())
-	.put((_, res) => res.status(405).end());
-	
+	.patch(return405)
+	.delete(return405)
+	.put(return405);
+
 app.route('/api/board/:id')
 	.get(cApi.getBoard)
-	.post((_, res) => res.status(405).end())
-	.patch((_, res) => res.status(405).end())
-	.delete((_, res) => res.status(405).end())
+	.post(return405)
+	.patch(return405)
+	.delete(return405)
 	.put(jsonParser, cApi.updateBoard);
 
 const server = app.listen(8080);
+
+/**
+ * Returns a vanilla 405 Method Not Allowed error
+ * @param {Object} _ Ignored
+ * @param {Object} res An Express response object
+ */
+function return405(_, res) {
+	res.status(405).end();
+}
