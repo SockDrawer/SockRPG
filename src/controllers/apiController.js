@@ -96,12 +96,10 @@ function addGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateGame(req, res) {
-	console.log(req.body);
 	return dao.updateGame(req.params.id, req.body).then((data) => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
-		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }

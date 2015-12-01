@@ -178,7 +178,10 @@ describe('Game API', () => {
 				host: 'localhost',
 				port: '8080',
 				path: '/api/game/1111',
-				method: 'PUT'
+				method: 'PUT',
+				headers: {
+					'Content-type': 'application/json'
+				}
 			});
 			req.write(JSON.stringify(formData) + "\n");
 			req.end();

@@ -181,8 +181,12 @@ describe('Board API', () => {
 				host: 'localhost',
 				port: '8080',
 				path: '/api/board/1111',
-				method: 'PUT'
+				method: 'PUT',
+				headers: {
+					'Content-type': 'application/json'
+				}
 			});
+			req.write(JSON.stringify(formData) + "\n");
 			req.end();
 
 			req.on('response', (response) => {
