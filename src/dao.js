@@ -42,7 +42,7 @@ module.exports = {
  * Initialise the DAO. *Must be called before any other function.*
  *
  * @param {Object} config The necessary information to set up the database
- * @param {String} config.sqlite The location of the SQLite file to use; if it doesn't exist, create it
+ * @param {String} config.sqlite The location of the SQLite file to use; if it doesn't exist, it'll be created
  * @param {Object} config.postgres The necessary information to connect to a PostgreSQL database
  * @param {String} config.postgres.host The host running the PostGreSQL server
  * @param {String} config.postgres.name The name of the database to connect to
@@ -87,12 +87,7 @@ function isInitialised() {
  * @returns {Promise} A Promise that is resolved with a list of users
  */
 function getAllUsers() {
-	return db.Users.findAll().then((users) => {
-		if (!users || users.length === 0) {
-			throw new Error(`No users exist`);
-		}
-		return users;
-	});
+	return db.Users.findAll();
 }
 
 /**
@@ -103,12 +98,7 @@ function getAllUsers() {
  * @returns {Promise} A Promise that is resolved with the user requested
  */
 function getUser(id) {
-	return db.Users.findByPrimary(id).then((user) => {
-		if (!user) {
-			throw new Error(`User with ID ${id} not found`);
-		}
-		return user;
-	});
+	return db.Users.findByPrimary(id);
 }
 
 /**
@@ -123,11 +113,6 @@ function getUserByName(name) {
 		where: {
 			Username: name
 		}
-	}).then((user) => {
-		if (!user) {
-			throw new Error(`User with name ${name} not found`);
-		}
-		return user;
 	});
 }
 
@@ -170,11 +155,6 @@ function getAllBoards() {
 		where: {
 			GameID: null
 		}
-	}).then((boards) => {
-		if (!boards || boards.length === 0) {
-			throw new Error(`No boards exist`);
-		}
-		return boards;
 	});
 }
 
@@ -194,11 +174,6 @@ function getBoards(parentID) {
 			BoardID: parentID,
 			GameID: null
 		}
-	}).then((boards) => {
-		if (!boards || boards.length === 0) {
-			throw new Error(`No boards exist with a parent of ${parentID}`);
-		}
-		return boards;
 	});
 }
 
@@ -276,11 +251,6 @@ function getAllGames() {
 			}
 		},
 		include: [db.Games]
-	}).then((games) => {
-		if (!games || games.length === 0) {
-			throw new Error(`No games exist`);
-		}
-		return games;
 	});
 }
 
@@ -303,11 +273,6 @@ function getGames(parentID) {
 			}
 		},
 		include: [db.Games]
-	}).then((games) => {
-		if (!games || games.length === 0) {
-			throw new Error(`No games exist with a parent of ${parentID}`);
-		}
-		return games;
 	});
 }
 
@@ -361,7 +326,7 @@ function addGame(game) {
 function updateGame(id, game) {
 	return new Promise((resolve, reject) => {
 		if (!game.GameID && !game.Game) {
-			reject(new Error('Boards cannot be updated using this method; please use updateBoard() instead'));
+			reject(new Error('Vanilla boards cannot be updated using this method; please use updateBoard() instead'));
 		} else {
 			resolve();
 		}
