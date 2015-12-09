@@ -82,7 +82,7 @@ describe('DAO', () => {
 			}).should.become(false);
 		});
 
-		it('should crash on multiple teardowns', () => {
+		it('should not crash on multiple teardowns', () => {
 			return dao.teardown().should.eventually.be.fulfilled;
 		});
 	});
@@ -97,7 +97,7 @@ describe('DAO', () => {
 		});
 
 		it('should start with no users', () => {
-			return dao.getAllUsers().should.be.rejectedWith(Error);
+			return dao.getAllUsers().should.eventually.deep.equal([]);
 		});
 
 		it('should add a user', () => {
@@ -146,7 +146,7 @@ describe('DAO', () => {
 		});
 
 		it('should not find a non-existant user by ID', () => {
-			return dao.getUser(0).should.be.rejectedWith(Error);
+			return dao.getUser(0).should.eventually.equal(null);
 		});
 
 		it('should find an existing user by name', () => {
@@ -155,7 +155,7 @@ describe('DAO', () => {
 		});
 
 		it('should not find a non-existant user by name', () => {
-			return dao.getUserByName('User0').should.be.rejectedWith(Error);
+			return dao.getUserByName('User0').should.eventually.equal(null);
 		});
 
 		it('should edit an existing user', () => {
@@ -163,7 +163,7 @@ describe('DAO', () => {
 			return dao.updateUser(1, {Username: username}).should.eventually.contain.all({Username: username});
 		});
 
-		it('should not edit an non-existant user', () => {
+		it('should not edit a non-existant user', () => {
 			return dao.updateUser(0, {}).should.be.rejectedWith(Error);
 		});
 	});
@@ -186,7 +186,7 @@ describe('DAO', () => {
 		});
 
 		it('should start with no boards', () => {
-			return dao.getAllBoards().should.be.rejectedWith(Error);
+			return dao.getAllBoards().should.eventually.deep.equal([]);
 		});
 
 		it('should add a board', () => {
@@ -234,7 +234,7 @@ describe('DAO', () => {
 		});
 
 		it('should not find a non-existant board by ID', () => {
-			return dao.getBoard(0).should.be.rejectedWith(Error);
+			return dao.getBoard(0).should.eventually.equal(null);
 		});
 
 		it('should edit an existing board', () => {
@@ -242,7 +242,7 @@ describe('DAO', () => {
 			return dao.updateBoard(1, {Title: title}).should.eventually.contain.all({Title: title});
 		});
 
-		it('should not edit an non-existant board', () => {
+		it('should not edit a non-existant board', () => {
 			return dao.updateBoard(0, {}).should.be.rejectedWith(Error);
 		});
 
@@ -306,7 +306,7 @@ describe('DAO', () => {
 		});
 
 		it('should start with no child boards', () => {
-			return dao.getBoards(boardID).should.be.rejectedWith(Error);
+			return dao.getBoards(boardID).should.eventually.deep.equal([]);
 		});
 
 		it('should add a child board', () => {
@@ -359,7 +359,7 @@ describe('DAO', () => {
 		});
 
 		it('should not find children of a board with an ID of zero', () => {
-			return dao.getBoards(0).should.be.rejectedWith(Error);
+			return dao.getBoards(0).should.eventually.deep.equal([]);
 		});
 	});
 
@@ -381,7 +381,7 @@ describe('DAO', () => {
 		});
 
 		it('should start with no games', () => {
-			return dao.getAllGames().should.be.rejectedWith(Error);
+			return dao.getAllGames().should.eventually.deep.equal([]);
 		});
 
 		it('should add a game', () => {
@@ -433,7 +433,7 @@ describe('DAO', () => {
 		});
 
 		it('should not find a non-existant game by ID', () => {
-			return dao.getGame(0).should.be.rejectedWith(Error);
+			return dao.getGame(0).should.eventually.equal(null);
 		});
 
 		it('should edit an existing game', () => {
@@ -441,7 +441,7 @@ describe('DAO', () => {
 			return dao.updateGame(1, {Title: title, Game: {}}).should.eventually.contain.all({Title: title});
 		});
 
-		it('should not edit an non-existant game', () => {
+		it('should not edit a non-existant game', () => {
 			return dao.updateGame(0, {Game: {}}).should.be.rejectedWith(Error);
 		});
 
@@ -490,7 +490,7 @@ describe('DAO', () => {
 		});
 
 		it('should start with no child games', () => {
-			return dao.getGames(gameID).should.be.rejectedWith(Error);
+			return dao.getGames(gameID).should.eventually.deep.equal([]);
 		});
 
 		it('should add a child game', () => {
@@ -548,7 +548,7 @@ describe('DAO', () => {
 		});
 
 		it('should not find children of a game with an ID of zero', () => {
-			return dao.getGames(0).should.be.rejectedWith(Error);
+			return dao.getGames(0).should.eventually.deep.equal([]);
 		});
 	});
 });

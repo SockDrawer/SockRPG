@@ -140,8 +140,11 @@ function updateUser(id, user) {
 		where: {
 			ID: id
 		}
-	}).then(() => {
-		return getUser(id);
+	}).then((counts) => {
+		if (counts[0] > 0) {
+			return getUser(id);
+		}
+		throw Error(`User with ID ${id} not found`);
 	});
 }
 
@@ -233,8 +236,11 @@ function updateBoard(id, board) {
 				GameID: null
 			}
 		});
-	}).then(() => {
-		return getBoard(id);
+	}).then((counts) => {
+		if (counts[0] > 0) {
+			return getBoard(id);
+		}
+		throw Error(`Board with ID ${id} not found`);
 	});
 }
 
@@ -339,7 +345,10 @@ function updateGame(id, game) {
 				}
 			}
 		});
-	}).then(() => {
-		return getGame(id);
+	}).then((counts) => {
+		if (counts[0] > 0) {
+			return getGame(id);
+		}
+		throw Error(`Game with ID ${id} not found`);
 	});
 }
