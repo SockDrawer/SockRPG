@@ -170,6 +170,8 @@ describe('Game API', () => {
 		});
 
 		it('should update a game on PUT', (done) => {
+			sandbox.stub(dao, 'updateGame').resolves();
+			
 			const formData = {
 				GameID: 1111,
 				Adult: false,
@@ -192,6 +194,33 @@ describe('Game API', () => {
 
 			req.on('response', (response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK.');
+				done();
+			});
+		});
+		
+		it('should fail to update a nonexistant game on PUT', (done) => {	
+			const formData = {
+				GameID: 1111,
+				Adult: false,
+				GameMasters: null,
+				Tags: [],
+				IC: null
+			};
+
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/game/1111',
+				method: 'PUT',
+				headers: {
+					'Content-type': 'application/json'
+				}
+			});
+			req.write(`${JSON.stringify(formData)}\n`);
+			req.end();
+
+			req.on('response', (response) => {
+				assert.equal(404, response.statusCode, 'Status code should be 404 NOT FOUND.');
 				done();
 			});
 		});

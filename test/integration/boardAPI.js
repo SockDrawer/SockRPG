@@ -170,8 +170,10 @@ describe('Board API', () => {
 		});
 
 		it('should update a board on PUT', (done) => {
+			sandbox.stub(dao, 'updateBoard').resolves();
+			
 			const formData = {
-				Name: 'test board edited!',
+				Title: 'test board edited!',
 				Adult: false,
 				BoardMasters: null,
 				Tags: [],
@@ -193,7 +195,34 @@ describe('Board API', () => {
 			req.on('response', (response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 				done();
+			});			
+		});
+		
+		it('should fail to update a nonexistant board on PUT', (done) => {		
+			const formData = {
+				Title: 'test board edited!',
+				Adult: false,
+				BoardMasters: null,
+				Tags: [],
+				IC: null
+			};
+
+			const req = http.request({
+				host: 'localhost',
+				port: '8080',
+				path: '/api/board/1111',
+				method: 'PUT',
+				headers: {
+					'Content-type': 'application/json'
+				}
 			});
+			req.write(`${JSON.stringify(formData)}\n`);
+			req.end();
+
+			req.on('response', (response) => {
+				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
+				done();
+			});			
 		});
 
 		it('should reject Patch', (done) => {
