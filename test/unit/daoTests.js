@@ -1,8 +1,7 @@
 'use strict';
 
 //Testing modules
-const sinon = require('sinon'),
-	chai = require('chai'),
+const chai = require('chai'),
 	chaiAsPromised = require('chai-as-promised');
 
 const expect = chai.expect;
@@ -17,17 +16,13 @@ const dao = require('../../src/dao.js');
 const dbConfig = {sqlite: ':memory:'};
 
 describe('DAO', () => {
-	let sandbox;
-
 	before(() => {
 	});
 
 	beforeEach(() => {
-		sandbox = sinon.sandbox;
 	});
 
 	afterEach(() => {
-		sandbox.restore();
 	});
 
 	after(() => {
