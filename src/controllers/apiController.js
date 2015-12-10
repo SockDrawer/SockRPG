@@ -70,6 +70,7 @@ function getGame(req, res) {
 		res.send(data);
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }

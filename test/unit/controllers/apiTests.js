@@ -14,7 +14,7 @@ describe('Game API controller', () => {
 	});
 
 	beforeEach(() => {
-		sandbox = Sinon.sandbox;
+		sandbox = Sinon.sandbox.create();
 	});
 
 	afterEach( () => {
@@ -226,7 +226,8 @@ describe('Game API controller', () => {
 				send: () => {
 					assert.notOk(true, 'Should not send data');
 					return mockResponse;
-				}
+				},
+				end: () => {}
 			};
 
 			return api.getGame(mockRequest, mockResponse);
@@ -375,7 +376,8 @@ describe('Game API controller', () => {
 				send: () => {
 					assert.notOk(true, 'Should not send data');
 					return mockResponse;
-				}
+				},
+				end: () => {}
 			};
 
 			return api.getBoard(mockRequest, mockResponse);
