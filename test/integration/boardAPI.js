@@ -220,7 +220,7 @@ describe('Board API', () => {
 			req.end();
 
 			req.on('response', (response) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
+				assert.equal(404, response.statusCode, 'Status code should be 200 OK');
 				done();
 			});			
 		});
