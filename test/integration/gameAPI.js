@@ -98,7 +98,7 @@ describe('Game API', () => {
 				path: '/api/games',
 				method: 'PUT'
 			});
-		
+
 
 			req.on('response', (response) => {
 				assert.equal(405, response.statusCode, 'Put should not be accepted');
@@ -171,7 +171,7 @@ describe('Game API', () => {
 
 		it('should update a game on PUT', (done) => {
 			sandbox.stub(dao, 'updateGame').resolves();
-			
+
 			const formData = {
 				GameID: 1111,
 				Adult: false,
@@ -197,8 +197,8 @@ describe('Game API', () => {
 				done();
 			});
 		});
-		
-		it('should fail to update a nonexistant game on PUT', (done) => {	
+
+		it('should fail to update a nonexistant game on PUT', (done) => {
 			const formData = {
 				GameID: 1111,
 				Adult: false,
