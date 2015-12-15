@@ -2,6 +2,7 @@
 const Chai = require('chai');
 const assert = Chai.assert;
 const request = require('request');
+const requestp = require('request-promise');
 const http = require('http');
 const Sinon = require('sinon');
 require('sinon-as-promised');
@@ -25,8 +26,7 @@ describe('Board API', () => {
 	});
 
 	describe('/api/boards', () => {
-		it('should return a list of boards on GET', (done) => {
-
+		it('should return a list of boards on GET', () => {
 			const data = [{
 				ID: '1',
 				Name: 'test board',
@@ -48,11 +48,16 @@ describe('Board API', () => {
 				IC: null
 			}];
 
-			request.get('http://localhost:8080/api/boards', (error, response, body) => {
+			const req = {
+				method: 'GET',
+				uri: 'http://localhost:8080/api/boards',
+				json: true,
+				'resolveWithFullResponse': true
+			};
+
+			return requestp(req).then((response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				assert.notOk(error, 'No error should be received');
-				assert.deepEqual(expected, JSON.parse(body), 'Body should contain data');
-				done();
+				assert.deepEqual(expected, response.body, 'Body should contain data');
 			});
 		});
 
