@@ -1,9 +1,7 @@
 'use strict';
 const Chai = require('chai');
 const assert = Chai.assert;
-const request = require('request');
-const requestp = require('request-promise');
-const http = require('http');
+const request = require('request-promise');
 const Sinon = require('sinon');
 require('sinon-as-promised');
 const dao = require('../../src/dao.js');
@@ -55,13 +53,13 @@ describe('Board API', () => {
 				'resolveWithFullResponse': true
 			};
 
-			return requestp(req).then((response) => {
+			return request(req).then((response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 				assert.deepEqual(expected, response.body, 'Body should contain data');
 			});
 		});
 
-		it('should add a board on Post', (done) => {
+		it('should add a board on Post', () => {
 			const formData = {
 				Name: 'test board',
 				Adult: false,
@@ -70,65 +68,56 @@ describe('Board API', () => {
 				IC: null
 			};
 			sandbox.stub(dao, 'addBoard').resolves(true);
-
-			request.post({
-				url: 'http://localhost:8080/api/boards',
-				form: formData
-			}, (error, response) => {
+			const req = {
+				uri: 'http://localhost:8080/api/boards',
+				body: formData,
+				json: true,
+				'resolveWithFullResponse': true
+			};
+			return request(req).then((response) => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				assert.notOk(error, 'No error should be received');
-				done();
 			});
 		});
 
-		it('should reject Patch', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/boards',
+		it('should reject Patch', () => {
+			const req = {
+				uri: 'http://localhost:8080/api/boards',
 				method: 'PATCH'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Patch should not be accepted');
-				done();
-			});
-		});
-
-		it('should reject Put', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/boards',
-				method: 'PUT'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Put should not be accepted');
-				done();
+			};
+			return request(req).then(() => {
+				assert.fail('Should not have resolved the promise!');
+			}, (response) => {
+				assert.equal(response.statusCode, 405, 'Status code should indicate method not allowed');
 			});
 		});
 
-		it('should reject Del', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/boards',
+		it('should reject Put', () => {
+			const req = {
+				uri: 'http://localhost:8080/api/boards',
+				method: 'PATCH'
+			};
+			return request(req).then(() => {
+				assert.fail('Should not have resolved the promise!');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Status code should indicate method not allowed');
+			});
+		});
+
+		it('should reject Del', () => {
+			const req = {
+				uri: 'http://localhost:8080/api/boards',
 				method: 'DELETE'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Delete should not be accepted');
-				done();
+			};
+			return request(req).then(() => {
+				assert.fail('Should not have resolved the promise!');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Status code should indicate method not allowed');
 			});
 		});
 	});
 
 	describe('/api/board', () => {
-		it('should return a board on GET', (done) => {
+		it('should return a board on GET', () => {
 			const expected = {
 				ID: '1',
 				Canonical: '/api/board/1',
@@ -150,31 +139,31 @@ describe('Board API', () => {
 
 			sandbox.stub(dao, 'getBoard').resolves(data);
 
-			request.get('http://localhost:8080/api/board/1', (error, response, body) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				assert.notOk(error, 'No error should be received');
-				assert.deepEqual(expected, JSON.parse(body), 'Body should contain data');
-				done();
+			const req = {
+				uri: 'http://localhost:8080/api/board/1',
+				method: 'GET',
+				json: true,
+				'resolveWithFullResponse': true
+			};
+			return request(req).then((response) => {
+				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
+				assert.deepEqual(response.body, expected, 'Body should contain data');
 			});
 		});
 
-		it('should not return an invalid board', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/board/1111',
-				method: 'GET'
+		it('should not return an invalid board', () => {
+			const req = {
+				uri: 'http://localhost:8080/api/board/1111',
+				method: 'GET',
+				json: true,
+				'resolveWithFullResponse': true
+			};
+			return request(req).catch((response) => {
+				assert.equal(response.statusCode, 404, 'Status code should be 404 OK');
 			});
-
-			req.on('response', (response) => {
-				assert.equal(404, response.statusCode, 'Invalid board should not be returned');
-				done();
-			});
-
-			req.end();
 		});
 
-		it('should update a board on PUT', (done) => {
+		it('should update a board on PUT', () => {
 			sandbox.stub(dao, 'updateBoard').resolves();
 
 			const formData = {
@@ -185,25 +174,20 @@ describe('Board API', () => {
 				IC: null
 			};
 
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/board/1111',
+			const req = {
+				uri: 'http://localhost:8080/api/board/1111',
 				method: 'PUT',
-				headers: {
-					'Content-type': 'application/json'
-				}
-			});
-			req.write(`${JSON.stringify(formData)}\n`);
-			req.end();
+				body: formData,
+				json: true,
+				'resolveWithFullResponse': true
+			};
 
-			req.on('response', (response) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				done();
+			return request(req).then((response) => {
+				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
 			});
 		});
 
-		it('should fail to update a nonexistant board on PUT', (done) => {
+		it('should fail to update a nonexistant board on PUT', () => {
 			const formData = {
 				Title: 'test board edited!',
 				Adult: false,
@@ -212,66 +196,51 @@ describe('Board API', () => {
 				IC: null
 			};
 
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/board/1111',
+			const req = {
+				uri: 'http://localhost:8080/api/board/1111',
 				method: 'PUT',
-				headers: {
-					'Content-type': 'application/json'
-				}
-			});
-			req.write(`${JSON.stringify(formData)}\n`);
-			req.end();
+				body: formData,
+				json: true,
+				'resolveWithFullResponse': true
+			};
 
-			req.on('response', (response) => {
-				assert.equal(404, response.statusCode, 'Status code should be 200 OK');
-				done();
+			return request(req).then(() => {
+				assert.fail('Request should not resolve');
+			}, (response) => {
+				assert.equal(response.statusCode, 404, 'Status code should be 404 NOT FOUND');
 			});
 		});
 
-		it('should reject Patch', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/board/1',
+		it('should reject Patch', () => {
+			return request({
+				uri: 'http://localhost:8080/api/board/1111',
 				method: 'PATCH'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Patch should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not resolve!');
+			}, (response) => {
+				assert.equal(response.statusCode, 405, 'Should reject with a 405 status code');
 			});
 		});
 
-		it('should reject Post', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/board/1',
+		it('should reject Post', () => {
+			return request({
+				uri: 'http://localhost:8080/api/board/1111',
 				method: 'POST'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Post should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not resolve!');
+			}, (response) => {
+				assert.equal(response.statusCode, 405, 'Should reject with a 405 status code');
 			});
 		});
 
-		it('should reject Del', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/board/1',
+		it('should reject Delete', () => {
+			return request({
+				uri: 'http://localhost:8080/api/board/1111',
 				method: 'DELETE'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Delete should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not resolve!');
+			}, (response) => {
+				assert.equal(response.statusCode, 405, 'Should reject with a 405 status code');
 			});
 		});
 	});
