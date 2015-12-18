@@ -1,9 +1,9 @@
 language: node_js
 node_js:
 - 'node'
-- '4.0'
-- '4.1'
-- '4.2'
+- '4'
+- '5.1'
+- '5.2'
 before_script:
 - rm -rf ./coverage
 after_script:
@@ -12,6 +12,7 @@ branches:
   only:
   - master
   - testing
+  - sprint_staging
 notifications:
   webhooks:
     urls:
