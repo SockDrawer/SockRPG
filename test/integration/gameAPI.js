@@ -1,9 +1,7 @@
 'use strict';
 const Chai = require('chai');
 const assert = Chai.assert;
-const request = require('request');
-const requestp = require('request-promise');
-const http = require('http');
+const request = require('request-promise');
 const Sinon = require('sinon');
 require('sinon-as-promised');
 const dao = require('../../src/dao.js');
@@ -48,7 +46,7 @@ describe('Game API', () => {
 				Tags: [],
 				IC: null
 			}];
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/games',
 				json: true,
 				'resolveWithFullResponse': true
@@ -68,7 +66,7 @@ describe('Game API', () => {
 			};
 			sandbox.stub(dao, 'addGame').resolves(true);
 
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/games',
 				method: 'POST',
 				body: formData,
@@ -80,7 +78,7 @@ describe('Game API', () => {
 		});
 
 		it('should reject Patch', () => {
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/games',
 				method: 'PATCH'
 			}).then(() => {
@@ -91,7 +89,7 @@ describe('Game API', () => {
 		});
 
 		it('should reject Put', () => {
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/games',
 				method: 'PUT'
 			}).then(() => {
@@ -102,7 +100,7 @@ describe('Game API', () => {
 		});
 
 		it('should reject Delete', () => {
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/games',
 				method: 'DELETE'
 			}).then(() => {
@@ -136,7 +134,7 @@ describe('Game API', () => {
 
 			sandbox.stub(dao, 'getGame').resolves(data);
 
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/game/1',
 				json: true,
 				'resolveWithFullResponse': true
@@ -147,7 +145,7 @@ describe('Game API', () => {
 		});
 
 		it('should not return an invalid game', () => {
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/game/1111',
 				method: 'GET'
 			}).then(() => {
@@ -168,7 +166,7 @@ describe('Game API', () => {
 				IC: null
 			};
 
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/game/1111',
 				method: 'PUT',
 				body: formData,
@@ -188,7 +186,7 @@ describe('Game API', () => {
 				IC: null
 			};
 
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/game/1111',
 				method: 'PUT',
 				body: formData,
@@ -201,7 +199,7 @@ describe('Game API', () => {
 		});
 
 		it('should reject Patch', () => {
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/game/1',
 				method: 'PATCH'
 			}).then(() => {
@@ -212,7 +210,7 @@ describe('Game API', () => {
 		});
 
 		it('should reject Post', () => {
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/game/1',
 				method: 'POST'
 			}).then(() => {
@@ -223,7 +221,7 @@ describe('Game API', () => {
 		});
 
 		it('should reject Del', () => {
-			return requestp({
+			return request({
 				uri: 'http://localhost:8080/api/game/1',
 				method: 'DELETE'
 			}).then(() => {
