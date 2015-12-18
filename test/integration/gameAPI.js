@@ -2,6 +2,7 @@
 const Chai = require('chai');
 const assert = Chai.assert;
 const request = require('request');
+const requestp = require('request-promise');
 const http = require('http');
 const Sinon = require('sinon');
 require('sinon-as-promised');
@@ -25,7 +26,7 @@ describe('Game API', () => {
 	});
 
 	describe('/api/games', () => {
-		it('should return a list of games on GET', (done) => {
+		it('should return a list of games on GET', () => {
 
 			const data = [{
 				ID: '1',
@@ -47,16 +48,17 @@ describe('Game API', () => {
 				Tags: [],
 				IC: null
 			}];
-
-			request.get('http://localhost:8080/api/games', (error, response, body) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				assert.notOk(error, 'No error should be received');
-				assert.deepEqual(expected, JSON.parse(body), 'Body should contain data');
-				done();
+			return requestp({
+				uri: 'http://localhost:8080/api/games',
+				json: true,
+				'resolveWithFullResponse': true
+			}).then((response) => {
+				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
+				assert.deepEqual(response.body, expected, 'Body should contain data');
 			});
 		});
 
-		it('should add a game on Post', (done) => {
+		it('should add a game on Post', () => {
 			const formData = {
 				Name: 'test game',
 				Adult: false,
@@ -66,65 +68,53 @@ describe('Game API', () => {
 			};
 			sandbox.stub(dao, 'addGame').resolves(true);
 
-			request.post({
-				url: 'http://localhost:8080/api/games',
-				form: formData
-			}, (error, response) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				assert.notOk(error, 'No error should be received');
-				done();
+			return requestp({
+				uri: 'http://localhost:8080/api/games',
+				method: 'POST',
+				body: formData,
+				json: true,
+				'resolveWithFullResponse': true
+			}).then((response) => {
+				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
 			});
 		});
 
-		it('should reject Patch', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/games',
+		it('should reject Patch', () => {
+			return requestp({
+				uri: 'http://localhost:8080/api/games',
 				method: 'PATCH'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Patch should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not have resolved');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Patch should not be accepted');
 			});
 		});
 
-		it('should reject Put', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/games',
+		it('should reject Put', () => {
+			return requestp({
+				uri: 'http://localhost:8080/api/games',
 				method: 'PUT'
+			}).then(() => {
+				assert.fail('Request should not have resolved');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Put should not be accepted');
 			});
-
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Put should not be accepted');
-				done();
-			});
-			req.end();
 		});
 
-		it('should reject Del', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/games',
+		it('should reject Delete', () => {
+			return requestp({
+				uri: 'http://localhost:8080/api/games',
 				method: 'DELETE'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Delete should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not have resolved');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Delete should not be accepted');
 			});
 		});
 	});
 
 	describe('/api/game', () => {
-		it('should return a game on GET', (done) => {
+		it('should return a game on GET', () => {
 			const expected = {
 				ID: '1',
 				Canonical: '/api/game/1',
@@ -146,30 +136,28 @@ describe('Game API', () => {
 
 			sandbox.stub(dao, 'getGame').resolves(data);
 
-			request.get('http://localhost:8080/api/game/1', (error, response, body) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
-				assert.notOk(error, 'No error should be received');
-				assert.deepEqual(expected, JSON.parse(body), 'Body should contain data');
-				done();
+			return requestp({
+				uri: 'http://localhost:8080/api/game/1',
+				json: true,
+				'resolveWithFullResponse': true
+			}).then((response) => {
+				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
+				assert.deepEqual(response.body, expected, 'Body should contain data');
 			});
 		});
 
-		it('should not return an invalid game', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/game/1111',
+		it('should not return an invalid game', () => {
+			return requestp({
+				uri: 'http://localhost:8080/api/game/1111',
 				method: 'GET'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(404, response.statusCode, 'Invalid game should not be returned');
-				done();
+			}).then(() => {
+				assert.fail('Request should not resolve.');
+			}, (err) => {
+				assert.equal(err.statusCode, 404, 'Invalid game should not be returned');
 			});
 		});
 
-		it('should update a game on PUT', (done) => {
+		it('should update a game on PUT', () => {
 			sandbox.stub(dao, 'updateGame').resolves();
 
 			const formData = {
@@ -180,25 +168,18 @@ describe('Game API', () => {
 				IC: null
 			};
 
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/game/1111',
+			return requestp({
+				uri: 'http://localhost:8080/api/game/1111',
 				method: 'PUT',
-				headers: {
-					'Content-type': 'application/json'
-				}
-			});
-			req.write(`${JSON.stringify(formData)}\n`);
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(200, response.statusCode, 'Status code should be 200 OK.');
-				done();
+				body: formData,
+				json: true,
+				'resolveWithFullResponse': true
+			}).then((response) => {
+				assert.equal(response.statusCode, 200, 'Status code should be 200 OK.');
 			});
 		});
 
-		it('should fail to update a nonexistant game on PUT', (done) => {
+		it('should fail to update a nonexistant game on PUT', () => {
 			const formData = {
 				GameID: 1111,
 				Adult: false,
@@ -207,66 +188,48 @@ describe('Game API', () => {
 				IC: null
 			};
 
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/game/1111',
+			return requestp({
+				uri: 'http://localhost:8080/api/game/1111',
 				method: 'PUT',
-				headers: {
-					'Content-type': 'application/json'
-				}
-			});
-			req.write(`${JSON.stringify(formData)}\n`);
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(404, response.statusCode, 'Status code should be 404 NOT FOUND.');
-				done();
+				body: formData,
+				json: true
+			}).then(() => {
+				assert.fail('Request should not have resolved!');
+			}, (error) => {
+				assert.equal(error.statusCode, 404, 'Status code should be 200 OK.');
 			});
 		});
 
-		it('should reject Patch', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/game/1',
+		it('should reject Patch', () => {
+			return requestp({
+				uri: 'http://localhost:8080/api/game/1',
 				method: 'PATCH'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Patch should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not have resolved');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Patch should not be accepted');
 			});
 		});
 
-		it('should reject Post', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/game/1',
+		it('should reject Post', () => {
+			return requestp({
+				uri: 'http://localhost:8080/api/game/1',
 				method: 'POST'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Post should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not have resolved');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Patch should not be accepted');
 			});
 		});
 
-		it('should reject Del', (done) => {
-			const req = http.request({
-				host: 'localhost',
-				port: '8080',
-				path: '/api/game/1',
+		it('should reject Del', () => {
+			return requestp({
+				uri: 'http://localhost:8080/api/game/1',
 				method: 'DELETE'
-			});
-			req.end();
-
-			req.on('response', (response) => {
-				assert.equal(405, response.statusCode, 'Delete should not be accepted');
-				done();
+			}).then(() => {
+				assert.fail('Request should not have resolved');
+			}, (err) => {
+				assert.equal(err.statusCode, 405, 'Patch should not be accepted');
 			});
 		});
 	});
