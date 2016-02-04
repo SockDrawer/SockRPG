@@ -1,0 +1,15 @@
+{
+	"ecmaFeatures": {
+		"regexYFlag": false,
+		"regexUFlag": false
+	},
+	"env": {
+		"es6": false,
+		"node": false,
+		"browser": true,
+		"jquery": true
+	},
+	"globals":{
+	    "Handlebars": true
+	}
+}
