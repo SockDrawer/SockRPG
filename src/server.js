@@ -19,17 +19,19 @@ const DAO = require('./dao.js');
 //For now, static config
 //TODO: make this configurable
 DAO.initialise({
-	sqlite: ':memory:'
+	sqlite: 'test.sqlite'
 });
 
 //Controllers
 const cStatic = require('./controllers/staticController.js');
 const cApi = require('./controllers/apiController.js');
 
-app.route('/')
-	.get((req, res) => {
-		res.send('Dude, where\'s my forum?');
-	});
+// app.route('/')
+// 	.get((req, res) => {
+// 		res.send('Dude, where\'s my forum?');
+// 	});
+
+app.route('/').get(cStatic.serve);
 
 //This is purely an example to show how the routing will be implemented for each endpoint
 //Any unsupported methods will be omitted

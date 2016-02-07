@@ -17,7 +17,12 @@ const url = require('url'),
 	path = require('path');
 
 exports.serve = function serve(request, response) {
-	const filename = path.join(process.cwd(), url.parse(request.url).pathname);
+	let filename = '';
+	if (url.parse(request.url).pathname === '/') {
+		filename = path.join(process.cwd(), '/static/templates/index.html');
+	} else {
+		filename = path.join(process.cwd(), url.parse(request.url).pathname);
+	}
 	fs.exists(filename, (exists) => {
 		if (!exists) {
 			response.writeHead(404);
