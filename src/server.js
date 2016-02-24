@@ -25,13 +25,8 @@ DAO.initialise({
 //Controllers
 const cStatic = require('./controllers/staticController.js');
 const cApi = require('./controllers/apiController.js');
+const cPage = require('./controllers/pageController.js');
 
-// app.route('/')
-// 	.get((req, res) => {
-// 		res.send('Dude, where\'s my forum?');
-// 	});
-
-app.route('/').get(cStatic.serve);
 
 //This is purely an example to show how the routing will be implemented for each endpoint
 //Any unsupported methods will be omitted
@@ -53,6 +48,10 @@ app.route('/example')
 //Static content and uploads
 app.route('/static/*').get(cStatic.serve);
 app.route('/uploads/*').get(cStatic.serve);
+
+/*Pages*/
+app.route('/')
+	.get(cPage.getHomePage)
 
 
 const jsonParser = bodyParser.json({type: 'application/json'});

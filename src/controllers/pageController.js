@@ -31,12 +31,12 @@ const apiController = require ('apiController');
  * Get the home page to hand to the view
  * @param  {Request} req The Express request object
  * @param  {Response} res The Express response object
- * @returns {Object}     A promise for the data for the view
+ * @returns {Promise} A promise that will resolve when the response has been sent.
  */
-function getHomePage (req, res) {
+function getHomePage(req, res) {
 	const data = {};
 
-	return Promise.resolve(data);
+	return Promise.reject();
 }
 
 const controller = {
