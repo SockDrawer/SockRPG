@@ -70,6 +70,7 @@ describe('Board API', () => {
 			sandbox.stub(dao, 'addBoard').resolves(true);
 			const req = {
 				uri: 'http://localhost:8080/api/boards',
+				method: 'POST',
 				body: formData,
 				json: true,
 				'resolveWithFullResponse': true

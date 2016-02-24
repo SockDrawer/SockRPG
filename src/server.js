@@ -51,8 +51,7 @@ app.route('/uploads/*').get(cStatic.serve);
 
 /*Pages*/
 app.route('/')
-	.get(cPage.getHomePage)
-
+	.get(cPage.getHomePage);
 
 const jsonParser = bodyParser.json({type: 'application/json'});
 /*API*/

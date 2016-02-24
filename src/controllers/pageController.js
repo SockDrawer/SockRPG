@@ -25,7 +25,7 @@
 */
 
 const dao = require('../dao.js');
-const apiController = require ('apiController');
+const apiController = require ('./apiController');
 
 /**
  * Get the home page to hand to the view
