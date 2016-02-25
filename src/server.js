@@ -20,7 +20,7 @@ const DAO = require('./dao.js');
 //For now, static config
 //TODO: make this configurable
 DAO.initialise({
-	sqlite: 'test.sqlite'
+	sqlite: 'sampleData.sqlite'
 });
 
 //Controllers

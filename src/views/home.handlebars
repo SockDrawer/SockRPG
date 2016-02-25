@@ -1,35 +1,31 @@
-This is the home page. Stuff goes here.
-
-<h2>Data:</h2>
-<ul>
-<li>Boards:
-<ul>
-{{#each boards}}
-	<li>{{Name}}</li>
-{{/each}}
-</ul>
-</li>
-
-<li>Games:
-<ul>
+<h2>Games</h2>
 {{#each games}}
-	<li>{{Name}}</li>
-{{/each}}
-</ul>
-</li>
-</ul>
+	<div class="row">
+		<div class="media z-depth-3 col s6 offset-s1">
 
-<H2>Test media objects</h2>
+		  <i class="large material-icons img">chat_bubble</i>
 
-<div class="row">
-	<div class="media z-depth-3 col s6 offset-s1">
+		  <div class="bd">
+		    <h4>{{Title}}</h4>
+		    This is a description of the board. It goes here. 
+		  </div>
 
-	  <i class="large material-icons img">chat_bubble</i>
-
-	  <div class="bd">
-	    <h4>Name Of Board</h4>
-	    This is a description of the board. It goes here. 
-	  </div>
-
+		</div>
 	</div>
-</div>
+{{/each}}
+
+<h2>Boards</h2>
+{{#each boards}}
+	<div class="row">
+		<div class="media z-depth-3 col s6 offset-s1">
+
+		  <i class="large material-icons img">chat_bubble_outline</i>
+
+		  <div class="bd">
+		    <h4>{{Title}}</h4>
+		    This is a description of the board. It goes here. 
+		  </div>
+
+		</div>
+	</div>
+{{/each}}
