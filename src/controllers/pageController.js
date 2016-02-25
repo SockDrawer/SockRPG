@@ -35,8 +35,17 @@ const apiController = require ('./apiController');
  */
 function getHomePage(req, res) {
 	const data = {};
-
-	return Promise.reject();
+	
+	return dao.getAllBoards().then((boards) => {
+		data.boards = boards;
+	})
+	.then(() => {
+		res.render('home', data);
+	})
+	.catch((err) => {
+		//TODO: logging errors
+		res.status(500).send({error: err.toString()});
+	});
 }
 
 const controller = {

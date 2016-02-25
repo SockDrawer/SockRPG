@@ -9,6 +9,7 @@
  */
 
 const express = require('express');
+const exphbs = require('express-handlebars');
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -26,6 +27,14 @@ DAO.initialise({
 const cStatic = require('./controllers/staticController.js');
 const cApi = require('./controllers/apiController.js');
 const cPage = require('./controllers/pageController.js');
+
+//Views
+const hbs = exphbs.create({
+	defaultLayout: 'main'
+});
+
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
 
 
 //This is purely an example to show how the routing will be implemented for each endpoint
