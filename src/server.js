@@ -30,11 +30,14 @@ const cPage = require('./controllers/pageController.js');
 
 //Views
 const hbs = exphbs.create({
-	defaultLayout: 'main'
+	defaultLayout: 'main',
+	layoutsDir: 'src/views/layouts',
+	partialsDir: 'src/views/partials'
 });
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
+app.set('views', 'src/views')
 
 
 //This is purely an example to show how the routing will be implemented for each endpoint

@@ -71,5 +71,37 @@ describe('Page API controller', () => {
 				expect(data.boards).to.equal(boardList);
 			});
 		});
+		
+		it('should render a list of games', () => {
+			const fakeRes = {
+				render: sandbox.stub()
+			};
+			
+			const gameList = [{
+				ID: '1',
+				Name: 'test board',
+				Adult: false,
+				Tags: [],
+				IC: null
+			}, {
+				ID: '2',
+				Name: 'test board 2',
+				Adult: false,
+				Tags: [],
+				IC: null
+			}];
+			
+			const fakeReq = {};
+			
+			sandbox.stub(dao, 'getAllBoards').resolves();
+			sandbox.stub(dao, 'getAllGames').resolves(gameList);
+
+			return page.getHomePage(fakeReq, fakeRes).then(() => {
+				expect(dao.getAllGames.called).to.be.equal(true);
+				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
+				const data = fakeRes.render.args[0][1];
+				expect(data.games).to.equal(gameList);
+			});
+		});
 	});
 });

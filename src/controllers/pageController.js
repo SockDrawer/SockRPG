@@ -38,6 +38,10 @@ function getHomePage(req, res) {
 	
 	return dao.getAllBoards().then((boards) => {
 		data.boards = boards;
+		return dao.getAllGames();
+	})
+	.then((games) => {
+		data.games = games;
 	})
 	.then(() => {
 		res.render('home', data);
