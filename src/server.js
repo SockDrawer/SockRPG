@@ -37,7 +37,7 @@ const hbs = exphbs.create({
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-app.set('views', 'src/views')
+app.set('views', 'src/views');
 
 
 //This is purely an example to show how the routing will be implemented for each endpoint
