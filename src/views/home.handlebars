@@ -1,7 +1,8 @@
 <h2>Games</h2>
+<div class="boardList">
 {{#each games}}
 	<div class="row">
-		<div class="col-md-6 col-md-offset-1 shadow media">
+		<div class="col-md-6 col-md-offset-1 media board shadow">
 			<div class="media-left">
 				<i class="large material-icons img">chat_bubble</i>
 			</div>
@@ -14,11 +15,26 @@
 		</div>
 	</div>
 {{/each}}
+</div>
+
+<div class="row">
+		<div class="col-md-4 col-md-offset-5 media">
+			<div class="media-left">
+				<i class="large material-icons img">games</i>
+			</div>
+
+		  <div class="media-body">
+		     <h4 class="media-heading">Add Game</h4>
+		  </div>
+
+		</div>
+	</div>
 
 <h2>Boards</h2>
+<div class="boardList">
 {{#each boards}}
 	<div class="row">
-		<div class="col-md-6 col-md-offset-1 shadow media" style="margin-top: 10px">
+		<div class="col-md-6 col-md-offset-1 media board shadow">
 			<div class="media-left">
 				<i class="large material-icons img">chat_bubble</i>
 			</div>
@@ -31,3 +47,17 @@
 		</div>
 	</div>
 {{/each}}
+</div>
+
+<div class="row">
+		<div class="col-md-4 col-md-offset-5 media">
+			<div class="media-left">
+				<i class="large material-icons img">note_add</i>
+			</div>
+
+		  <div class="media-body">
+		     <h4 class="media-heading">Add Board</h4>
+		  </div>
+
+		</div>
+	</div>
