@@ -1,0 +1,5 @@
+<form>
+<input type="text" name="name" value="{{name}}"><br/>
+<textarea name="description">{{description}}</textarea><br/>
+Adult only: <input type="checkbox" name="adult" {{#if adult}}checked{{/if}}>
+</form>
