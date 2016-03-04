@@ -9,7 +9,7 @@
 
 		  <div class="media-body">
 		     <h4 class="media-heading">{{Title}}</h4>
-		    This is a description of the board. It goes here. 
+		    This is a description of the board. It goes here.
 		  </div>
 
 		</div>
@@ -41,7 +41,7 @@
 
 			<div class="media-body">
 				<h4 class="media-heading">{{Title}}</h4>
-				This is a description of the board. It goes here. 
+				This is a description of the board. It goes here.
 			</div>
 
 		</div>
@@ -62,5 +62,23 @@
 		</div>
 	</div>
 
-<script src="/static/templates/newBoardModal.hbrs" type="handlebars">
-<script src="/static/js/newBoard.js">
+<script type="handlebars" id="boardModal">
+<form>
+<div class="alert alert-danger" role="alert" hidden="true"></div>
+<div class="alert alert-success" role="alert" hidden="true"></div>
+<input type="text" name="name" value="{{name}}"><br/>
+<textarea name="description">{{description}}</textarea><br/>
+Adult only: <input type="checkbox" name="adult" {{#if adult}}checked{{/if}}>
+<input type="submit" id="submitModal">
+</form>
+
+</script>
+<script src="/static/js/boards.js"></script>
+<script src="/static/js/newBoard.js"></script>
+
+<div class="modal fade" id="bsModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>

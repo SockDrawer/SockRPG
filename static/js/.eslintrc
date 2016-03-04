@@ -3,7 +3,8 @@
 		"strict": 0,
 		"func-names": 0,
 		"prefer-arrow-callback": 0,
-		"no-var": 0
+		"no-var": 0,
+		"id-length": 0,
 	},
 	"ecmaFeatures": {
 		"regexYFlag": false,
@@ -16,6 +17,8 @@
 		"jquery": true
 	},
 	"globals":{
-	    "Handlebars": true
+	    "Handlebars": true,
+        "Backbone": true,
+        "SockRPGBoards": true
 	}
 }
