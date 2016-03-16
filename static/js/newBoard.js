@@ -14,7 +14,7 @@ $( document ).ready(function() {
 function openNewBoardModal(event) {
 	var model;
 
-	if ($(event.currentTarget).attr('id').indexOf('game') >= 0) {
+	if ($(event.currentTarget).attr('id').toLowerCase().indexOf('game') >= 0) {
 		model = new SockRPGBoards.Game();
 	} else {
 		model = new SockRPGBoards.Board();

@@ -63,15 +63,27 @@
 	</div>
 
 <script type="handlebars" id="boardModal">
-<form>
-<div class="alert alert-danger" role="alert" hidden="true"></div>
-<div class="alert alert-success" role="alert" hidden="true"></div>
-<input type="text" name="name" value="{{name}}"><br/>
-<textarea name="description">{{description}}</textarea><br/>
-Adult only: <input type="checkbox" name="adult" {{#if adult}}checked{{/if}}>
-<input type="submit" id="submitModal">
-</form>
-
+<div class="modal-header">
+{{log game}}
+	{{#if game}}<h3>Add a game</h3>
+	{{else}}<h3>Add a board</h3>{{/if}}
+</div>
+<div class="modal-body">
+	<form>
+	<div class="alert alert-danger" role="alert" hidden="true"></div>
+	<div class="alert alert-success" role="alert" hidden="true"></div>
+	<div class="form-group">
+		<label for="name">{{#if game}}Game{{else}}Board{{/if}} name:</label><input type="text" class="form-control" name="name" value="{{name}}"><br/>
+		<label for="description">Description:</label><textarea class="form-control" name="description">{{description}}</textarea><br/>
+		<div class="checkbox">
+			<label for="adult">
+				<input type="checkbox" name="adult" {{#if adult}}checked{{/if}}> Adults Only
+			</label>
+		</div>
+		<input type="submit" class="form-control" id="submitModal">
+	</div>
+	</form>
+</div>
 </script>
 <script src="/static/js/boards.js"></script>
 <script src="/static/js/newBoard.js"></script>
@@ -79,6 +91,7 @@ Adult only: <input type="checkbox" name="adult" {{#if adult}}checked{{/if}}>
 <div class="modal fade" id="bsModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+
     </div>
   </div>
 </div>

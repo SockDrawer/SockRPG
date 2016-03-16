@@ -50,8 +50,12 @@ window.SockRPGBoards = {
 		},
 
 		render: function(){
+			var data = this.model.toJSON();
+			if (this.model instanceof SockRPGBoards.Game) {
+				data.game = true;
+			}
 			var tpl = Handlebars.compile($('#boardModal').html());
-			this.$el.find('.modal-content').html(tpl(this.model.toJSON()));
+			this.$el.find('.modal-content').html(tpl(data));
 			this.$el.find('#submitModal').click(this.onSave.bind(this));
 			this.$el.modal('show');
 		},
