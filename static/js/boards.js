@@ -50,7 +50,7 @@ window.SockRPGBoards = {
 		},
 
 		render: function(){
-			var data = _.clone(this.model.attributes);
+			var data = this.model.toJSON();
 			if (this.model instanceof SockRPGBoards.Game) {
 				data.game = true;
 			}
