@@ -74,7 +74,7 @@ app.route('/api/games')
 	.delete(return405)
 	.put(return405);
 
-app.route('/api/game/:id')
+app.route('/api/games/:id')
 	.get(cApi.getGame)
 	.post(return405)
 	.patch(return405)
@@ -88,7 +88,7 @@ app.route('/api/boards')
 	.delete(return405)
 	.put(return405);
 
-app.route('/api/board/:id')
+app.route('/api/boards/:id')
 	.get(cApi.getBoard)
 	.post(return405)
 	.patch(return405)
@@ -96,6 +96,7 @@ app.route('/api/board/:id')
 	.put(jsonParser, cApi.updateBoard);
 
 const server = app.listen(8080);
+console.log('Server now listening on port 8080');
 
 /**
  * Returns a vanilla 405 Method Not Allowed error

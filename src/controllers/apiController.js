@@ -70,6 +70,7 @@ function getGame(req, res) {
 		res.send(data);
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -85,6 +86,7 @@ function addGame(req, res) {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -100,6 +102,7 @@ function updateGame(req, res) {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		if (err.toString().indexOf('not found') > -1) {
 			res.status(404).send({error: err.toString()});
 		} else {
@@ -123,6 +126,7 @@ function getAllBoards(_, res) {
 		res.send(data);
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -153,6 +157,7 @@ function getBoard(req, res) {
 		res.send(data);
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -168,6 +173,7 @@ function addBoard(req, res) {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -183,6 +189,7 @@ function updateBoard(req, res) {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
+		console.log(err);
 		if (err.toString().indexOf('not found') > -1) {
 			res.status(404).send({error: err.toString()});
 		} else {

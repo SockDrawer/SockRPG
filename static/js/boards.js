@@ -1,6 +1,6 @@
 window.SockRPGBoards = {
 	Board: Backbone.Model.extend({
-		url: '/api/board',
+		url: '/api/boards',
 
 		defaults: {
 			name: 'New Board',
@@ -8,9 +8,9 @@ window.SockRPGBoards = {
 			adult: false
 		},
 
-		validate: function() {
-			if (this.name.length <= 0) {
-				return 'Name invalid';
+		validate: function(attrs) {
+			if (attrs.name.length <= 0) {
+				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.name + '"';
 			}
 		}
 
@@ -21,7 +21,7 @@ window.SockRPGBoards = {
 	}),
 
 	Game: Backbone.Model.extend({
-		url: '/api/game',
+		url: '/api/games',
 
 		defaults: {
 			name: 'New Game',
@@ -29,9 +29,9 @@ window.SockRPGBoards = {
 			adult: false
 		},
 
-		validate: function() {
-			if (name.length <= 0) {
-				return 'Name invalid';
+		validate: function(attrs) {
+			if (attrs.name.length <= 0) {
+				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.name + '"';
 			}
 		}
 
@@ -44,8 +44,9 @@ window.SockRPGBoards = {
 
 	BoardEditModal: Backbone.View.extend({
 		initialize: function(){
-			this.model.on('invalid', this.showErrors);
-			this.model.on('sync', this.showSuccess);
+			this.model.on('invalid', this.showErrors.bind(this));
+			this.model.on('error', this.showErrors.bind(this));
+			this.model.on('sync', this.showSuccess.bind(this));
 			this.render();
 		},
 
@@ -60,15 +61,19 @@ window.SockRPGBoards = {
 			this.$el.modal('show');
 		},
 
-		onSave: function() {
+		onSave: function(event) {
+			event.preventDefault();
 			var newData = {};
-			newData.name = this.$el.find('input[name="name"]').value();
-			newData.description = this.$el.find('textarea[name="description"]').value();
-			newData.adult = this.$el.find('input[name="adult"]').checked();
+			newData.name = this.$el.find('input[name="name"]').val();
+			newData.description = this.$el.find('textarea[name="description"]').val();
+			newData.adult = this.$el.find('input[name="adult"]').val() === 'on';
 			this.model.save(newData);
 		},
 
 		showErrors: function (_, error) {
+			if (error.responseJSON.error) {
+				error = error.responseJSON.error;
+			}
 			this.$el.find('.alert-danger').text(error);
 			this.$el.find('.alert-danger').show();
 		},
