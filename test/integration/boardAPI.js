@@ -117,11 +117,11 @@ describe('Board API', () => {
 		});
 	});
 
-	describe('/api/board', () => {
+	describe('/api/boards/id', () => {
 		it('should return a board on GET', () => {
 			const expected = {
 				ID: '1',
-				Canonical: '/api/board/1',
+				Canonical: '/api/boards/1',
 				Name: 'test board',
 				Adult: false,
 				BoardMasters: null,
@@ -141,7 +141,7 @@ describe('Board API', () => {
 			sandbox.stub(dao, 'getBoard').resolves(data);
 
 			const req = {
-				uri: 'http://localhost:8080/api/board/1',
+				uri: 'http://localhost:8080/api/boards/1',
 				method: 'GET',
 				json: true,
 				'resolveWithFullResponse': true
@@ -154,7 +154,7 @@ describe('Board API', () => {
 
 		it('should not return an invalid board', () => {
 			const req = {
-				uri: 'http://localhost:8080/api/board/1111',
+				uri: 'http://localhost:8080/apis/board/1111',
 				method: 'GET',
 				json: true,
 				'resolveWithFullResponse': true
@@ -176,7 +176,7 @@ describe('Board API', () => {
 			};
 
 			const req = {
-				uri: 'http://localhost:8080/api/board/1111',
+				uri: 'http://localhost:8080/api/boards/1111',
 				method: 'PUT',
 				body: formData,
 				json: true,
@@ -198,7 +198,7 @@ describe('Board API', () => {
 			};
 
 			const req = {
-				uri: 'http://localhost:8080/api/board/1111',
+				uri: 'http://localhost:8080/api/boards/1111',
 				method: 'PUT',
 				body: formData,
 				json: true,
@@ -214,7 +214,7 @@ describe('Board API', () => {
 
 		it('should reject Patch', () => {
 			return request({
-				uri: 'http://localhost:8080/api/board/1111',
+				uri: 'http://localhost:8080/api/boards/1111',
 				method: 'PATCH'
 			}).then(() => {
 				assert.fail('Request should not resolve!');
@@ -225,7 +225,7 @@ describe('Board API', () => {
 
 		it('should reject Post', () => {
 			return request({
-				uri: 'http://localhost:8080/api/board/1111',
+				uri: 'http://localhost:8080/api/boards/1111',
 				method: 'POST'
 			}).then(() => {
 				assert.fail('Request should not resolve!');
@@ -236,7 +236,7 @@ describe('Board API', () => {
 
 		it('should reject Delete', () => {
 			return request({
-				uri: 'http://localhost:8080/api/board/1111',
+				uri: 'http://localhost:8080/api/boards/1111',
 				method: 'DELETE'
 			}).then(() => {
 				assert.fail('Request should not resolve!');

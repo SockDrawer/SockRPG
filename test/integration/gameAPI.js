@@ -39,7 +39,7 @@ describe('Game API', () => {
 
 			const expected = [{
 				ID: '1',
-				Canonical: '/api/game/1',
+				Canonical: '/api/games/1',
 				Name: 'test game',
 				Adult: false,
 				GameMasters: null,
@@ -111,11 +111,11 @@ describe('Game API', () => {
 		});
 	});
 
-	describe('/api/game', () => {
+	describe('/api/games/:id', () => {
 		it('should return a game on GET', () => {
 			const expected = {
 				ID: '1',
-				Canonical: '/api/game/1',
+				Canonical: '/api/games/1',
 				Name: 'test game',
 				Adult: false,
 				GameMasters: null,
@@ -135,7 +135,7 @@ describe('Game API', () => {
 			sandbox.stub(dao, 'getGame').resolves(data);
 
 			return request({
-				uri: 'http://localhost:8080/api/game/1',
+				uri: 'http://localhost:8080/api/games/1',
 				json: true,
 				'resolveWithFullResponse': true
 			}).then((response) => {
@@ -146,7 +146,7 @@ describe('Game API', () => {
 
 		it('should not return an invalid game', () => {
 			return request({
-				uri: 'http://localhost:8080/api/game/1111',
+				uri: 'http://localhost:8080/api/games/1111',
 				method: 'GET'
 			}).then(() => {
 				assert.fail('Request should not resolve.');
@@ -167,7 +167,7 @@ describe('Game API', () => {
 			};
 
 			return request({
-				uri: 'http://localhost:8080/api/game/1111',
+				uri: 'http://localhost:8080/api/games/1111',
 				method: 'PUT',
 				body: formData,
 				json: true,
@@ -187,7 +187,7 @@ describe('Game API', () => {
 			};
 
 			return request({
-				uri: 'http://localhost:8080/api/game/1111',
+				uri: 'http://localhost:8080/api/games/1111',
 				method: 'PUT',
 				body: formData,
 				json: true
@@ -200,7 +200,7 @@ describe('Game API', () => {
 
 		it('should reject Patch', () => {
 			return request({
-				uri: 'http://localhost:8080/api/game/1',
+				uri: 'http://localhost:8080/api/games/1',
 				method: 'PATCH'
 			}).then(() => {
 				assert.fail('Request should not have resolved');
@@ -211,7 +211,7 @@ describe('Game API', () => {
 
 		it('should reject Post', () => {
 			return request({
-				uri: 'http://localhost:8080/api/game/1',
+				uri: 'http://localhost:8080/api/games/1',
 				method: 'POST'
 			}).then(() => {
 				assert.fail('Request should not have resolved');
@@ -222,7 +222,7 @@ describe('Game API', () => {
 
 		it('should reject Del', () => {
 			return request({
-				uri: 'http://localhost:8080/api/game/1',
+				uri: 'http://localhost:8080/api/games/1',
 				method: 'DELETE'
 			}).then(() => {
 				assert.fail('Request should not have resolved');
