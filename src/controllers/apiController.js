@@ -35,7 +35,7 @@ function getAllGames(_, res) {
 	//For this sprint, all users can see all games
 	return dao.getAllGames().then((data) => {
 		for (let i = 0; i < data.length; i++) {
-			data[i].Canonical = `/api/game/${data[i].ID}`;
+			data[i].Canonical = `/api/games/${data[i].ID}`;
 		}
 		res.send(data);
 	}).catch((err) => {
@@ -65,7 +65,7 @@ function getGame(req, res) {
 			res.status(404).end();
 			return;
 		}
-		data.Canonical = `/api/game/${data.ID}`;
+		data.Canonical = `/api/games/${data.ID}`;
 
 		res.send(data);
 	}).catch((err) => {
@@ -121,7 +121,7 @@ function getAllBoards(_, res) {
 	//For this sprint, all users can see all games
 	return dao.getAllBoards().then((data) => {
 		for (let i = 0; i < data.length; i++) {
-			data[i].Canonical = `/api/board/${data[i].ID}`;
+			data[i].Canonical = `/api/boards/${data[i].ID}`;
 		}
 		res.send(data);
 	}).catch((err) => {
@@ -152,7 +152,7 @@ function getBoard(req, res) {
 			res.status(404).end();
 			return;
 		}
-		data.Canonical = `/api/board/${data.ID}`;
+		data.Canonical = `/api/boards/${data.ID}`;
 
 		res.send(data);
 	}).catch((err) => {
@@ -207,7 +207,7 @@ function updateBoard(req, res) {
 function getAllUsers(_, res) {
 	return dao.getAllUsers().then((data) => {
 		for (let i = 0; i < data.length; i++) {
-			data[i].canonical = `/api/user/${data[i].id}`;
+			data[i].canonical = `/api/users/${data[i].id}`;
 		}
 		res.send(data);
 	}).catch((err) => {
@@ -232,7 +232,7 @@ function getUser(req, res) {
 			res.status(404);
 			return;
 		}
-		data.canonical = `/api/user/${data.id}`;
+		data.canonical = `/api/users/${data.id}`;
 
 		res.send(data);
 	};

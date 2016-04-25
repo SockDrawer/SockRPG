@@ -38,7 +38,7 @@ describe('Board API', () => {
 
 			const expected = [{
 				ID: '1',
-				Canonical: '/api/board/1',
+				Canonical: '/api/boards/1',
 				Name: 'test board',
 				Adult: false,
 				BoardMasters: null,
