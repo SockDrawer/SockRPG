@@ -3,14 +3,14 @@ window.SockRPGBoards = {
 		url: '/api/boards',
 
 		defaults: {
-			name: 'New Board',
-			description: '',
-			adult: false
+			Name: 'New Board',
+			Description: '',
+			Adult: false
 		},
 
 		validate: function(attrs) {
-			if (attrs.name.length <= 0) {
-				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.name + '"';
+			if (attrs.Name.length <= 0) {
+				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.Name + '"';
 			}
 		}
 
@@ -24,14 +24,14 @@ window.SockRPGBoards = {
 		url: '/api/games',
 
 		defaults: {
-			name: 'New Game',
-			description: '',
-			adult: false
+			Name: 'New Game',
+			Description: '',
+			Adult: false
 		},
 
 		validate: function(attrs) {
-			if (attrs.name.length <= 0) {
-				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.name + '"';
+			if (attrs.Name.length <= 0) {
+				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.Name + '"';
 			}
 		}
 
@@ -64,9 +64,9 @@ window.SockRPGBoards = {
 		onSave: function(event) {
 			event.preventDefault();
 			var newData = {};
-			newData.name = this.$el.find('input[name="name"]').val();
-			newData.description = this.$el.find('textarea[name="description"]').val();
-			newData.adult = this.$el.find('input[name="adult"]').val() === 'on';
+			newData.Name = this.$el.find('input[name="name"]').val();
+			newData.Description = this.$el.find('textarea[name="description"]').val();
+			newData.Adult = this.$el.find('input[name="adult"]').val() === 'on';
 			this.model.save(newData);
 		},
 

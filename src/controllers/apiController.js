@@ -82,7 +82,12 @@ function getGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function addGame(req, res) {
-	return dao.addGame(req.body).then((data) => {
+	return dao.addGame({
+		Title: req.body.Name,
+		GameID: req.params.id,
+		Game: {},
+		UserID: 0
+	}).then((data) => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
@@ -98,7 +103,12 @@ function addGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateGame(req, res) {
-	return dao.updateGame(req.params.id, req.body).then((data) => {
+	return dao.updateGame(req.params.id, {
+		Title: req.body.Name,
+		GameID: req.params.id,
+		Game: {},
+		UserID: 0
+	}).then((data) => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
@@ -169,7 +179,10 @@ function getBoard(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function addBoard(req, res) {
-	return dao.addBoard(req.body).then((data) => {
+	return dao.addBoard({
+		Title: req.body.Name,
+		UserID: 0
+	}).then((data) => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
@@ -185,7 +198,10 @@ function addBoard(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateBoard(req, res) {
-	return dao.updateBoard(req.params.id, req.body).then((data) => {
+	return dao.updateBoard(req.params.id, {
+		Title: req.body.Name,
+		UserID: 0
+	}).then((data) => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors

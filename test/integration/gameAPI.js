@@ -180,6 +180,7 @@ describe('Game API', () => {
 		it('should fail to update a nonexistant game on PUT', () => {
 			const formData = {
 				GameID: 1111,
+				Name: 'banana',
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
@@ -194,7 +195,7 @@ describe('Game API', () => {
 			}).then(() => {
 				assert.fail('Request should not have resolved!');
 			}, (error) => {
-				assert.equal(error.statusCode, 404, 'Status code should be 200 OK.');
+				assert.equal(error.statusCode, 404, 'Status code should be 404 NOT FOUND.');
 			});
 		});
 

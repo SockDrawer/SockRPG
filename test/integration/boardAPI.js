@@ -79,7 +79,7 @@ describe('Board API', () => {
 				assert.equal(200, response.statusCode, 'Status code should be 200 OK');
 			});
 		});
-
+		
 		it('should reject Patch', () => {
 			const req = {
 				uri: 'http://localhost:8080/api/boards',
@@ -190,7 +190,7 @@ describe('Board API', () => {
 
 		it('should fail to update a nonexistant board on PUT', () => {
 			const formData = {
-				Title: 'test board edited!',
+				Name: 'test board edited!',
 				Adult: false,
 				BoardMasters: null,
 				Tags: [],
