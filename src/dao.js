@@ -1,4 +1,6 @@
 'use strict';
+/* eslint-disable func-names*/
+/* eslint-disable no-invalid-this */
 
 /**
  * Data Access Object.
@@ -7,7 +9,7 @@
  *
  * @module dao
  * @license MIT
- * @author RaceProUK
+ * @author yamikuronue
  */
 
 const sqlite3 = require('sqlite3').verbose();
@@ -63,7 +65,6 @@ function initialise() {
 		return Promise.resolve();
 	}
 	
-	console.log('initalising')
 	db = new sqlite3.Database(':memory:');
 	
 	return new Promise((resolve, reject) => {
@@ -72,19 +73,18 @@ function initialise() {
 			(callback) => db.run('CREATE TABLE IF NOT EXISTS Games (id INTEGER PRIMARY KEY, dummyColumn TEXT)', callback),
 			(callback) => db.run('CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY, Username TEXT)', callback),
 			(callback) => db.run('CREATE TABLE IF NOT EXISTS Boards (id INTEGER PRIMARY KEY, Owner INTEGER, GameID INTEGER, Name TEXT, FOREIGN KEY(GameID) REFERENCES Game(id))', callback),
-			(callback) => db.run('CREATE TABLE IF NOT EXISTS ChildBoards (ParentID INTEGER, ChildID INTEGER, FOREIGN KEY(ParentID) REFERENCES Board(id), FOREIGN KEY(ChildID) REFERENCES Board(id))', callback),
+			(callback) => db.run('CREATE TABLE IF NOT EXISTS ChildBoards (ParentID INTEGER, ChildID INTEGER, FOREIGN KEY(ParentID) REFERENCES Board(id), FOREIGN KEY(ChildID) REFERENCES Board(id))', callback)
 			//	db.run('CREATE TABLE IF NOT EXISTS GameMasters (UserID INTEGER, GameID INTEGER, FOREIGN KEY(GameID) REFERENCES Game(id), FOREIGN KEY(UserID) REFERENCES Users(id))')
-			], 
-			(err, results) => {
-				if (err) {
-					db = null;
-					reject(err);
-				} else {
-					initialised = true;
-					resolve(true);
-				}
+		], 
+		(err, results) => {
+			if (err) {
+				db = null;
+				reject(err);
+			} else {
+				initialised = true;
+				resolve(true);
 			}
-		);
+		});
 	});
 }
 
@@ -400,25 +400,24 @@ function addGame(game) {
 		}
 	}).then(() => {
 		//TODO: this is probably wrong
-		
+		/* eslint-disable indent*/
 		return new Promise((resolve, reject) => {
 			async.waterfall([
 				(callback) => db.run('INSERT INTO Games (dummyColumn) VALUES ("hi")', function(err) {
 						if (err) {
-							callback(err);
-						} else {
-							callback(null, this.lastID)
+							return callback(err);
 						}
+						return callback(null, this.lastID);
 					}),
 				(gameID, callback) => db.run('INSERT INTO BOARDS (Owner, Name, GameID) VALUES (?,?,?)', game.Owner, game.Name, gameID, function(err) {
 						if (err) {
-							callback(err);
-						} else {
-							callback(null, this.lastID)
+							return callback(err);
 						}
+						
+						return callback(null, this.lastID);
 					})
 				],
-				function (err, ID) {
+				(err, ID) => {
 					if (err) {
 						reject(err);
 					} else {
@@ -427,6 +426,7 @@ function addGame(game) {
 				}
 			);
 		});
+		/* eslint-enable indent*/
 	});
 }
 
