@@ -11,12 +11,22 @@
  */
 
 class Board {
-	construtor(rowData) {
+	constructor (rowData) {
 		this.data = rowData;
 	}
-	get Name() {
-		return this.data.Title;
+	
+	get ID() {
+		return this.data.id;
 	}
+	
+	get UserID() {
+		return this.data.owner;
+	}
+	
+	get Name() {
+		return this.data.Name;
+	}
+	
 	set Name(newName) {
 		this.data.Name = newName;
 	}
