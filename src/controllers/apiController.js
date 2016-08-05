@@ -87,7 +87,7 @@ function addGame(req, res) {
 		GameID: req.params.id,
 		Game: {}
 	}).then((data) => {
-		res.status(200).end();
+		res.status(200).send(data).end();
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -178,7 +178,7 @@ function getBoard(req, res) {
  */
 function addBoard(req, res) {
 	return dao.addBoard(req.body).then((data) => {
-		res.status(200).end();
+		res.status(200).send(data).end();
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
