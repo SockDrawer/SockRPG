@@ -111,7 +111,7 @@ function updateGame(req, res) {
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
-		if (err.toString().indexOf('not found') > -1) {
+		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});
 		} else {
 			res.status(500).send({error: err.toString()});
@@ -198,7 +198,7 @@ function updateBoard(req, res) {
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
-		if (err.toString().indexOf('not found') > -1) {
+		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});
 		} else {
 			res.status(500).send({error: err.toString()});
