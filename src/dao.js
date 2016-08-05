@@ -303,11 +303,15 @@ function updateBoard(id, board) {
 		}
 	}).then(() => {
 		return new Promise((resolve, reject) => {
-			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', board.Owner, board.Name, board.id, function (err) {
+			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', board.Owner, board.Name, id, function (err) {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(module.exports.getBoard(this.lastID));
+					if (this.changes <= 0) {
+						reject(new Error('No such board'));
+					} else {
+						resolve(module.exports.getBoard(this.lastID));
+					}
 				}
 			});
 		});
@@ -448,7 +452,11 @@ function updateGame(id, game) {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(module.exports.getGame(this.lastID));
+					if (this.changes <= 0) {
+						reject(new Error('No such board'));
+					} else {
+						resolve(module.exports.getGame(this.lastID));	
+					}
 				}
 			});
 		});
