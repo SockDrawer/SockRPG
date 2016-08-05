@@ -7,13 +7,24 @@
  *
  * @module Game
  * @license MIT
- * @author RaceProUK
+ * @author yamikuronue
  */
 
-//const Sequelize = require('sequelize');
 
-module.exports = (db, specs) => {
-	return db.define('Game', {
-		ID: specs.pk
-	});
-};
+class Game {
+	construtor(rowData) {
+		this.data = rowData;
+	}
+	get Name() {
+		return this.data.Title;
+	}
+	set Name(newName) {
+		this.data.Name = newName;
+	}
+	
+	serialize() {
+		return this.data;
+	}
+}
+
+module.exports = Game;

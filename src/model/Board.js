@@ -7,17 +7,23 @@
  *
  * @module User
  * @license MIT
- * @author RaceProUK
+ * @author yamikuronue
  */
 
-const Sequelize = require('sequelize');
+class Board {
+	construtor(rowData) {
+		this.data = rowData;
+	}
+	get Name() {
+		return this.data.Title;
+	}
+	set Name(newName) {
+		this.data.Name = newName;
+	}
+	
+	serialize() {
+		return this.data;
+	}
+}
 
-module.exports = (db, specs) => {
-	return db.define('Board', {
-		ID: specs.pk,
-		Title: {
-			type: Sequelize.STRING(255),
-			allowNull: false
-		}
-	});
-};
+module.exports = Board;

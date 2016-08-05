@@ -10,7 +10,12 @@
  * @author RaceProUK
  */
 
-const db = require('./model/db');
+const sqlite3 = require('sqlite3').verbose();
+
+const Board = require('./model/Board');
+const Game = require('./model/Game');
+
+let db;
 
 let initialised = false;
 
@@ -51,12 +56,19 @@ module.exports = {
  *
  * @returns {Promise} A Promise that is resolved when the DAO is initialised.
  */
-function initialise(config) {
-	return initialised
-		? Promise.resolve()
-		: db.initialise(config).then(() => {
-			initialised = true;
-		});
+function initialise() {
+	if (initialised) {
+		return Promise.resolve();
+	}
+	
+	db = new sqlite3.Database(':memory:');
+	db.run('CREATE TABLE IF NOT EXISTS Games (id INTEGER PRIMARY KEY)');
+	db.run('CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY)');
+	db.run('CREATE TABLE IF NOT EXISTS Boards (id INTEGER PRIMARY KEY, Owner INTEGER, GameID INTEGER, Name TEXT, FOREIGN KEY(GameID) REFERENCES Game(id)'); //no user foriegn key until we get auth sorted out
+	db.run('CREATE TABLE IF NOT EXISTS ChildBoards (ParentID INTEGER, ChildID INTEGER, FOREIGN KEY(ParentID) REFERENCES Board(id), FOREIGN KEY(ChildID) REFERENCES Board(id))');
+//	db.run('CREATE TABLE IF NOT EXISTS GameMasters (UserID INTEGER, GameID INTEGER, FOREIGN KEY(GameID) REFERENCES Game(id), FOREIGN KEY(UserID) REFERENCES Users(id))');
+	initialised = true;
+	return Promise.resolve();
 }
 
 /**
@@ -65,11 +77,10 @@ function initialise(config) {
  * @returns {Promise} A Promise that is resolved when the DAO is torn down.
  */
 function teardown() {
-	return !initialised
-		? Promise.resolve()
-		: db.close().then(() => {
-			initialised = false;
-		});
+	db = null;
+	initialised = false;
+	
+	return Promise.resolve();
 }
 
 /**
@@ -87,7 +98,15 @@ function isInitialised() {
  * @returns {Promise} A Promise that is resolved with a list of users
  */
 function getAllUsers() {
-	return db.Users.findAll();
+	return new Promise((resolve, reject) => {
+		db.all('SELECT * FROM Users', (err, rows) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(rows); //TODO: Make a model instead of a bare object
+			}
+		});
+	});
 }
 
 /**
@@ -98,7 +117,8 @@ function getAllUsers() {
  * @returns {Promise} A Promise that is resolved with the user requested
  */
 function getUser(id) {
-	return db.Users.findByPrimary(id);
+	//return db.Users.findByPrimary(id);
+	return Promise.reject('Not yet implemented');
 }
 
 /**
@@ -109,11 +129,7 @@ function getUser(id) {
  * @returns {Promise} A Promise that is resolved with the user requested
  */
 function getUserByName(name) {
-	return db.Users.findOne({
-		where: {
-			Username: name
-		}
-	});
+	return Promise.reject('Not yet implemented');
 }
 
 /**
@@ -124,7 +140,7 @@ function getUserByName(name) {
  * @returns {Promise} A Promise that is resolved with the user added
  */
 function addUser(user) {
-	return db.Users.create(user);
+	return Promise.reject('Not yet implemented');
 }
 
 /**
@@ -136,16 +152,7 @@ function addUser(user) {
  * @returns {Promise} A Promise that is resolved with the user updated
  */
 function updateUser(id, user) {
-	return db.Users.update(user, {
-		where: {
-			ID: id
-		}
-	}).then((counts) => {
-		if (counts[0] > 0) {
-			return getUser(id);
-		}
-		throw Error(`User with ID ${id} not found`);
-	});
+	return Promise.reject('Not yet implemented');
 }
 
 /**
@@ -154,10 +161,16 @@ function updateUser(id, user) {
  * @returns {Promise} A Promise that is resolved with a list of vanilla boards
  */
 function getAllBoards() {
-	return db.Boards.findAll({
-		where: {
-			GameID: null
-		}
+	return new Promise((resolve, reject) => {
+		db.all('SELECT * FROM Boards', (err, rows) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(rows.map((row) => {
+					return new Board(row);
+				}));
+			}
+		});
 	});
 }
 
@@ -172,11 +185,16 @@ function getBoards(parentID) {
 	if (parentID !== 0) {
 		parentID = parentID || null; //Coerce to null to prevent avoidable errors
 	}
-	return db.Boards.findAll({
-		where: {
-			BoardID: parentID,
-			GameID: null
-		}
+	return new Promise((resolve, reject) => {
+		db.all('SELECT id, Owner, Name FROM Boards INNER JOIN ChildBoards ON Boards.id = ChildBoards.ChildID WHERE ChildBoards.parentID = ? AND GameID IS NULL', parentID, (err, rows) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(rows.map((row) => {
+					return new Board(row);
+				}));
+			}
+		});
 	});
 }
 
@@ -188,10 +206,14 @@ function getBoards(parentID) {
  * @returns {Promise} A Promise that is resolved with the board requested
  */
 function getBoard(id) {
-	return db.Boards.findByPrimary(id, {
-		where: {
-			GameID: null
-		}
+	return new Promise((resolve, reject) => {
+		db.get('SELECT id, Owner, Name FROM Boards WHERE id = ? AND GameID IS NULL', id, (err, row) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(new Board(row));
+			}
+		});
 	});
 }
 
@@ -210,7 +232,15 @@ function addBoard(board) {
 			resolve();
 		}
 	}).then(() => {
-		return db.Boards.create(board);
+		return new Promise((resolve, reject) => {
+			db.run('INSERT INTO Boards (Owner, Name) VALUES (?,?)', board.Owner, board.Name, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(true);
+				}
+			});
+		});
 	});
 }
 
@@ -230,17 +260,15 @@ function updateBoard(id, board) {
 			resolve();
 		}
 	}).then(() => {
-		return db.Boards.update(board, {
-			where: {
-				ID: id,
-				GameID: null
-			}
+		return new Promise((resolve, reject) => {
+			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', board.Owner, board.Name, board.id, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(true);
+				}
+			});
 		});
-	}).then((counts) => {
-		if (counts[0] > 0) {
-			return getBoard(id);
-		}
-		throw Error(`Board with ID ${id} not found`);
 	});
 }
 
@@ -250,13 +278,16 @@ function updateBoard(id, board) {
  * @returns {Promise} A Promise that is resolved with a list of games
  */
 function getAllGames() {
-	return db.Boards.findAll({
-		where: {
-			GameID: {
-				not: null
+	return new Promise((resolve, reject) => {
+		db.all('SELECT * FROM Boards INNER JOIN Games ON Board.GameID = Games.id', (err, rows) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(rows.map((row) => {
+					return new Game(row);
+				}));
 			}
-		},
-		include: [db.Games]
+		});
 	});
 }
 
@@ -271,14 +302,16 @@ function getGames(parentID) {
 	if (parentID !== 0) {
 		parentID = parentID || null; //Coerce to null to prevent avoidable errors
 	}
-	return db.Boards.findAll({
-		where: {
-			BoardID: parentID,
-			GameID: {
-				not: null
+	return new Promise((resolve, reject) => {
+		db.all('SELECT id, Owner, Name FROM Boards INNER JOIN ChildBoards ON Boards.id = ChildBoards.ChildID WHERE ChildBoards.parentID = ?', parentID, (err, rows) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(rows.map((row) => {
+					return new Game(row);
+				}));
 			}
-		},
-		include: [db.Games]
+		});
 	});
 }
 
@@ -290,13 +323,14 @@ function getGames(parentID) {
  * @returns {Promise} A Promise that is resolved with the game requested
  */
 function getGame(id) {
-	return db.Boards.findByPrimary(id, {
-		where: {
-			GameID: {
-				not: null
+	return new Promise((resolve, reject) => {
+		db.get('SELECT id, Owner, Name FROM Boards INNER JOIN Games ON Boards.GameID = Games.id WHERE id = ? AND GameID IS NOT NULL', id, (err, row) => {
+			if (err) {
+				reject(err);
+			} else {
+				resolve(new Game(row));
 			}
-		},
-		include: [db.Games]
+		});
 	});
 }
 
@@ -315,8 +349,15 @@ function addGame(game) {
 			resolve();
 		}
 	}).then(() => {
-		return db.Boards.create(game, {
-			include: [db.Games]
+		//TODO: this is probably wrong
+		return new Promise((resolve, reject) => {
+			db.run('INSERT INTO Boards (Owner, Name) VALUES (?,?)', game.Owner, game.Name, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(true);
+				}
+			});
 		});
 	});
 }
@@ -337,18 +378,15 @@ function updateGame(id, game) {
 			resolve();
 		}
 	}).then(() => {
-		return db.Boards.update(game, {
-			where: {
-				ID: id,
-				GameID: {
-					not: null
+		//TODO: this is probably wrong
+		return new Promise((resolve, reject) => {
+			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', game.Owner, game.Name, game.id, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(true);
 				}
-			}
+			});
 		});
-	}).then((counts) => {
-		if (counts[0] > 0) {
-			return getGame(id);
-		}
-		throw Error(`Game with ID ${id} not found`);
 	});
 }
