@@ -392,7 +392,7 @@ describe('DAO', () => {
 				UserID: userID,
 				Name: title,
 				GameID: 1
-			}).and.contain.key('Game');
+			});
 		});
 
 		it('should now have one game', () => {
@@ -412,7 +412,7 @@ describe('DAO', () => {
 				UserID: userID,
 				Name: title,
 				GameID: 2
-			}).and.contain.key('Game');
+			});
 		});
 
 		it('should now have two games', () => {
@@ -435,7 +435,7 @@ describe('DAO', () => {
 
 		it('should edit an existing game', () => {
 			const title = 'FirstGame';
-			return dao.updateGame(1, {Title: title, Game: {}}).should.eventually.contain.all({Title: title});
+			return dao.updateGame(1, {Name: title, Game: {}}).should.eventually.contain.all({Name: title});
 		});
 
 		it('should not edit a non-existant game', () => {
@@ -455,7 +455,7 @@ describe('DAO', () => {
 		});
 	});
 
-	describe('Child Games', () => {
+/*	describe('Child Games', () => {
 		let userID, gameID;
 
 		before(() => {
@@ -548,4 +548,5 @@ describe('DAO', () => {
 			return dao.getGames(0).should.eventually.deep.equal([]);
 		});
 	});
+	*/
 });

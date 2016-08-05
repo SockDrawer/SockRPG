@@ -24,6 +24,10 @@ class Game {
 		return this.data.owner;
 	}
 	
+	get GameID() {
+		return this.data.GameID;
+	}
+	
 	get Name() {
 		return this.data.Name;
 	}

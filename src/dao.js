@@ -69,7 +69,7 @@ function initialise() {
 	return new Promise((resolve, reject) => {
 		
 		async.series([
-			(callback) => db.run('CREATE TABLE IF NOT EXISTS Games (id INTEGER PRIMARY KEY)', callback),
+			(callback) => db.run('CREATE TABLE IF NOT EXISTS Games (id INTEGER PRIMARY KEY, dummyColumn TEXT)', callback),
 			(callback) => db.run('CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY, Username TEXT)', callback),
 			(callback) => db.run('CREATE TABLE IF NOT EXISTS Boards (id INTEGER PRIMARY KEY, Owner INTEGER, GameID INTEGER, Name TEXT, FOREIGN KEY(GameID) REFERENCES Game(id))', callback),
 			(callback) => db.run('CREATE TABLE IF NOT EXISTS ChildBoards (ParentID INTEGER, ChildID INTEGER, FOREIGN KEY(ParentID) REFERENCES Board(id), FOREIGN KEY(ChildID) REFERENCES Board(id))', callback),
@@ -396,14 +396,32 @@ function addGame(game) {
 		}
 	}).then(() => {
 		//TODO: this is probably wrong
+		
 		return new Promise((resolve, reject) => {
-			db.run('INSERT INTO Boards (Owner, Name, GameID) VALUES (?,?,?)', game.Owner, game.Name, 12, function (err) {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(module.exports.getGame(this.lastID));
+			async.waterfall([
+				(callback) => db.run('INSERT INTO Games (dummyColumn) VALUES ("hi")', function(err) {
+						if (err) {
+							callback(err);
+						} else {
+							callback(null, this.lastID)
+						}
+					}),
+				(gameID, callback) => db.run('INSERT INTO BOARDS (Owner, Name, GameID) VALUES (?,?,?)', game.Owner, game.Name, gameID, function(err) {
+						if (err) {
+							callback(err);
+						} else {
+							callback(null, this.lastID)
+						}
+					})
+				],
+				function (err, ID) {
+					if (err) {
+						reject(err);
+					} else {
+						resolve(module.exports.getGame(ID));
+					}
 				}
-			});
+			);
 		});
 	});
 }
@@ -426,7 +444,7 @@ function updateGame(id, game) {
 	}).then(() => {
 		//TODO: this is probably wrong
 		return new Promise((resolve, reject) => {
-			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', game.Owner, game.Name, game.id, (err) => {
+			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', game.Owner, game.Name, id, function (err) {
 				if (err) {
 					reject(err);
 				} else {
