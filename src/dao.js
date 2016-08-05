@@ -310,7 +310,7 @@ function updateBoard(id, board) {
 					if (this.changes <= 0) {
 						reject(new Error('No such board'));
 					} else {
-						resolve(module.exports.getBoard(this.lastID));
+						resolve(module.exports.getBoard(id));
 					}
 				}
 			});
@@ -455,7 +455,7 @@ function updateGame(id, game) {
 					if (this.changes <= 0) {
 						reject(new Error('No such board'));
 					} else {
-						resolve(module.exports.getGame(this.lastID));	
+						resolve(module.exports.getGame(id));	
 					}
 				}
 			});
