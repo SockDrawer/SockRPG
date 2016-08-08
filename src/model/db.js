@@ -152,12 +152,12 @@ function createModel() {
 	Board.belongsTo(Game, specs.fkNullable);
 
 	//Set up the 1:N relationships
-	User.hasMany(Board, specs.fkNonNullable);
+	User.hasMany(Board, specs.fkNullable);
 	Board.hasMany(Board, specs.fkNullable);
 
 	//Set up the M:N relationships
-	User.belongsToMany(Game, {through: 'Gamemaster'});
-	Game.belongsToMany(User, {through: 'Gamemaster'});
+	User.belongsToMany(Game, {through: 'Gamemaster', allowNull: true});
+	Game.belongsToMany(User, {through: 'Gamemaster', allowNull: true});
 
 	//Set table exports
 	module.exports.Users = User;

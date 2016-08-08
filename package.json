@@ -21,6 +21,7 @@
     "node": ">=4.0"
   },
   "dependencies": {
+    "async": "^2.0.1",
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "pg": "^4.4.3",
