@@ -33,6 +33,7 @@
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
     "coveralls": "^2.11.4",
+    "cz-conventional-changelog": "^1.1.7",
     "eslint": "^1.7.3",
     "express-handlebars": "^3.0.0",
     "istanbul": "^0.4.0",
@@ -46,5 +47,10 @@
     "test": "eslint . && istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R dot ./test/unit/*.js && mocha --recursive -R dot ./test/integration/*.js",
     "istanbul": "eslint .; istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R nyan",
     "mocha": "echo 'Unit Tests:';mocha --recursive -R nyan ./test/unit/; echo 'Integration Tests'; mocha --recursive -R nyan ./test/integration/"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
