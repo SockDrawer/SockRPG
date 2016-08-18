@@ -82,7 +82,7 @@ describe('DAO', () => {
 		});
 	});
 
-/*	describe('Users', () => {
+	describe('Users', () => {
 		before(() => {
 			return dao.initialise(dbConfig);
 		});
@@ -99,10 +99,7 @@ describe('DAO', () => {
 			const username = 'User1';
 			return dao.addUser({
 				Username: username
-			}).should.eventually.contain.all({
-				ID: 1,
-				Username: username
-			});
+			}).should.eventually.contain(1);
 		});
 
 		it('should now have one user', () => {
@@ -115,10 +112,7 @@ describe('DAO', () => {
 			const username = 'User2';
 			return dao.addUser({
 				Username: username
-			}).should.eventually.contain.all({
-				ID: 2,
-				Username: username
-			});
+			}).should.eventually.contain(2);
 		});
 
 		it('should now have two users', () => {
@@ -155,25 +149,25 @@ describe('DAO', () => {
 
 		it('should edit an existing user', () => {
 			const username = 'FirstUser';
-			return dao.updateUser(1, {Username: username}).should.eventually.contain.all({Username: username});
+			return dao.updateUser(1, {Username: username}).then(() => dao.getUser(1)).should.eventually.contain.all({Username: username});
 		});
 
 		it('should not edit a non-existant user', () => {
 			return dao.updateUser(0, {}).should.be.rejectedWith(Error);
 		});
 	});
-	*/
+
 
 	describe('Boards', () => {
-		let userID;
+		let userID = 1;
 
 		before(() => {
 			return dao.initialise(dbConfig).then(() => {
 				userID = 1;
 				return dao.addUser({
 					Username: 'BoardTester'
-				}).then((user) => {
-					userID = user.ID;
+				}).then((ids) => {
+					userID = ids[0];
 				});
 			});
 		});
@@ -189,13 +183,9 @@ describe('DAO', () => {
 		it('should add a board', () => {
 			const title = 'Board1';
 			return dao.addBoard({
-				UserID: userID,
+				Owner: userID,
 				Name: title
-			}).should.eventually.contain.all({
-				ID: 1,
-				UserID: userID,
-				Name: title
-			}).and.not.contain.key('Game');
+			}).should.eventually.contain(1);
 		});
 
 		it('should now have one board', () => {
@@ -207,13 +197,9 @@ describe('DAO', () => {
 		it('should add a second board', () => {
 			const title = 'Board2';
 			return dao.addBoard({
-				UserID: userID,
+				Owner: userID,
 				Name: title
-			}).should.eventually.contain.all({
-				ID: 2,
-				UserID: userID,
-				Name: title
-			}).and.not.contain.key('Game');
+			}).should.eventually.contain(2);
 		});
 
 		it('should now have two boards', () => {
@@ -236,7 +222,7 @@ describe('DAO', () => {
 
 		it('should edit an existing board', () => {
 			const title = 'FirstBoard';
-			return dao.updateBoard(1, {Name: title}).should.eventually.contain.all({Name: title});
+			return dao.updateBoard(1, {Name: title}).should.eventually.equal(1);
 		});
 
 		it('should not edit a non-existant board', () => {
@@ -309,7 +295,7 @@ describe('DAO', () => {
 		it('should add a child board', () => {
 			const title = 'ChildBoard1';
 			return dao.addBoard({
-				UserID: userID,
+				Owner: userID,
 				BoardID: boardID,
 				Name: title
 			}).should.eventually.contain.all({
@@ -367,8 +353,8 @@ describe('DAO', () => {
 			return dao.initialise(dbConfig).then(() => {
 				return dao.addUser({
 					Username: 'GameTester'
-				}).then((user) => {
-					userID = user.ID;
+				}).then((userids) => {
+					userID = userids[0];
 				});
 			});
 		});
@@ -384,15 +370,12 @@ describe('DAO', () => {
 		it('should add a game', () => {
 			const title = 'Game1';
 			return dao.addGame({
-				UserID: userID,
+				Owner: userID,
 				Name: title,
-				Game: {}
-			}).should.eventually.contain.all({
-				ID: 1,
-				UserID: userID,
-				Name: title,
-				GameID: 1
-			});
+				Game: {
+					gameDescription: 'A cool game'
+				}
+			}).should.eventually.contain(1);
 		});
 
 		it('should now have one game', () => {
@@ -404,15 +387,12 @@ describe('DAO', () => {
 		it('should add a second game', () => {
 			const title = 'Game2';
 			return dao.addGame({
-				UserID: userID,
+				Owner: userID,
 				Name: title,
-				Game: {}
-			}).should.eventually.contain.all({
-				ID: 2,
-				UserID: userID,
-				Name: title,
-				GameID: 2
-			});
+				Game: {
+					gameDescription: 'A nice game'
+				}
+			}).should.eventually.contain(2);
 		});
 
 		it('should now have two games', () => {
@@ -435,7 +415,7 @@ describe('DAO', () => {
 
 		it('should edit an existing game', () => {
 			const title = 'FirstGame';
-			return dao.updateGame(1, {Name: title, Game: {}}).should.eventually.contain.all({Name: title});
+			return dao.updateGame(1, {Name: title, Game: {}}).then(() => dao.getGame(1)).should.eventually.contain.all({Name: title});
 		});
 
 		it('should not edit a non-existant game', () => {

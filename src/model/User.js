@@ -7,20 +7,14 @@
  *
  * @module User
  * @license MIT
- * @author RaceProUK
+ * @author Yamikuronue
  */
 
-const Sequelize = require('sequelize');
+class User {
+	constructor(row) {
+		this.ID = row.ID;
+		this.Username = row.Username;
+	}
+}
 
-module.exports = (db, specs) => {
-	return db.define('User', {
-		ID: specs.pk,
-		Username: {
-			type: Sequelize.STRING(63),
-			unique: true,
-			allowNull: false
-		}
-	}, {
-		indexes: [{fields: ['Username']}]
-	});
-};
+module.exports = User;

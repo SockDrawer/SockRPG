@@ -13,6 +13,9 @@
 class Board {
 	constructor (rowData) {
 		this.data = rowData;
+		if (rowData.BoardID) {
+			this.data.id = rowData.BoardID;
+		}
 	}
 	
 	get ID() {
