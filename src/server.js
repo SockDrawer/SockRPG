@@ -30,6 +30,10 @@ const hbs = exphbs.create({
 	partialsDir: 'src/views/partials'
 });
 
+/**
+ * Initialise the DAO
+ * @returns {Promise} A promise chain that resolves when the DAO is ready to use
+ */
 function setupDao() {
 	debug('Initializing dao');
 	//For now, static config
@@ -44,6 +48,10 @@ function setupDao() {
 	});
 }
 
+/**
+ * Initialise the Express server
+ * @returns {Promise} A promise chain that resolves when the server is ready to use
+ */
 function setupExpress() {
 	debug('Initializing Express');
 	return new Promise(
@@ -112,11 +120,15 @@ function setupExpress() {
 		});
 }
 
+/**
+ * Initialise the server
+ * @returns {Promise} A promise chain that resolves when the server is running
+ */
 function setup() {
 	return setupDao().then(() => setupExpress()).then(() => {
 		const server = app.listen(8080);
 		console.log('Server now listening on port 8080');
-	})
+	});
 }
 
 
@@ -129,10 +141,10 @@ function return405(_, res) {
 	res.status(405).end();
 }
 
-module.exports =  {
+module.exports = {
 	setup: setup
 };
 
 if (require.main === module) {
-    setup();
+	setup();
 }
