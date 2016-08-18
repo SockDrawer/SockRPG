@@ -76,7 +76,7 @@ function initialise() {
 	});
 	
 	return knex.schema.createTableIfNotExists('Games', (table) => {
-		table.increments().primary();
+		table.increments('ID').primary();
 		table.string('gameDescription');
 	}).then(() => {
 		return knex.schema.createTableIfNotExists('Users', (table) => {
@@ -85,17 +85,17 @@ function initialise() {
 		});
 	}).then(() => {
 		return knex.schema.createTableIfNotExists('Boards', (table) => {
-			table.increments().primary();
-			table.integer('Owner').references('Users.id').notNullable();
-			table.integer('GameID').references('Games.id').nullable();
+			table.increments('ID').primary();
+			table.integer('Owner').references('Users.ID').notNullable();
+			table.integer('GameID').references('Games.ID').nullable();
 			table.string('Name').notNullable();
 			table.boolean('Adult').defaultTo(false);
 		});
 	}).then(() => {
 		return knex.schema.createTableIfNotExists('ChildBoards', (table) => {
-			table.increments().primary();
-			table.integer('ParentID').references('Boards.id').notNullable();
-			table.integer('ChildID').references('Boards.id').notNullable();
+			table.increments('ID').primary();
+			table.integer('ParentID').references('Boards.ID').notNullable();
+			table.integer('ChildID').references('Boards.ID').notNullable();
 		});
 	}).then(() => {
 		initialised = true;
@@ -130,7 +130,7 @@ function isInitialised() {
  * @returns {Promise} A Promise that is resolved with a list of users
  */
 function getAllUsers() {
-	return knex('Users').select('id', 'Username').map((row) => new User(row));
+	return knex('Users').select('ID', 'Username').map((row) => new User(row));
 }
 
 /**
@@ -220,7 +220,7 @@ function getBoards(parentID) {
  * @returns {Promise} A Promise that is resolved with the board requested
  */
 function getBoard(id) {
-	return knex('Boards').where('ID', id).select('Boards.ID', 'Owner', 'Name', 'GameID').then((rows) => {
+	return knex('Boards').where('ID', id).select('Boards.ID', 'Owner', 'Name', 'GameID', 'Adult').then((rows) => {
 		if (!rows || rows.length <= 0) {
 			return null;
 		}

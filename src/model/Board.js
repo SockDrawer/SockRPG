@@ -16,14 +16,18 @@ class Board {
 		if (rowData.BoardID) {
 			this.data.id = rowData.BoardID;
 		}
+		
+		//Type coersion
+		this.data.ID = Number(this.data.ID);
+		this.data.Adult = Boolean(this.data.Adult);
 	}
 	
 	get ID() {
-		return this.data.id;
+		return this.data.ID;
 	}
 	
-	get UserID() {
-		return this.data.owner;
+	get Owner() {
+		return this.data.Owner;
 	}
 	
 	get Name() {
