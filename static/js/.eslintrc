@@ -1,0 +1,26 @@
+{
+	"rules": {
+		"strict": 0,
+		"func-names": 0,
+		"prefer-arrow-callback": 0,
+		"no-var": 0,
+		"id-length": 0,
+		"prefer-template": 0,
+		"no-console": 2
+	},
+	"ecmaFeatures": {
+		"regexYFlag": false,
+		"regexUFlag": false
+	},
+	"env": {
+		"es6": false,
+		"node": false,
+		"browser": true,
+		"jquery": true
+	},
+	"globals":{
+	    "Handlebars": true,
+        "Backbone": true,
+        "SockRPGBoards": true
+	}
+}
