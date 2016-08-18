@@ -11,6 +11,7 @@ All rules and commandments will be enforced with ESLint rules where possible.
 1. One shall be the number of tabs in thine indent, and the number of tabs in thine indent shall be one. Two shalt not count, nor shalt zero, except on thy way to one. And three is right out.
 1. Spaces are an abomination unto thy indent; only tabs are permitted.
 1. Operators of a logical and mathematical nature shall be flanked by a single space each side; this also applies to the arrow in thy arrow functions.
+1. Thy arrow functions must envelop their argument list in parentheses.
 1. A keyword must be followed by a space; however, thy function names must not.
 1. There shall be a single space between thy closing parenthesis and opening brace for both functions and control flow structures.
 1. Leavers of trailing whitespace shall be smote with great prejudice.
@@ -19,13 +20,14 @@ All rules and commandments will be enforced with ESLint rules where possible.
 1. Keep thy lines at 120 characters or less.
 1. Thy strings are to be fenced in single quotes only.
 1. The keyword var shall be struck from thy vocabulary; only const and let are permitted.
-1. Each of thy code files must start with ‘use strict’, and end with a single \n.
+1. Each of thy code files must start with ‘use strict’, and end with a single `\n`.
 1. Thy opening braces shall always accompany the same line as their owning statement.
 1. Thou must use camelCase for thy function names, variables, constants, and properties.
 1. Thou must use PascalCase for thy class names.
+1. Thou shalt not begin thy names with impersonal pronouns, lest they be smited.
 1. Thy constants must not be in all-capitals.
-1. Thou is forbidden to use == and !=.
-1. Never extend a built-in prototype.
+1. Thou art forbidden to use == and !=.
+1. Thou art forbidden to extend a built-in prototype.
 1. When thou comments, thou shalt comment in nought but English.
 1. Thou must comment functions and objects declared at module level with the glory of JSDoc.
 1. Thou shalt leave no more than one blank line between code blocks.
@@ -169,7 +171,7 @@ When calling such a function, insert line breaks to keep lines within 120 charac
 New in ES6, arrow functions are extremely useful; however, as they cannot be named, their use should be restricted to short callbacks with few arguments.
 
 ##### Call chains
-Promise-heavy code is likely to feature call chains; when chaining methods, each call should start on a new line, indented one tab in the same manner the body of a loop is.
+Promise-heavy code is likely to feature call chains; when chaining methods, each call should start on a new line, indented one tab in the same manner the body of a loop is, and have a leading period.
 
 ##### To document or not to document?
 Is the function defined at module level? Yes? Document it.
