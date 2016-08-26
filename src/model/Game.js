@@ -17,7 +17,7 @@ class Game {
 	}
 	
 	get ID() {
-		return this.data.id;
+		return this.data.ID;
 	}
 	
 	get UserID() {
