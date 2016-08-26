@@ -16,10 +16,11 @@ const sqlite3 = require('sqlite3').verbose();
 
 const Board = require('./model/Board');
 const Game = require('./model/Game');
+const User = require('./model/User');
 
 const async = require('async');
 
-let db;
+let db, knex;
 
 let initialised = false;
 
@@ -65,26 +66,40 @@ function initialise() {
 		return Promise.resolve();
 	}
 	
-	db = new sqlite3.Database(':memory:');
+	knex = require('knex')({
+		client: 'sqlite3',
+		connection: {
+			filename: ':memory:'
+		},
+	//	debug: true,
+		useNullAsDefault: true
+	});
 	
-	return new Promise((resolve, reject) => {
-		
-		async.series([
-			(callback) => db.run('CREATE TABLE IF NOT EXISTS Games (id INTEGER PRIMARY KEY, dummyColumn TEXT)', callback),
-			(callback) => db.run('CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY, Username TEXT)', callback),
-			(callback) => db.run('CREATE TABLE IF NOT EXISTS Boards (id INTEGER PRIMARY KEY, Owner INTEGER, GameID INTEGER, Name TEXT, FOREIGN KEY(GameID) REFERENCES Game(id))', callback),
-			(callback) => db.run('CREATE TABLE IF NOT EXISTS ChildBoards (ParentID INTEGER, ChildID INTEGER, FOREIGN KEY(ParentID) REFERENCES Board(id), FOREIGN KEY(ChildID) REFERENCES Board(id))', callback)
-			//	db.run('CREATE TABLE IF NOT EXISTS GameMasters (UserID INTEGER, GameID INTEGER, FOREIGN KEY(GameID) REFERENCES Game(id), FOREIGN KEY(UserID) REFERENCES Users(id))')
-		], 
-		(err, results) => {
-			if (err) {
-				db = null;
-				reject(err);
-			} else {
-				initialised = true;
-				resolve(true);
-			}
+	return knex.schema.createTableIfNotExists('Games', (table) => {
+		table.increments('ID').primary();
+		table.string('gameDescription');
+	}).then(() => {
+		return knex.schema.createTableIfNotExists('Users', (table) => {
+			table.increments('ID').primary();
+			table.string('Username').notNullable().unique();
 		});
+	}).then(() => {
+		return knex.schema.createTableIfNotExists('Boards', (table) => {
+			table.increments('ID').primary();
+			table.integer('Owner').references('Users.ID').notNullable();
+			table.integer('GameID').references('Games.ID').nullable();
+			table.string('Name').notNullable();
+			table.boolean('Adult').defaultTo(false);
+		});
+	}).then(() => {
+		return knex.schema.createTableIfNotExists('ChildBoards', (table) => {
+			table.increments('ID').primary();
+			table.integer('ParentID').references('Boards.ID').notNullable();
+			table.integer('ChildID').references('Boards.ID').notNullable();
+		});
+	}).then(() => {
+		initialised = true;
+		return Promise.resolve(initialised);
 	});
 }
 
@@ -94,7 +109,7 @@ function initialise() {
  * @returns {Promise} A Promise that is resolved when the DAO is torn down.
  */
 function teardown() {
-	db = null;
+	knex = null;
 	initialised = false;
 	
 	return Promise.resolve();
@@ -115,15 +130,7 @@ function isInitialised() {
  * @returns {Promise} A Promise that is resolved with a list of users
  */
 function getAllUsers() {
-	return new Promise((resolve, reject) => {
-		db.all('SELECT * FROM Users', (err, rows) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(rows); //TODO: Make a model instead of a bare object
-			}
-		});
-	});
+	return knex('Users').select('ID', 'Username').map((row) => new User(row));
 }
 
 /**
@@ -134,14 +141,11 @@ function getAllUsers() {
  * @returns {Promise} A Promise that is resolved with the user requested
  */
 function getUser(id) {
-	return new Promise((resolve, reject) => {
-		db.get('SELECT * FROM Users WHERE id = ?', id, (err, row) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(row);
-			}
-		});
+	return knex('Users').where('ID', id).select().then((row) => {
+		if (row.length <= 0 || row[0].ID === undefined) {
+			return null;
+		}
+		return new User(row[0]);
 	});
 }
 
@@ -153,7 +157,12 @@ function getUser(id) {
  * @returns {Promise} A Promise that is resolved with the user requested
  */
 function getUserByName(name) {
-	return Promise.reject('Not yet implemented');
+	return knex('Users').where({'Username': name}).select().then((row) => {
+		if (row.length <= 0 || row[0].ID === undefined) {
+			return null;
+		}
+		return new User(row[0]);
+	});
 }
 
 /**
@@ -164,15 +173,7 @@ function getUserByName(name) {
  * @returns {Promise} A Promise that is resolved with the user added
  */
 function addUser(user) {
-	return new Promise((resolve, reject) => {
-		db.run('INSERT INTO Users (Username) VALUES (?)', user.Username, (err) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(true);
-			}
-		});
-	});
+	return knex('Users').insert(user);
 }
 
 /**
@@ -184,7 +185,7 @@ function addUser(user) {
  * @returns {Promise} A Promise that is resolved with the user updated
  */
 function updateUser(id, user) {
-	return Promise.reject('Not yet implemented');
+	return knex('Users').where({'ID': id}).update(user);
 }
 
 /**
@@ -193,17 +194,7 @@ function updateUser(id, user) {
  * @returns {Promise} A Promise that is resolved with a list of vanilla boards
  */
 function getAllBoards() {
-	return new Promise((resolve, reject) => {
-		db.all('SELECT * FROM Boards', (err, rows) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(rows.map((row) => {
-					return new Board(row);
-				}));
-			}
-		});
-	});
+	return knex('Boards').select().map((row) => new Board(row));
 }
 
 /**
@@ -218,17 +209,7 @@ function getBoards(parentID) {
 		parentID = parentID || null; //Coerce to null to prevent avoidable errors
 	}
 	
-	return new Promise((resolve, reject) => {
-		db.all('SELECT id, Owner, Name FROM Boards INNER JOIN ChildBoards ON Boards.id = ChildBoards.ChildID WHERE ChildBoards.parentID = ? AND GameID IS NULL', parentID, (err, rows) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(rows.map((row) => {
-					return new Board(row);
-				}));
-			}
-		});
-	});
+	return knex('Boards').leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID').where('parentID', parentID).select('Boards.ID', 'Owner', 'Name', 'GameID').map((row) => new Board(row));
 }
 
 /**
@@ -239,18 +220,12 @@ function getBoards(parentID) {
  * @returns {Promise} A Promise that is resolved with the board requested
  */
 function getBoard(id) {
-	return new Promise((resolve, reject) => {
-		db.get('SELECT id, Owner, Name FROM Boards WHERE id = ? AND GameID IS NULL', id, (err, row) => {
-			if (err) {
-				reject(err);
-			} else {
-				if (row) {
-					resolve(new Board(row));
-				} else {
-					resolve(null);
-				}
-			}
-		});
+	return knex('Boards').where('ID', id).select('Boards.ID', 'Owner', 'Name', 'GameID', 'Adult').then((rows) => {
+		if (!rows || rows.length <= 0) {
+			return null;
+		}
+		
+		return new Board(rows[0]);
 	});
 }
 
@@ -274,15 +249,7 @@ function addBoard(board) {
 		}
 	})
 	.then(() => {
-		return new Promise((resolve, reject) => {
-			db.run('INSERT INTO Boards (Owner, Name) VALUES (?,?)', board.Owner, board.Name, function (err) {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(module.exports.getBoard(this.lastID));
-				}
-			});
-		});
+		return knex('Boards').insert(board);
 	});
 }
 
@@ -302,19 +269,7 @@ function updateBoard(id, board) {
 			resolve();
 		}
 	}).then(() => {
-		return new Promise((resolve, reject) => {
-			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', board.Owner, board.Name, id, function (err) {
-				if (err) {
-					reject(err);
-				} else {
-					if (this.changes <= 0) {
-						reject(new Error('No such board'));
-					} else {
-						resolve(module.exports.getBoard(id));
-					}
-				}
-			});
-		});
+		return knex('Boards').where('ID', id).update(board);
 	});
 }
 
@@ -324,17 +279,7 @@ function updateBoard(id, board) {
  * @returns {Promise} A Promise that is resolved with a list of games
  */
 function getAllGames() {
-	return new Promise((resolve, reject) => {
-		db.all('SELECT * FROM Boards INNER JOIN Games ON Boards.GameID = Games.id', (err, rows) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(rows.map((row) => {
-					return new Game(row);
-				}));
-			}
-		});
-	});
+	return knex('Boards').leftJoin('Games', 'Boards.GameID', 'Games.ID').select().map((row) => new Game(row));
 }
 
 /**
@@ -348,17 +293,8 @@ function getGames(parentID) {
 	if (parentID !== 0) {
 		parentID = parentID || null; //Coerce to null to prevent avoidable errors
 	}
-	return new Promise((resolve, reject) => {
-		db.all('SELECT Boards.id, Owner, Name FROM Boards INNER JOIN ChildBoards ON Boards.id = ChildBoards.ChildID WHERE ChildBoards.parentID = ?', parentID, (err, rows) => {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(rows.map((row) => {
-					return new Game(row);
-				}));
-			}
-		});
-	});
+	
+	return knex('Boards').leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID').where('parentID', parentID).select('Boards.ID', 'Owner', 'Name', 'GameID').map((row) => new Game(row));
 }
 
 /**
@@ -369,18 +305,12 @@ function getGames(parentID) {
  * @returns {Promise} A Promise that is resolved with the game requested
  */
 function getGame(id) {
-	return new Promise((resolve, reject) => {
-		db.get('SELECT Boards.id, Owner, Name, GameID FROM Boards INNER JOIN Games ON Boards.GameID = Games.id WHERE Games.id = ? AND GameID IS NOT NULL', id, (err, row) => {
-			if (err) {
-				reject(err);
-			} else {
-				if (row) {
-					resolve(new Game(row));
-				} else {
-					resolve(null);
-				}
-			}
-		});
+	return knex('Boards').innerJoin('Games', 'Boards.GameID', 'Games.ID').where('Games.ID', id).select('Boards.ID', 'Owner', 'Name', 'GameID').then((rows) => {
+		if (!rows || rows.length <= 0) {
+			return null;
+		}
+		
+		return new Game(rows[0]);
 	});
 }
 
@@ -392,6 +322,7 @@ function getGame(id) {
  * @returns {Promise} A Promise that is resolved with the game added
  */
 function addGame(game) {
+
 	return new Promise((resolve, reject) => {
 		if (!game.GameID && !game.Game) {
 			reject(new Error('Vanilla boards cannot be added using this method; please use addBoard() instead'));
@@ -399,35 +330,17 @@ function addGame(game) {
 			resolve();
 		}
 	}).then(() => {
-		//TODO: this is probably wrong
-		/* eslint-disable indent*/
-		return new Promise((resolve, reject) => {
-			async.waterfall([
-				(callback) => db.run('INSERT INTO Games (dummyColumn) VALUES ("hi")', function(err) {
-						if (err) {
-							return callback(err);
-						}
-						return callback(null, this.lastID);
-					}),
-				(gameID, callback) => db.run('INSERT INTO BOARDS (Owner, Name, GameID) VALUES (?,?,?)', game.Owner, game.Name, gameID, function(err) {
-						if (err) {
-							return callback(err);
-						}
-						
-						return callback(null, this.lastID);
-					})
-				],
-				(err, ID) => {
-					if (err) {
-						reject(err);
-					} else {
-						resolve(module.exports.getGame(ID));
-					}
-				}
-			);
+		if (!game.Name) {
+			throw new Error('A board has no name.');
+		}
+	})
+	.then(() => {
+		return knex('Games').insert(game.Game).then((ids) => {
+			game.GameID = ids[0];
+			delete game.Game;
+			return knex('Boards').insert(game);
 		});
-		/* eslint-enable indent*/
-	});
+	}).then(() => Promise.resolve([game.GameID]));
 }
 
 /**
@@ -446,19 +359,13 @@ function updateGame(id, game) {
 			resolve();
 		}
 	}).then(() => {
-		//TODO: this is probably wrong
-		return new Promise((resolve, reject) => {
-			db.run('UPDATE Boards SET Owner=?, Name=? WHERE id=?', game.Owner, game.Name, id, function (err) {
-				if (err) {
-					reject(err);
-				} else {
-					if (this.changes <= 0) {
-						reject(new Error('No such board'));
-					} else {
-						resolve(module.exports.getGame(id));	
-					}
-				}
-			});
-		});
+		if (game.Game && Object.keys(game.Game).length > 0) {
+			return knex('Games').where('Games.ID', id).update(game.Game);
+		}
+		
+		return Promise.resolve();
+	}).then(() => {
+		delete game.Game;
+		return knex('Boards').where('GameID', id).update(game);
 	});
 }

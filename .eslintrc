@@ -38,7 +38,7 @@
 			"min": 2,
 			"max": 15,
 			"properties": "always",
-			"exceptions": ["x", "y", "i", "j", "_"]
+			"exceptions": ["x", "y", "i", "j", "_", "useNullAsDefault"]
 		}],
 		"indent": [2, "tab"],
 		"linebreak-style": [2, "unix"],
@@ -74,7 +74,7 @@
 		"no-else-return": 2,
 		"no-empty": 2,
 		"no-empty-character-class": 2,
-		"no-empty-label": 2,
+		"no-labels": 2,
 		"no-eq-null": 2,
 		"no-eval": 2,
 		"no-ex-assign": 2,
