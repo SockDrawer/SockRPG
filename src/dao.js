@@ -17,6 +17,7 @@ const sqlite3 = require('sqlite3').verbose();
 const Board = require('./model/Board');
 const Game = require('./model/Game');
 const User = require('./model/User');
+const Thread = require('./model/Thread');
 
 const async = require('async');
 
@@ -45,7 +46,11 @@ module.exports = {
 	getGames: getGames,
 	getGame: getGame,
 	addGame: addGame,
-	updateGame: updateGame
+	updateGame: updateGame,
+	//Thread operations
+	getThreadList: getThreadList,
+	addThread: addThread
+	
 };
 
 /**
@@ -96,6 +101,12 @@ function initialise() {
 			table.increments('ID').primary();
 			table.integer('ParentID').references('Boards.ID').notNullable();
 			table.integer('ChildID').references('Boards.ID').notNullable();
+		});
+	}).then(() => {
+		return knex.schema.createTableIfNotExists('Threads', (table) => {
+			table.increments('ID').primary();
+			table.string('Title').notNullable();
+			table.integer('Board').references('Boards.ID').notNullable();
 		});
 	}).then(() => {
 		initialised = true;
@@ -368,4 +379,32 @@ function updateGame(id, game) {
 		delete game.Game;
 		return knex('Boards').where('GameID', id).update(game);
 	});
+}
+
+/**
+ * Get the threads in a board
+ *
+ * @param {Number} boardID The ID of the board to get the threads for
+ *
+ * @returns {Promise} A Promise that is resolved with the thread added
+ */
+function getThreadList(boardID) {
+	return knex('Threads')
+		.innerJoin('Boards', 'Threads.Board', 'Boards.ID')
+		.where('Boards.ID', boardID)
+		.select('Threads.Title', 'Threads.ID')
+		.map((row) => new Thread(row));
+}
+
+/**
+ * Add a thread to a board
+ *
+ * @param {Number} boardID The ID of the board to add the thread to
+ * @param {Object} thread the thread data to add
+ *
+ * @returns {Promise} A Promise that is resolved with the ID of the thread added
+ */
+function addThread(boardID, thread) {
+	thread.Board = boardID;
+	return knex('Threads').insert(thread);
 }

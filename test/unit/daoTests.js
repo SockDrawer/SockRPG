@@ -529,4 +529,46 @@ describe('DAO', () => {
 		});
 	});
 	*/
+
+	
+	describe('Threads', () => {
+		let userID = 1, boardID;
+		const Thread = require('../../src/model/Thread');
+
+		before(() => {
+			return dao.initialise(dbConfig).then(() => {
+				userID = 1;
+				return dao.addUser({
+					Username: 'BoardTester'
+				}).then((ids) => {
+					userID = ids[0];
+					return dao.addBoard({
+						Owner: userID,
+						Name: 'test board'
+					});
+				}).then((ids) => boardID = ids[0]);
+			});
+		});
+
+		after(() => {
+			return dao.teardown();
+		});
+		
+		it('should start with no threads', () => {
+			return dao.getThreadList(boardID).should.eventually.deep.equal([]);
+		});
+		
+		it('should add a thread', () => {
+			const expected = new Thread({
+				Title: 'thread',
+				ID: 1
+			});
+			
+			return dao.addThread(boardID, {
+				Title: 'thread'
+			}).then(() => dao.getThreadList(boardID)).should.eventually.contain(expected);
+		});
+	});
 });
+
+
