@@ -26,6 +26,7 @@ let db, knex;
 let initialised = false;
 
 module.exports = {
+	database: knex,
 	initialise: initialise,
 	teardown: teardown,
 	isInitialised: isInitialised,
@@ -35,12 +36,6 @@ module.exports = {
 	getUserByName: getUserByName,
 	addUser: addUser,
 	updateUser: updateUser,
-	//Board operations
-	getAllBoards: getAllBoards,
-	getBoards: getBoards,
-	getBoard: getBoard,
-	addBoard: addBoard,
-	updateBoard: updateBoard,
 	//Game operations
 	getAllGames: getAllGames,
 	getGames: getGames,
@@ -199,90 +194,7 @@ function updateUser(id, user) {
 	return knex('Users').where({'ID': id}).update(user);
 }
 
-/**
- * Get all vanilla boards in the forum.
- *
- * @returns {Promise} A Promise that is resolved with a list of vanilla boards
- */
-function getAllBoards() {
-	return knex('Boards').select().map((row) => new Board(row));
-}
 
-/**
- * Get all vanilla boards that belong to a parent board, or all root-level vanilla boards if no parent specified.
- *
- * @param {Number} [parentID] The ID of the parent board, or `null` for root-level boards
- *
- * @returns {Promise} A Promise that is resolved with a list of vanilla boards
- */
-function getBoards(parentID) {
-	if (parentID !== 0) {
-		parentID = parentID || null; //Coerce to null to prevent avoidable errors
-	}
-	
-	return knex('Boards').leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID').where('parentID', parentID).select('Boards.ID', 'Owner', 'Name', 'GameID').map((row) => new Board(row));
-}
-
-/**
- * Get a vanilla board by ID.
- *
- * @param {Number} id The ID of the board requested
- *
- * @returns {Promise} A Promise that is resolved with the board requested
- */
-function getBoard(id) {
-	return knex('Boards').where('ID', id).select('Boards.ID', 'Owner', 'Name', 'GameID', 'Adult').then((rows) => {
-		if (!rows || rows.length <= 0) {
-			return null;
-		}
-		
-		return new Board(rows[0]);
-	});
-}
-
-/**
- * Add a vanilla board.
- *
- * @param {Object} board The board to add
- *
- * @returns {Promise} A Promise that is resolved with the board added
- */
-function addBoard(board) {
-	return new Promise((resolve, reject) => {
-		if (board.GameID || board.Game) {
-			reject(new Error('Games cannot be added using this method; please use addGame() instead'));
-		} else {
-			resolve();
-		}
-	}).then(() => {
-		if (!board.Name) {
-			throw new Error('A board has no name.');
-		}
-	})
-	.then(() => {
-		return knex('Boards').insert(board);
-	});
-}
-
-/**
- * Update a vanilla board.
- *
- * @param {Number} id The ID of the board to update
- * @param {Object} board The details to update the board with
- *
- * @returns {Promise} A Promise that is resolved with the board updated
- */
-function updateBoard(id, board) {
-	return new Promise((resolve, reject) => {
-		if (board.GameID || board.Game) {
-			reject(new Error('Games cannot be updated using this method; please use updateGame() instead'));
-		} else {
-			resolve();
-		}
-	}).then(() => {
-		return knex('Boards').where('ID', id).update(board);
-	});
-}
 
 /**
  * Get all games in the forum.

@@ -6,6 +6,10 @@ const Sinon = require('sinon');
 const DAO = require('../../src/dao.js');
 require('sinon-as-promised');
 
+describe.only('placeholder', () => {
+	
+});
+
 describe('Board API', function() {
 	let sandbox, userID;
 	this.timeout(50000);

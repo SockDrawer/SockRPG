@@ -42,13 +42,6 @@ describe('DAO', () => {
 		});
 	});
 
-	describe('should export board management function', () => {
-		const fns = ['getAllBoards', 'getBoards', 'getBoard', 'addBoard', 'updateBoard'];
-		fns.forEach((fn) => {
-			it(fn, () => expect(dao[fn]).to.be.a('function'));
-		});
-	});
-
 	describe('should export game management function', () => {
 		const fns = ['getAllGames', 'getGames', 'getGame', 'addGame', 'updateGame'];
 		fns.forEach((fn) => {
@@ -156,195 +149,6 @@ describe('DAO', () => {
 			return dao.updateUser(0, {}).should.be.rejectedWith(Error);
 		});
 	});
-
-
-	describe('Boards', () => {
-		let userID = 1;
-
-		before(() => {
-			return dao.initialise(dbConfig).then(() => {
-				userID = 1;
-				return dao.addUser({
-					Username: 'BoardTester'
-				}).then((ids) => {
-					userID = ids[0];
-				});
-			});
-		});
-
-		after(() => {
-			return dao.teardown();
-		});
-
-		it('should start with no boards', () => {
-			return dao.getAllBoards().should.eventually.deep.equal([]);
-		});
-
-		it('should add a board', () => {
-			const title = 'Board1';
-			return dao.addBoard({
-				Owner: userID,
-				Name: title
-			}).should.eventually.contain(1);
-		});
-
-		it('should now have one board', () => {
-			return dao.getAllBoards().then((boards) => {
-				return boards.length;
-			}).should.become(1);
-		});
-
-		it('should add a second board', () => {
-			const title = 'Board2';
-			return dao.addBoard({
-				Owner: userID,
-				Name: title
-			}).should.eventually.contain(2);
-		});
-
-		it('should now have two boards', () => {
-			return dao.getAllBoards().then((boards) => {
-				return boards.length;
-			}).should.become(2);
-		});
-
-		it('should reject missing required fields', () => {
-			return dao.addBoard({}).should.be.rejectedWith(Error);
-		});
-
-		it('should find an existing board by ID', () => {
-			return dao.getBoard(1).should.eventually.contain.all({ID: 1});
-		});
-
-		it('should not find a non-existant board by ID', () => {
-			return dao.getBoard(0).should.eventually.equal(null);
-		});
-
-		it('should edit an existing board', () => {
-			const title = 'FirstBoard';
-			return dao.updateBoard(1, {Name: title}).should.eventually.equal(1);
-		});
-
-		it('should not edit a non-existant board', () => {
-			return dao.updateBoard(0, {}).should.be.rejectedWith(Error);
-		});
-
-		describe('that are really Games', () => {
-			it('should not add a board with a game ID', () => {
-				return dao.addBoard({
-					Name: 'GameByID',
-					GameID: 1
-				}).should.be.rejectedWith(Error);
-			});
-
-			it('should not add a board with a game object', () => {
-				return dao.addBoard({
-					Name: 'GameByObject',
-					Game: {}
-				}).should.be.rejectedWith(Error);
-			});
-
-			it('should not edit a board with a game ID', () => {
-				return dao.updateBoard(1, {
-					GameID: 1
-				}).should.be.rejectedWith(Error);
-			});
-
-			it('should not edit a board with a game object', () => {
-				return dao.updateBoard(1, {
-					Game: {}
-				}).should.be.rejectedWith(Error);
-			});
-		});
-	});
-
-/*	describe('Child Boards', () => {
-		let userID, boardID;
-
-		before(() => {
-			return dao.initialise(dbConfig).then(() => {
-				return dao.addUser({
-					Username: 'ChildBoardTester'
-				}).then((user) => {
-					userID = user.ID;
-				}).then(() => {
-					return dao.addBoard({
-						UserID: userID,
-						Title: 'ParentBoard'
-					});
-				}).then((board) => {
-					boardID = board.ID;
-				});
-			});
-		});
-
-		after(() => {
-			return dao.teardown();
-		});
-
-		it('should start with one root board', () => {
-			return dao.getBoards().then((boards) => {
-				return boards.length;
-			}).should.become(1);
-		});
-
-		it('should start with no child boards', () => {
-			return dao.getBoards(boardID).should.eventually.deep.equal([]);
-		});
-
-		it('should add a child board', () => {
-			const title = 'ChildBoard1';
-			return dao.addBoard({
-				Owner: userID,
-				BoardID: boardID,
-				Name: title
-			}).should.eventually.contain.all({
-				ID: 2,
-				UserID: userID,
-				BoardID: boardID,
-				Name: title
-			}).and.not.contain.key('Game');
-		});
-
-		it('should now have one child board', () => {
-			return dao.getBoards(boardID).then((boards) => {
-				return boards.length;
-			}).should.become(1);
-		});
-
-		it('should add a second child board', () => {
-			const title = 'ChildBoard2';
-			return dao.addBoard({
-				UserID: userID,
-				BoardID: boardID,
-				Name: title
-			}).should.eventually.contain.all({
-				ID: 3,
-				UserID: userID,
-				BoardID: boardID,
-				Name: title
-			}).and.not.contain.key('Game');
-		});
-
-		it('should now have two child boards', () => {
-			return dao.getBoards(boardID).then((boards) => {
-				return boards.length;
-			}).should.become(2);
-		});
-
-		it('should not add a child board to a non-existant parent', () => {
-			const title = 'ChildBoard3';
-			return dao.addBoard({
-				UserID: userID,
-				BoardID: 0,
-				Name: title
-			}).should.be.rejectedWith(Error);
-		});
-
-		it('should not find children of a board with an ID of zero', () => {
-			return dao.getBoards(0).should.eventually.deep.equal([]);
-		});
-	}); */
 
 	describe('Games', () => {
 		let userID;
@@ -531,7 +335,7 @@ describe('DAO', () => {
 	*/
 
 	
-	describe('Threads', () => {
+/*	describe('Threads', () => {
 		let userID = 1, boardID;
 		const Thread = require('../../src/model/Thread');
 
@@ -569,6 +373,5 @@ describe('DAO', () => {
 			}).then(() => dao.getThreadList(boardID)).should.eventually.contain(expected);
 		});
 	});
+*/
 });
-
-
