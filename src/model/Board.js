@@ -30,8 +30,6 @@ class Board {
 		
 		//Canonical link
 		this.Canonical = `/api/boards/${this.data.ID}`;
-		
-		this.data.GameID = null;
 	}
 	
 	get ID() {

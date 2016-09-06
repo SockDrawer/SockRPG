@@ -95,11 +95,16 @@ function addGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateGame(req, res) {
-	return Game.updateGame(req.params.id, {
-		Title: req.body.Name,
-		GameID: req.params.id,
-		Game: {}
-	}).then((data) => {
+	return Game.getGame(req.params.id).then((board) => {
+		board.Name = req.body.Name || board.Name;
+		board.Owner = req.body.Owner || board.Owner;
+		board.description = req.body.Game.gameDescription || board.description;
+		
+		if ('Adult' in req.body) {
+			board.Adult = req.body.Adult;
+		}
+		return board.save();
+	}).then(() => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors

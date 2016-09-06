@@ -20,21 +20,41 @@ class Game extends Board {
 		
 		//Canonical link
 		this.Canonical = `/api/games/${this.data.ID}`;
-		
 		//Game data
-		this.data.Game = {};
+		if (!rowData.Game) {
+			this.data.Game = {};
 		
-		this.data.Game.ID = rowData.GameID;
-		delete this.data.gameDescription;
-		this.data.Game.gameDescription = rowData.gameDescription;
+			this.data.Game.ID = rowData.GameID;
+			this.data.Game.gameDescription = rowData.gameDescription;
+			delete this.data.gameDescription;
+		}
 	}
 	
 	get GameID() {
 		return this.data.Game.ID;
 	}
 	
+	get description() {
+		return this.data.Game.gameDescription;
+	}
+	
+	set description(des) {
+		this.data.Game.gameDescription = des;
+	}
+	
 	serialize() {
 		return super.serialize();
+	}
+	
+	save() {
+		let boardData = JSON.parse(JSON.stringify(this.data));
+		boardData.Game = undefined;
+		let gameData = JSON.parse(JSON.stringify(this.data.Game));
+		
+		return DB.knex.transaction(function(trx) {
+			return trx('Boards').where('ID', boardData.ID).update(boardData)
+			.then(() => trx('Games').where('ID', gameData.ID).update(gameData));
+		});
 	}
 	
 	/**
@@ -72,11 +92,11 @@ class Game extends Board {
 		return DB.knex('Boards')
 			.innerJoin('Games', 'Boards.GameID', 'Games.ID')
 			.where('Boards.ID', id)
-			.select('Boards.ID', 'Owner', 'Name', 'GameID', 'gameDescription').then((rows) => {
+			.select('Boards.ID', 'Owner', 'Name', 'Adult', 'GameID', 'gameDescription').then((rows) => {
 				if (!rows || rows.length <= 0) {
 					return null;
 				}
-			
+
 				return new Game(rows[0]);
 			});
 	}
