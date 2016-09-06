@@ -17,10 +17,11 @@ const debug = require('debug')('server');
 
 //Model
 const DAO = require('./dao.js');
+const DB = require('./model/db');
 
 //Controllers
 const cStatic = require('./controllers/staticController.js');
-const cApi = require('./controllers/apiController.js');
+const cBoard = require('./controllers/boardController.js');
 const cPage = require('./controllers/pageController.js');
 
 //Views
@@ -38,10 +39,10 @@ function setupDao() {
 	debug('Initializing dao');
 	//For now, static config
 	//TODO: make this configurable
-	return DAO.initialise({
+	return DB.initialise({
 		sqlite: 'sampleData.sqlite'
 	}).then(() => {
-		if (!DAO.isInitialised()) {
+		if (!DB.isInitialised()) {
 			console.log('Initialization error');
 			process.exit(1);
 		}
@@ -89,32 +90,32 @@ function setupExpress() {
 			const jsonParser = bodyParser.json({type: 'application/json'});
 			/*API*/
 			app.route('/api/games')
-				.get(cApi.getAllGames)
-				.post(jsonParser, cApi.addGame)
+				.get(cBoard.getAllGames)
+				.post(jsonParser, cBoard.addGame)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
 			
 			app.route('/api/games/:id')
-				.get(cApi.getGame)
+				.get(cBoard.getGame)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
-				.put(jsonParser, cApi.updateGame);
+				.put(jsonParser, cBoard.updateGame);
 			
 			app.route('/api/boards')
-				.get(cApi.getAllBoards)
-				.post(jsonParser, cApi.addBoard)
+				.get(cBoard.getAllBoards)
+				.post(jsonParser, cBoard.addBoard)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
 			
 			app.route('/api/boards/:id')
-				.get(cApi.getBoard)
+				.get(cBoard.getBoard)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
-				.put(jsonParser, cApi.updateBoard);
+				.put(jsonParser, cBoard.updateBoard);
 			
 			resolve();
 		});

@@ -25,7 +25,7 @@
 */
 
 const dao = require('../dao.js');
-const apiController = require ('./apiController');
+const Board = require('../model/Board');
 
 /**
  * Get the home page to hand to the view
@@ -36,7 +36,7 @@ const apiController = require ('./apiController');
 function getHomePage(req, res) {
 	const data = {};
 	
-	return dao.getAllBoards().then((boards) => {
+	return Board.getAllBoards().then((boards) => {
 		data.boards = boards;
 		return dao.getAllGames();
 	})

@@ -4,11 +4,10 @@ const assert = Chai.assert;
 const request = require('request-promise');
 const Sinon = require('sinon');
 const DAO = require('../../src/dao.js');
+const User = require('../../src/model/User');
+const Board = require('../../src/model/Board');
 require('sinon-as-promised');
 
-describe.only('placeholder', () => {
-	
-});
 
 describe('Board API', function() {
 	let sandbox, userID;
@@ -18,7 +17,7 @@ describe('Board API', function() {
 		//Start server
 		const server = require('../../src/server.js');
 		return server.setup().then(() => {
-			return DAO.addUser({
+			return User.addUser({
 				Username: 'testUser'
 			});
 		}).then((id) => {
@@ -51,6 +50,7 @@ describe('Board API', function() {
 			body: boardInput
 		}).then((response) => {
 			assert.equal(response.statusCode, 200, 'Board creation should return 200 OK');
+			assert.equal(response.body.id, 1, 'Board creation should return id');
 			
 			/*-------------- RETRIEVE -----------------*/
 			return request({
@@ -64,7 +64,11 @@ describe('Board API', function() {
 			const body = response.body;
 			boardInput.GameID = null;
 			assert.deepEqual(body.Canonical, '/api/boards/1', 'Board canonical link should be returned');
-			assert.deepEqual(body.data, boardInput, 'Board should be returned unchanged');
+			assert.equal(body.ID, 1, 'Board ID should match canonical link');
+			assert.equal(body.Name, boardInput.Name, 'Name should be returned okay');
+			assert.equal(body.Adult, boardInput.Adult, 'Adult should be returned okay');
+			assert.equal(body.Owner, boardInput.Owner, 'Owner should be returned okay');
+			
 
 			/*-------------- UPDATE -----------------*/
 			boardInput.Name = 'test board';
@@ -91,7 +95,10 @@ describe('Board API', function() {
 			assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
 			const body = response.body;
 			assert.deepEqual(body.Canonical, '/api/boards/1', 'Board canonical link should be returned');
-			assert.deepEqual(body.data, JSON.parse(JSON.stringify(boardInput)), 'Board should be returned unchanged');
+			assert.equal(body.ID, 1, 'Board ID should match canonical link');
+			assert.equal(body.Name, boardInput.Name, 'Name should be returned okay');
+			assert.equal(body.Adult, boardInput.Adult, 'Adult should be returned okay');
+			assert.equal(body.Owner, boardInput.Owner, 'Owner should be returned okay');
 		});
 	});
 });

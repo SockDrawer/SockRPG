@@ -1,5 +1,7 @@
 'use strict';
 
+const DB = require('./db');
+
 /**
  * The User table.
  *
@@ -15,6 +17,18 @@ class User {
 		this.ID = row.ID;
 		this.Username = row.Username;
 	}
+	
+	/**
+	* Add a user.
+	*
+	* @param {Object} user The user to add
+	*
+	* @returns {Promise} A Promise that is resolved with the user added
+	*/
+	static addUser(user) {
+		return DB.knex('Users').insert(user);
+	}
+
 }
 
 module.exports = User;
