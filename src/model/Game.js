@@ -25,7 +25,7 @@ class Game extends Board {
 		this.data.Game = {};
 		
 		this.data.Game.ID = rowData.GameID;
-		delete(this.data.gameDescription);
+		delete this.data.gameDescription;
 		this.data.Game.gameDescription = rowData.gameDescription;
 	}
 	
@@ -82,9 +82,9 @@ class Game extends Board {
 	}
 	
 	/**
-	* Add a vanilla board.
+	* Add a game.
 	*
-	* @param {Object} board The board to add
+	* @param {Object} game The game data to add
 	*
 	* @returns {Promise} A Promise that is resolved with the board added
 	*/

@@ -80,7 +80,7 @@ function getGame(req, res) {
  */
 function addGame(req, res) {
 	return Game.addGame(req.body).then((index) => {
-		res.status(200).send({ id: index[0]}).end();
+		res.status(200).send({id: index[0]}).end();
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
