@@ -143,19 +143,18 @@ describe('Board/Game API', function() {
 			assert.deepEqual(body.Game, boardInput.Game, 'Game data should be returned okay');
 			
 		
-		 	/*-------------- UPDATE -----------------*/
-		 	boardInput.Name = 'test game';
-
-		 	return request({
-		 		uri: 'http://localhost:8080/api/games/2',
-		 		json: true,
-		 		'resolveWithFullResponse': true,
-		 		method: 'PUT',
-		 		body: boardInput
-		 	});
-		 }).then((response) => {
-		 	assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
-		
+			/*-------------- UPDATE -----------------*/
+			boardInput.Name = 'test game';
+			
+			return request({
+				uri: 'http://localhost:8080/api/games/2',
+				json: true,
+				'resolveWithFullResponse': true,
+				method: 'PUT',
+				body: boardInput
+			});
+		}).then((response) => {
+			assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
 
 			/*-------------- RETRIEVE AGAIN-----------------*/
 			return request({

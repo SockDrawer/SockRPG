@@ -47,11 +47,11 @@ class Game extends Board {
 	}
 	
 	save() {
-		let boardData = JSON.parse(JSON.stringify(this.data));
+		const boardData = JSON.parse(JSON.stringify(this.data));
 		boardData.Game = undefined;
-		let gameData = JSON.parse(JSON.stringify(this.data.Game));
+		const gameData = JSON.parse(JSON.stringify(this.data.Game));
 		
-		return DB.knex.transaction(function(trx) {
+		return DB.knex.transaction((trx) => {
 			return trx('Boards').where('ID', boardData.ID).update(boardData)
 			.then(() => trx('Games').where('ID', gameData.ID).update(gameData));
 		});
