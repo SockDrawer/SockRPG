@@ -25,6 +25,7 @@
 
 const dao = require('../dao.js');
 const Board = require('../model/Board');
+const Game = require('../model/Game');
 
 /**
  * Get all games in the esystem
@@ -34,10 +35,7 @@ const Board = require('../model/Board');
  */
 function getAllGames(_, res) {
 	//For this sprint, all users can see all games
-	return dao.getAllGames().then((data) => {
-		for (let i = 0; i < data.length; i++) {
-			data[i].Canonical = `/api/games/${data[i].ID}`;
-		}
+	return Game.getAllGames().then((data) => {
 		res.send(data);
 	}).catch((err) => {
 		//TODO: logging errors
@@ -57,7 +55,7 @@ function getGame(req, res) {
 		return Promise.resolve();
 	}
 
-	return dao.getGame(req.params.id).then((data) => {
+	return Game.getGame(req.params.id).then((data) => {
 		if (Array.isArray(data)) {
 			data = data[0]; //Only the first game
 		}
@@ -66,9 +64,7 @@ function getGame(req, res) {
 			res.status(404).end();
 			return;
 		}
-		data.Canonical = `/api/games/${data.ID}`;
-
-		res.send(data);
+		res.send(data.serialize());
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -83,12 +79,8 @@ function getGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function addGame(req, res) {
-	return dao.addGame({
-		Title: req.body.Name,
-		GameID: req.params.id,
-		Game: {}
-	}).then((data) => {
-		res.status(200).send(data).end();
+	return Game.addGame(req.body).then((index) => {
+		res.status(200).send({ id: index[0]}).end();
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -103,7 +95,7 @@ function addGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateGame(req, res) {
-	return dao.updateGame(req.params.id, {
+	return Game.updateGame(req.params.id, {
 		Title: req.body.Name,
 		GameID: req.params.id,
 		Game: {}

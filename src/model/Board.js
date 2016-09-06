@@ -15,6 +15,7 @@ const DB = require('./db');
 
 class Board {
 	constructor (rowData) {
+		
 		this.data = rowData;
 		if (rowData.BoardID) {
 			this.data.id = rowData.BoardID;
@@ -73,7 +74,6 @@ class Board {
 	}
 	
 	save() {
-		console.log(this.data);
 		return DB.knex('Boards').where('ID', this.ID).update(this.data);
 	}
 	
