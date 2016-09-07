@@ -59,6 +59,16 @@ class User {
 	static addUser(user) {
 		return DB.knex('Users').insert(user);
 	}
+	
+	/**
+	* Get all users in the forum.
+	*
+	* @returns {Promise} A Promise that is resolved with a list of vanilla boards
+	*/
+	static getAllUsers() {
+		return DB.knex('Users').select().map((row) => new User(row));
+	}
+	
 
 	/**
 	* Get a user

@@ -7,7 +7,8 @@ require('sinon-as-promised');
 
 
 const page = require(Path.resolve(__dirname, '../../../src/controllers/pageController.js'));
-const dao = require(Path.resolve(__dirname, '../../../src/dao.js'));
+const Board = require('../../../src/model/Board');
+const Game = require('../../../src/model/Game');
 
 describe('Page API controller', () => {
 	let sandbox;
@@ -27,11 +28,14 @@ describe('Page API controller', () => {
 		});
 		
 		it('should render the home template', () => {
-			sandbox.stub(dao, 'getAllBoards').resolves();
-			sandbox.stub(dao, 'getAllGames').resolves();
+			sandbox.stub(Board, 'getAllBoards').resolves();
+			sandbox.stub(Game, 'getAllGames').resolves();
 			
 			const fakeRes = {
-				render: sandbox.stub()
+				render: sandbox.stub(),
+				status: (num) => {
+					expect(num).to.equal(200);
+				}
 			};
 			
 			const fakeReq = {};
@@ -42,7 +46,10 @@ describe('Page API controller', () => {
 		
 		it('should render a list of boards', () => {
 			const fakeRes = {
-				render: sandbox.stub()
+				render: sandbox.stub(),
+				status: (num) => {
+					expect(num).to.equal(200);
+				}
 			};
 			
 			const boardList = [{
@@ -50,31 +57,36 @@ describe('Page API controller', () => {
 				Name: 'test board',
 				Adult: false,
 				Tags: [],
-				IC: null
+				IC: null,
+				Canonical: '/api/boards/1'
 			}, {
 				ID: '2',
 				Name: 'test board 2',
 				Adult: false,
 				Tags: [],
-				IC: null
+				IC: null,
+				Canonical: '/api/boards/2'
 			}];
 			
 			const fakeReq = {};
 			
-			sandbox.stub(dao, 'getAllBoards').resolves(boardList);
-			sandbox.stub(dao, 'getAllGames').resolves();
+			sandbox.stub(Board, 'getAllBoards').resolves(boardList.map((board) => new Board(board)));
+			sandbox.stub(Game, 'getAllGames').resolves();
 
 			return page.getHomePage(fakeReq, fakeRes).then(() => {
-				expect(dao.getAllBoards.called).to.be.equal(true);
+				expect(Board.getAllBoards.called).to.be.equal(true);
 				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
 				const data = fakeRes.render.args[0][1];
-				expect(data.boards).to.equal(boardList);
+				expect(data.boards).to.deep.equal(boardList);
 			});
 		});
 		
 		it('should render a list of games', () => {
 			const fakeRes = {
-				render: sandbox.stub()
+				render: sandbox.stub(),
+				status: (num) => {
+					expect(num).to.equal(200);
+				}
 			};
 			
 			const gameList = [{
@@ -82,25 +94,35 @@ describe('Page API controller', () => {
 				Name: 'test board',
 				Adult: false,
 				Tags: [],
-				IC: null
+				IC: null,
+				Canonical: '/api/games/1',
+				Game: {
+					ID: 1, 
+					gameDescription: ''
+				}
 			}, {
 				ID: '2',
 				Name: 'test board 2',
 				Adult: false,
 				Tags: [],
-				IC: null
+				IC: null,
+				Canonical: '/api/games/2',
+				Game: {
+					ID: 1, 
+					gameDescription: ''
+				}
 			}];
 			
 			const fakeReq = {};
 			
-			sandbox.stub(dao, 'getAllBoards').resolves();
-			sandbox.stub(dao, 'getAllGames').resolves(gameList);
+			sandbox.stub(Board, 'getAllBoards').resolves();
+			sandbox.stub(Game, 'getAllGames').resolves(gameList.map((game) => new Game(game)));
 
 			return page.getHomePage(fakeReq, fakeRes).then(() => {
-				expect(dao.getAllGames.called).to.be.equal(true);
+				expect(Game.getAllGames.called).to.be.equal(true);
 				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
 				const data = fakeRes.render.args[0][1];
-				expect(data.games).to.equal(gameList);
+				expect(data.games).to.deep.equal(gameList);
 			});
 		});
 	});

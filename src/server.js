@@ -16,7 +16,6 @@ const debug = require('debug')('server');
 
 
 //Model
-const DAO = require('./dao.js');
 const DB = require('./model/db');
 
 //Controllers

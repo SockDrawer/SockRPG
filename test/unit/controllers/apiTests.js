@@ -4,8 +4,16 @@ const Chai = require('chai');
 const assert = Chai.assert;
 const Sinon = require('sinon');
 require('sinon-as-promised');
-const api = require(Path.resolve(__dirname, '../../../src/controllers/apiController.js'));
-const dao = require(Path.resolve(__dirname, '../../../src/dao.js'));
+
+//controllers
+const userController = require(Path.resolve(__dirname, '../../../src/controllers/userController.js'));
+const boardController = require(Path.resolve(__dirname, '../../../src/controllers/boardController.js'));
+const gameController = require(Path.resolve(__dirname, '../../../src/controllers/boardController.js'));
+
+//models
+const Game = require('../../../src/model/Game');
+const Board = require('../../../src/model/Board');
+const User = require('../../../src/model/User');
 
 describe('Game API controller', () => {
 	let sandbox;
@@ -39,7 +47,7 @@ describe('Game API controller', () => {
 				IC: null
 			}];
 
-			sandbox.stub(dao, 'getAllGames').resolves(data);
+			sandbox.stub(Game, 'getAllGames').resolves(data);
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(200, code, 'Should return a 200 ok if anything');
@@ -53,7 +61,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllGames(undefined, mockResponse);
+			return gameController.getAllGames(undefined, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -62,7 +70,7 @@ describe('Game API controller', () => {
 				error: 'Error: oops i asploded'
 			};
 
-			sandbox.stub(dao, 'getAllGames').rejects('oops i asploded');
+			sandbox.stub(Game, 'getAllGames').rejects('oops i asploded');
 
 			const mockResponse = {
 				status: (code) => {
@@ -75,7 +83,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllGames(undefined, mockResponse);
+			return gameController.getAllGames(undefined, mockResponse);
 		});
 	});
 
@@ -95,7 +103,7 @@ describe('Game API controller', () => {
 				IC: null
 			}];
 
-			sandbox.stub(dao, 'getAllBoards').resolves(data);
+			sandbox.stub(Board, 'getAllBoards').resolves(data);
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(200, code, 'Should return a 200 ok if anything');
@@ -109,7 +117,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllBoards(undefined, mockResponse);
+			return boardController.getAllBoards(undefined, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -118,7 +126,7 @@ describe('Game API controller', () => {
 				error: 'Error: oops i asploded'
 			};
 
-			sandbox.stub(dao, 'getAllBoards').rejects('oops i asploded');
+			sandbox.stub(Board, 'getAllBoards').rejects('oops i asploded');
 
 			const mockResponse = {
 				status: (code) => {
@@ -132,7 +140,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getAllBoards(undefined, mockResponse);
+			return boardController.getAllBoards(undefined, mockResponse);
 		});
 	});
 
@@ -144,10 +152,14 @@ describe('Game API controller', () => {
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null
+				IC: null,
+				Game: {
+					ID: 2,
+					gameDescription: 'A cool game'
+				}
 			};
 
-			sandbox.stub(dao, 'getGame').resolves(data);
+			sandbox.stub(Game, 'getGame').resolves(new Game(data));
 
 			const mockRequest = {
 				params: {
@@ -160,13 +172,13 @@ describe('Game API controller', () => {
 					assert.equal(200, code, 'Should return a 200 ok if anything');
 					return mockResponse;
 				}, send: (response) => {
-					data.canonical = '/game/1';
+					data.Canonical = '/api/games/1';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
 			};
 
-			return api.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse);
 		});
 
 		it('should return only the first game if one exists', () => {
@@ -176,17 +188,25 @@ describe('Game API controller', () => {
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null
+				IC: null,
+				Game: {
+					ID: 2,
+					gameDescription: 'A cool game'
+				}
 			}, {
 				ID: '2',
-				Name: 'evil game',
-				Adult: true,
+				Name: 'test game 2',
+				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null
+				IC: null,
+				Game: {
+					ID: 2,
+					gameDescription: 'A wicked game'
+				}
 			}];
 
-			sandbox.stub(dao, 'getGame').resolves(data);
+			sandbox.stub(Game, 'getGame').resolves(data.map((game) => new Game(game)));
 
 			const mockRequest = {
 				params: {
@@ -200,17 +220,17 @@ describe('Game API controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].canonical = '/game/1';
+					data[0].Canonical = '/api/games/1';
 					assert.deepEqual(data[0], response);
 					return mockResponse;
 				}
 			};
 
-			return api.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse);
 		});
 
 		it('should return a 404 if no game exists', () => {
-			sandbox.stub(dao, 'getGame').resolves(undefined);
+			sandbox.stub(Game, 'getGame').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -230,11 +250,11 @@ describe('Game API controller', () => {
 				end: () => {}
 			};
 
-			return api.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse);
 		});
 
 		it('should return a 501 if no ID passed in', () => {
-			sandbox.stub(dao, 'getGame').resolves(undefined);
+			sandbox.stub(Game, 'getGame').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -252,7 +272,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -261,7 +281,7 @@ describe('Game API controller', () => {
 				error: 'Error: oops i asploded'
 			};
 
-			sandbox.stub(dao, 'getGame').rejects('oops i asploded');
+			sandbox.stub(Game, 'getGame').rejects('oops i asploded');
 
 			const mockRequest = {
 				params: {
@@ -281,7 +301,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse);
 		});
 	});
 
@@ -296,7 +316,7 @@ describe('Game API controller', () => {
 				IC: null
 			};
 
-			sandbox.stub(dao, 'getBoard').resolves(data);
+			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
 
 			const mockRequest = {
 				params: {
@@ -310,13 +330,13 @@ describe('Game API controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					data.canonical = '/board/1';
+					data.Canonical = '/api/boards/1';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
 			};
 
-			return api.getBoard(mockRequest, mockResponse);
+			return boardController.getBoard(mockRequest, mockResponse);
 		});
 
 		it('should return only the first board board if one exists', () => {
@@ -325,18 +345,15 @@ describe('Game API controller', () => {
 				Name: 'test board',
 				Adult: false,
 				GameMasters: null,
-				Tags: [],
-				IC: null
+				Tags: []
 			}, {
 				ID: '2',
 				Name: 'evil board',
 				Adult: true,
 				GameMasters: null,
-				Tags: [],
-				IC: null
+				Tags: []
 			}];
-
-			sandbox.stub(dao, 'getBoard').resolves(data);
+			sandbox.stub(Board, 'getBoard').resolves(data.map((board) => new Board(board)));
 
 			const mockRequest = {
 				params: {
@@ -350,17 +367,17 @@ describe('Game API controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].canonical = '/board/1';
+					data[0].Canonical = '/api/boards/1';
 					assert.deepEqual(data[0], response);
 					return mockResponse;
 				}
 			};
 
-			return api.getBoard(mockRequest, mockResponse);
+			return boardController.getBoard(mockRequest, mockResponse);
 		});
 
 		it('should return a 404 if no board exists', () => {
-			sandbox.stub(dao, 'getBoard').resolves(undefined);
+			sandbox.stub(Board, 'getBoard').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -380,11 +397,11 @@ describe('Game API controller', () => {
 				end: () => {}
 			};
 
-			return api.getBoard(mockRequest, mockResponse);
+			return boardController.getBoard(mockRequest, mockResponse);
 		});
 
 		it('should return a 501 if no ID passed in', () => {
-			sandbox.stub(dao, 'getBoard').resolves(undefined);
+			sandbox.stub(Board, 'getBoard').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -402,7 +419,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getBoard(mockRequest, mockResponse);
+			return boardController.getBoard(mockRequest, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -411,7 +428,7 @@ describe('Game API controller', () => {
 				error: 'Error: oops i asploded'
 			};
 
-			sandbox.stub(dao, 'getBoard').rejects('oops i asploded');
+			sandbox.stub(Board, 'getBoard').rejects('oops i asploded');
 
 			const mockRequest = {
 				params: {
@@ -431,7 +448,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			return api.getBoard(mockRequest, mockResponse);
+			return boardController.getBoard(mockRequest, mockResponse);
 		});
 	});
 });
@@ -454,29 +471,27 @@ describe('User API Controller', () => {
 		it('should return a list of users', () => {
 			const data = [{
 				ID: '1',
-				Name: 'user1',
-				Admin: true
+				Username: 'user1'
 			}, {
 				ID: '2',
-				Name: 'user2',
-				Admin: false
+				Username: 'user2'
 			}];
 
-			sandbox.stub(dao, 'getAllUsers').resolves(data);
+			sandbox.stub(User, 'getAllUsers').resolves(data.map((user) => new User(user)));
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(200, code, 'Should return a 200 ok if anything');
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].canonical = 'api/users/1';
-					data[1].canonical = 'api/users/2';
+					data[0].Canonical = '/api/users/1';
+					data[1].Canonical = '/api/users/2';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
 			};
 
-			return api.getAllUsers(undefined, mockResponse);
+			return userController.getAllUsers(undefined, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -485,7 +500,7 @@ describe('User API Controller', () => {
 				error: 'Error: oops i asploded'
 			};
 
-			sandbox.stub(dao, 'getAllUsers').rejects('oops i asploded');
+			sandbox.stub(User, 'getAllUsers').rejects('oops i asploded');
 
 			const mockResponse = {
 				status: (code) => {
@@ -498,7 +513,7 @@ describe('User API Controller', () => {
 				}
 			};
 
-			return api.getAllUsers(undefined, mockResponse);
+			return userController.getAllUsers(undefined, mockResponse);
 		});
 	});
 
@@ -506,11 +521,10 @@ describe('User API Controller', () => {
 		it('should return a user if one exists by ID', () => {
 			const data = {
 				ID: '1',
-				Name: 'user1',
-				Admin: true
+				Username: 'user1'
 			};
 
-			sandbox.stub(dao, 'getUser').resolves(data);
+			sandbox.stub(User, 'getUser').resolves(new User(data));
 
 			const mockRequest = {
 				params: {
@@ -524,24 +538,23 @@ describe('User API Controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					assert.isTrue(dao.getUser.called, 'Should call the user search by id');
-					data.canonical = 'api/users/1';
+					assert.isTrue(User.getUser.called, 'Should call the user search by id');
+					data.Canonical = '/api/users/1';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
 			};
 
-			return api.getUser(mockRequest, mockResponse);
+			return userController.getUser(mockRequest, mockResponse);
 		});
 
 		it('should return a user if one exists by name', () => {
 			const data = {
 				ID: '1',
-				Name: 'user1',
-				Admin: true
+				Username: 'user1'
 			};
 
-			sandbox.stub(dao, 'getUserByName').resolves(data);
+			sandbox.stub(User, 'getUserByName').resolves(new User(data));
 
 			const mockRequest = {
 				params: {
@@ -555,28 +568,26 @@ describe('User API Controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					assert.isTrue(dao.getUserByName.called, 'Should call the user search by name');
-					data.canonical = 'api/users/1';
+					assert.isTrue(User.getUserByName.called, 'Should call the user search by name');
+					data.Canonical = '/api/users/1';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
 			};
 
-			return api.getUser(mockRequest, mockResponse);
+			return userController.getUser(mockRequest, mockResponse);
 		});
 
 		it('should return only the first user if more than one exists', () => {
 			const data = [{
 				ID: '1',
-				Name: 'user1',
-				Admin: true
+				Username: 'user1'
 			}, {
 				ID: '2',
-				Name: 'user2',
-				Admin: false
+				Username: 'user2'
 			}];
 
-			sandbox.stub(dao, 'getUser').resolves(data);
+			sandbox.stub(User, 'getUser').resolves(data.map((user) => new User(user)));
 
 			const mockRequest = {
 				params: {
@@ -590,17 +601,17 @@ describe('User API Controller', () => {
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].canonical = '/users/1';
+					data[0].Canonical = '/api/users/1';
 					assert.deepEqual(data[0], response);
 					return mockResponse;
 				}
 			};
 
-			return api.getUser(mockRequest, mockResponse);
+			return userController.getUser(mockRequest, mockResponse);
 		});
 
 		it('should return a 404 if no such user exists', () => {
-			sandbox.stub(dao, 'getUser').resolves(undefined);
+			sandbox.stub(User, 'getUser').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -619,11 +630,11 @@ describe('User API Controller', () => {
 				}
 			};
 
-			return api.getUser(mockRequest, mockResponse);
+			return userController.getUser(mockRequest, mockResponse);
 		});
 
 		it('should return a 501 if no ID passed in', () => {
-			sandbox.stub(dao, 'getUser').resolves(undefined);
+			sandbox.stub(User, 'getUser').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -641,7 +652,7 @@ describe('User API Controller', () => {
 				}
 			};
 
-			return api.getUser(mockRequest, mockResponse);
+			return userController.getUser(mockRequest, mockResponse);
 		});
 
 		it('should respond with an error when the DB errors', () => {
@@ -650,7 +661,7 @@ describe('User API Controller', () => {
 				error: 'Error: oops i asploded'
 			};
 
-			sandbox.stub(dao, 'getUser').rejects('oops i asploded');
+			sandbox.stub(User, 'getUser').rejects('oops i asploded');
 
 			const mockRequest = {
 				params: {
@@ -670,7 +681,7 @@ describe('User API Controller', () => {
 				}
 			};
 
-			return api.getUser(mockRequest, mockResponse);
+			return userController.getUser(mockRequest, mockResponse);
 		});
 	});
 });

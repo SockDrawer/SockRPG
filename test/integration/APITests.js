@@ -3,7 +3,6 @@ const Chai = require('chai');
 const assert = Chai.assert;
 const request = require('request-promise');
 const Sinon = require('sinon');
-const DAO = require('../../src/dao.js');
 const User = require('../../src/model/User');
 const Board = require('../../src/model/Board');
 require('sinon-as-promised');

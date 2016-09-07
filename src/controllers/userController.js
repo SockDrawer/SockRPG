@@ -23,7 +23,6 @@
   @function status - Set the status code for the response
 */
 
-const dao = require('../dao.js');
 const User = require('../model/User');
 
 /**
@@ -33,7 +32,7 @@ const User = require('../model/User');
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function getAllUsers(_, res) {
-	return dao.getAllUsers().then((data) => {
+	return User.getAllUsers().then((data) => {
 		res.send(data.map((user) => user.serialize()));
 	}).catch((err) => {
 		//TODO: logging errors
