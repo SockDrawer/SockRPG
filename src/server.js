@@ -23,6 +23,7 @@ const DB = require('./model/db');
 const cStatic = require('./controllers/staticController.js');
 const cBoard = require('./controllers/boardController.js');
 const cPage = require('./controllers/pageController.js');
+const cUser = require('./controllers/userController.js');
 
 //Views
 const hbs = exphbs.create({
@@ -30,6 +31,8 @@ const hbs = exphbs.create({
 	layoutsDir: 'src/views/layouts',
 	partialsDir: 'src/views/partials'
 });
+
+let server;
 
 /**
  * Initialise the DAO
@@ -116,6 +119,20 @@ function setupExpress() {
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cBoard.updateBoard);
+				
+			app.route('/api/users')
+				.get(cUser.getAllUsers)
+				.post(jsonParser, cUser.addUser)
+				.patch(return405)
+				.delete(return405)
+				.put(return405);
+			
+			app.route('/api/users/:id')
+				.get(cUser.getUser)
+				.post(return405)
+				.patch(return405)
+				.delete(return405)
+				.put(jsonParser, cUser.updateUser);
 			
 			resolve();
 		});
@@ -127,12 +144,18 @@ function setupExpress() {
  */
 function setup() {
 	return setupDao().then(() => setupExpress()).then(() => {
-		const server = app.listen(8080);
+		server = app.listen(8080);
 		console.log('Server now listening on port 8080');
 	});
 }
 
-
+/**
+ * Stop the server
+ */
+function stop() {
+	server.close();
+	console.log('Server stopped');
+}
 /**
  * Returns a vanilla 405 Method Not Allowed error
  * @param {Object} _ Ignored
@@ -143,7 +166,8 @@ function return405(_, res) {
 }
 
 module.exports = {
-	setup: setup
+	setup: setup,
+	stop: stop
 };
 
 if (require.main === module) {

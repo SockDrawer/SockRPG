@@ -14,8 +14,39 @@ const DB = require('./db');
 
 class User {
 	constructor(row) {
-		this.ID = row.ID;
-		this.Username = row.Username;
+		this.data = {};
+		this.data.ID = row.ID;
+		this.data.Username = row.Username;
+		
+		//Canonical link
+		this.Canonical = `/api/users/${this.data.ID}`;
+	}
+	
+	get ID() {
+		return this.data.ID;
+	}
+	
+	set ID(id) {
+		this.data.ID = Number(id);
+		this.data.Canonical = `/api/boards/${this.data.ID}`;
+	}
+	
+	get Username() {
+		return this.data.Username;
+	}
+	
+	set Username(us) {
+		this.data.Username = us;
+	}
+	
+	serialize() {
+		const serial = JSON.parse(JSON.stringify(this.data));
+		serial.Canonical = this.Canonical;
+		return serial;
+	}
+	
+	save() {
+		return DB.knex('Users').where('ID', this.ID).update(this.data);
 	}
 	
 	/**
@@ -29,6 +60,39 @@ class User {
 		return DB.knex('Users').insert(user);
 	}
 
+	/**
+	* Get a user
+	*
+	* @param {Number} id The ID of the user requested
+	*
+	* @returns {Promise} A Promise that is resolved with the board requested
+	*/
+	static getUser(id) {
+		return DB.knex('Users').where('ID', id).select('ID', 'Username').then((rows) => {
+			if (!rows || rows.length <= 0) {
+				return null;
+			}
+			
+			return new User(rows[0]);
+		});
+	}
+	
+	/**
+	* Get a user by name
+	*
+	* @param {String} name The username of the user requested
+	*
+	* @returns {Promise} A Promise that is resolved with the board requested
+	*/
+	static getUserByName(name) {
+		return DB.knex('Users').where('Username', name).select('ID', 'Username').then((rows) => {
+			if (!rows || rows.length <= 0) {
+				return null;
+			}
+			
+			return new User(rows[0]);
+		});
+	}
 }
 
 module.exports = User;
