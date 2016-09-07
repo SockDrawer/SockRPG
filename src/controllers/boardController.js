@@ -1,9 +1,9 @@
 'use strict';
 /**
- * The controller for the API
+ * The controller for the board API
  *
  *
- * @module apiController
+ * @module boardController
  * @license MIT
  * @author yamikuronue
  */
@@ -23,7 +23,8 @@
   @function status - Set the status code for the response
 */
 
-const dao = require('../dao.js');
+const Board = require('../model/Board');
+const Game = require('../model/Game');
 
 /**
  * Get all games in the esystem
@@ -33,10 +34,7 @@ const dao = require('../dao.js');
  */
 function getAllGames(_, res) {
 	//For this sprint, all users can see all games
-	return dao.getAllGames().then((data) => {
-		for (let i = 0; i < data.length; i++) {
-			data[i].Canonical = `/api/games/${data[i].ID}`;
-		}
+	return Game.getAllGames().then((data) => {
 		res.send(data);
 	}).catch((err) => {
 		//TODO: logging errors
@@ -56,7 +54,7 @@ function getGame(req, res) {
 		return Promise.resolve();
 	}
 
-	return dao.getGame(req.params.id).then((data) => {
+	return Game.getGame(req.params.id).then((data) => {
 		if (Array.isArray(data)) {
 			data = data[0]; //Only the first game
 		}
@@ -65,9 +63,7 @@ function getGame(req, res) {
 			res.status(404).end();
 			return;
 		}
-		data.Canonical = `/api/games/${data.ID}`;
-
-		res.send(data);
+		res.send(data.serialize());
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -82,12 +78,8 @@ function getGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function addGame(req, res) {
-	return dao.addGame({
-		Title: req.body.Name,
-		GameID: req.params.id,
-		Game: {}
-	}).then((data) => {
-		res.status(200).send(data).end();
+	return Game.addGame(req.body).then((index) => {
+		res.status(200).send({id: index[0]}).end();
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -102,11 +94,16 @@ function addGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateGame(req, res) {
-	return dao.updateGame(req.params.id, {
-		Title: req.body.Name,
-		GameID: req.params.id,
-		Game: {}
-	}).then((data) => {
+	return Game.getGame(req.params.id).then((board) => {
+		board.Name = req.body.Name || board.Name;
+		board.Owner = req.body.Owner || board.Owner;
+		board.description = req.body.Game.gameDescription || board.description;
+		
+		if ('Adult' in req.body) {
+			board.Adult = req.body.Adult;
+		}
+		return board.save();
+	}).then(() => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
@@ -127,7 +124,7 @@ function updateGame(req, res) {
  */
 function getAllBoards(_, res) {
 	//For this sprint, all users can see all games
-	return dao.getAllBoards().then((data) => {
+	return Board.getAllBoards().then((data) => {
 		for (let i = 0; i < data.length; i++) {
 			data[i].Canonical = `/api/boards/${data[i].ID}`;
 		}
@@ -151,19 +148,16 @@ function getBoard(req, res) {
 		return Promise.resolve();
 	}
 
-	return dao.getBoard(req.params.id).then((data) => {
+	return Board.getBoard(req.params.id).then((data) => {
 		if (Array.isArray(data)) {
 			data = data[0]; //Only the first board
 		}
-		
 		if (!data) {
 			res.status(404).end();
 			return;
 		}
-		
-		data.Canonical = `/api/boards/${data.ID}`;
 
-		res.send(data);
+		res.send(data.serialize());
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -178,8 +172,10 @@ function getBoard(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function addBoard(req, res) {
-	return dao.addBoard(req.body).then((data) => {
-		res.status(200).send(data).end();
+	return Board.addBoard(req.body).then((index) => {
+		res.status(200).send({
+			id: index[0]
+		}).end();
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -194,7 +190,15 @@ function addBoard(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateBoard(req, res) {
-	return dao.updateBoard(req.params.id, req.body).then((data) => {
+	
+	return Board.getBoard(req.params.id).then((board) => {
+		board.Name = req.body.Name || board.Name;
+		board.Owner = req.body.Owner || board.Owner;
+		if ('Adult' in req.body) {
+			board.Adult = req.body.Adult;
+		}
+		return board.save();
+	}).then(() => {
 		res.status(200).end();
 	}).catch((err) => {
 		//TODO: logging errors
@@ -205,64 +209,6 @@ function updateBoard(req, res) {
 			res.status(500).send({error: err.toString()});
 		}
 	});
-}
-
-/**
- * Get all users in the system
- * @param {Request} _ Express' request object. Expects an ID under the params key
- * @param {Response} res Express' response object.
- * @returns {Promise} A promise that will resolve when the response has been sent.
- */
-function getAllUsers(_, res) {
-	return dao.getAllUsers().then((data) => {
-		for (let i = 0; i < data.length; i++) {
-			data[i].canonical = `/api/users/${data[i].id}`;
-		}
-		res.send(data);
-	}).catch((err) => {
-		//TODO: logging errors
-		res.status(500).send({error: err.toString()});
-	});
-}
-
-/**
- * Get a single user.
- * @param {Request} req Express' request object. Expects an ID under the params key
- * @param {Response} res Express' response object.
- * @returns {Promise} A promise that will resolve when the response has been sent.
- */
-function getUser(req, res) {
-	const handleData = (data) => {
-		if (Array.isArray(data)) {
-			data = data[0]; //Only the first game
-		}
-
-		if (!data) {
-			res.status(404);
-			return;
-		}
-		data.canonical = `/api/users/${data.id}`;
-
-		res.send(data);
-	};
-
-	const handleError = (err) => {
-		//TODO: logging errors
-		res.status(500).send({error: err.toString()});
-	};
-
-	//Check if the ID is a number
-	if (Number.parseInt(req.params.id, 10) == req.params.id) { //eslint-disable-line eqeqeq
-		return dao.getUser(req.params.id).then(handleData).catch(handleError);
-
-	//Otherwise it's a name
-	} else if (req.params.id) {
-		return dao.getUserByName(req.params.id).then(handleData).catch(handleError);
-	}
-
-	//Fallthrough if we did neither:
-	res.status(501).send({error: 'Missing ID'});
-	return Promise.resolve();
 }
 
 const controller = {
@@ -280,11 +226,7 @@ const controller = {
 
 	addBoard: addBoard,
 
-	updateBoard: updateBoard,
-
-	getAllUsers: getAllUsers,
-
-	getUser: getUser
+	updateBoard: updateBoard
 
 };
 
