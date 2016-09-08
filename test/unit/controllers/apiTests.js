@@ -38,14 +38,14 @@ describe('Game API controller', () => {
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null,
+				IC: null
 			}, {
 				ID: '2',
 				Name: 'test game 2',
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null,
+				IC: null
 			}];
 
 			sandbox.stub(Game, 'getAllGames').resolves(data);
@@ -95,13 +95,13 @@ describe('Game API controller', () => {
 				Name: 'test board',
 				Adult: false,
 				Tags: [],
-				IC: null,
+				IC: null
 			}, {
 				ID: '2',
 				Name: 'test board 2',
 				Adult: false,
 				Tags: [],
-				IC: null,
+				IC: null
 			}];
 
 			sandbox.stub(Board, 'getAllBoards').resolves(data);
@@ -199,7 +199,7 @@ describe('Game API controller', () => {
 			};
 
 			sandbox.stub(Game, 'getGame').resolves(new Game(data));
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves([1,2,3]);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([1, 2, 3]);
 
 			const mockRequest = {
 				params: {
@@ -213,7 +213,7 @@ describe('Game API controller', () => {
 					return mockResponse;
 				}, send: (response) => {
 					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.deepEqual(response.body.threadList, [1,2,3]);
+					assert.deepEqual(response.body.threadList, [1, 2, 3]);
 					return mockResponse;
 				}
 			};
@@ -232,7 +232,7 @@ describe('Game API controller', () => {
 				Game: {
 					ID: 2,
 					gameDescription: 'A cool game'
-				},
+				}
 			}, {
 				ID: '2',
 				Name: 'test game 2',
@@ -243,7 +243,7 @@ describe('Game API controller', () => {
 				Game: {
 					ID: 2,
 					gameDescription: 'A wicked game'
-				},
+				}
 			}];
 
 			sandbox.stub(Game, 'getGame').resolves(data.map((game) => new Game(game)));
@@ -354,7 +354,7 @@ describe('Game API controller', () => {
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null,
+				IC: null
 			};
 
 			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
@@ -389,11 +389,11 @@ describe('Game API controller', () => {
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null,
+				IC: null
 			};
 
 			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves([1,2,3]);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([1, 2, 3]);
 
 			const mockRequest = {
 				params: {
@@ -408,7 +408,7 @@ describe('Game API controller', () => {
 				},
 				send: (response) => {
 					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.deepEqual(response.body.threadList, [1,2,3]);
+					assert.deepEqual(response.body.threadList, [1, 2, 3]);
 					return mockResponse;
 				}
 			};
@@ -422,13 +422,13 @@ describe('Game API controller', () => {
 				Name: 'test board',
 				Adult: false,
 				GameMasters: null,
-				Tags: [],
+				Tags: []
 			}, {
 				ID: '2',
 				Name: 'evil board',
 				Adult: true,
 				GameMasters: null,
-				Tags: [],
+				Tags: []
 			}];
 			sandbox.stub(Board, 'getBoard').resolves(data.map((board) => new Board(board)));
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves();

@@ -64,7 +64,7 @@ function getGame(req, res) {
 			return;
 		}
 		
-		let output = data.serialize();
+		const output = data.serialize();
 		
 		data.getThreads().then((threadIDs) => {
 			output.threadList = threadIDs;
@@ -163,7 +163,7 @@ function getBoard(req, res) {
 			return;
 		}
 
-		let output = data.serialize();
+		const output = data.serialize();
 		
 		data.getThreads().then((threadIDs) => {
 			output.threadList = threadIDs;
