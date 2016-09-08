@@ -38,7 +38,6 @@ describe('Game API controller', () => {
 				GameMasters: null,
 				Tags: [],
 				IC: null,
-				Threads: sandbox.stub().resolves()
 			}, {
 				ID: '2',
 				Name: 'test game 2',
@@ -46,7 +45,6 @@ describe('Game API controller', () => {
 				GameMasters: null,
 				Tags: [],
 				IC: null,
-				Threads: sandbox.stub().resolves()
 			}];
 
 			sandbox.stub(Game, 'getAllGames').resolves(data);
@@ -97,14 +95,12 @@ describe('Game API controller', () => {
 				Adult: false,
 				Tags: [],
 				IC: null,
-				Threads: sandbox.stub().resolves()
 			}, {
 				ID: '2',
 				Name: 'test board 2',
 				Adult: false,
 				Tags: [],
 				IC: null,
-				Threads: sandbox.stub().resolves()
 			}];
 
 			sandbox.stub(Board, 'getAllBoards').resolves(data);
@@ -160,8 +156,7 @@ describe('Game API controller', () => {
 				Game: {
 					ID: 2,
 					gameDescription: 'A cool game'
-				},
-				Threads: sandbox.stub().resolves()
+				}
 			};
 
 			sandbox.stub(Game, 'getGame').resolves(new Game(data));
@@ -198,7 +193,6 @@ describe('Game API controller', () => {
 					ID: 2,
 					gameDescription: 'A cool game'
 				},
-				Threads: sandbox.stub().resolves()
 			}, {
 				ID: '2',
 				Name: 'test game 2',
@@ -210,7 +204,6 @@ describe('Game API controller', () => {
 					ID: 2,
 					gameDescription: 'A wicked game'
 				},
-				Threads: sandbox.stub().resolves()
 			}];
 
 			sandbox.stub(Game, 'getGame').resolves(data.map((game) => new Game(game)));
@@ -321,7 +314,6 @@ describe('Game API controller', () => {
 				GameMasters: null,
 				Tags: [],
 				IC: null,
-				Threads: sandbox.stub().resolves()
 			};
 
 			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
@@ -354,14 +346,12 @@ describe('Game API controller', () => {
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				Threads: sandbox.stub().resolves()
 			}, {
 				ID: '2',
 				Name: 'evil board',
 				Adult: true,
 				GameMasters: null,
 				Tags: [],
-				Threads: sandbox.stub().resolves()
 			}];
 			sandbox.stub(Board, 'getBoard').resolves(data.map((board) => new Board(board)));
 
