@@ -1,6 +1,6 @@
 'use strict';
 
-const knex = require('./db').knex;
+const Threads = require('./Thread');
 const DB = require('./db');
 
 /**
@@ -62,6 +62,10 @@ class Board {
 	
 	set Adult(adult) {
 		this.data.Adult = Boolean(adult);
+	}
+	
+	getThreads() {
+		return Threads.getThreadsInBoard(this.ID);
 	}
 	
 	serialize() {

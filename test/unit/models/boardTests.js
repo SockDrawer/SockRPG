@@ -84,4 +84,32 @@ describe('Board model', () => {
 			}).should.be.rejectedWith(Error);
 		});
 	});
+	
+	describe('with threads', () => {
+		let board;
+		const Thread = require('../../../src/model/Thread.js');
+		
+		beforeEach(() => {
+			return Board.addBoard({
+				Owner: userID,
+				Name: 'Board1'
+			}).then((ids) => Board.getBoard(ids[0]))
+			.then((oot) => {
+				board = oot;
+			});
+		});
+		
+		it('Should return an array of threads', () => {
+			return board.getThreads().should.eventually.be.an('Array');
+		});
+		
+		it('Should start with no threads', () => {
+			return board.getThreads().should.eventually.be.empty;
+		});
+		
+		it('Should return threads that exist', () => {
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ ID: 1, Title: 'A Thread'}]);
+			return board.getThreads().should.eventually.have.length(1);
+		});
+	})
 });

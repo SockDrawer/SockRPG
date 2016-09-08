@@ -1,4 +1,5 @@
 'use strict';
+const DB = require('./db');
 
 /**
  * The Game table.
@@ -14,6 +15,7 @@
 class Thread {
 	constructor (rowData) {
 		this.data = rowData;
+		this.Canonical = `/api/Thread/${this.ID}`;
 	}
 	
 	get ID() {
@@ -26,6 +28,55 @@ class Thread {
 	
 	set Title(newTitle) {
 		this.data.Title = newTitle;
+	}
+	
+	serialize() {
+		const serial = JSON.parse(JSON.stringify(this.data));
+		serial.Canonical = this.Canonical;
+		return serial;
+	}
+	
+	save() {
+		return DB.knex('Threads').where('ID', this.ID).update(this.data);
+	}
+	
+	
+	static addThread(thread) {
+		if (!thread instanceof Thread) {
+			thread = new Thread(thread);
+		}
+		
+		return new Promise((resolve, reject) => {
+			if (!thread.Title) {
+				reject(new Error('A thread has no title.'));
+			}
+			resolve();
+		})
+		.then(() => {
+			return DB.knex('Threads').insert(thread);
+		});
+	}
+	
+	static getThread(id) {
+		return DB.knex('Threads')
+		.leftJoin('Boards', 'Threads.Board', 'Boards.ID')
+		.where('Threads.ID', id).select('Boards.Name', 'Title', 'Threads.ID')
+		.then((rows) => {
+			if (!rows || rows.length <= 0) {
+				return null;
+			}
+	
+			return new Thread(rows[0]);
+		});
+	}
+	
+	static getThreadsInBoard(boardID) {
+		return DB.knex('Threads')
+		.leftJoin('Boards', 'Threads.Board', 'Boards.ID')
+		.where('Boards.ID', boardID).select('Boards.Name', 'Title', 'Threads.ID')
+		.then((rows) => {
+			return rows.map((row) => new Thread(row));
+		});
 	}
 }
 
