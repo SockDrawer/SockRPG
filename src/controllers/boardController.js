@@ -63,7 +63,13 @@ function getGame(req, res) {
 			res.status(404).end();
 			return;
 		}
-		res.send(data.serialize());
+		
+		let output = data.serialize();
+		
+		data.getThreads().then((threadIDs) => {
+			output.threadList = threadIDs;
+			res.send(output);
+		});
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
@@ -157,7 +163,12 @@ function getBoard(req, res) {
 			return;
 		}
 
-		res.send(data.serialize());
+		let output = data.serialize();
+		
+		data.getThreads().then((threadIDs) => {
+			output.threadList = threadIDs;
+			res.send(output);
+		});
 	}).catch((err) => {
 		//TODO: logging errors
 		console.log(err);
