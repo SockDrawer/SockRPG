@@ -34,7 +34,7 @@
 		"func-style": [2, "declaration", { "allowArrowFunctions": true }],
 		"guard-for-in": 2,
 		"handle-callback-err": 2,
-		"id-length": [2, {
+		"id-length": [1, {
 			"min": 2,
 			"max": 15,
 			"properties": "always",

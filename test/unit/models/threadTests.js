@@ -30,7 +30,7 @@ describe('Thread model', () => {
 			useNullAsDefault: true
 		}).then(() => 
 			Board.addBoard({
-				Owner: userID,
+				Owner: 1,
 				Name: 'Board1'
 			})
 		).then((ids) => {
