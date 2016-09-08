@@ -65,7 +65,7 @@ class Board {
 	}
 	
 	getThreads() {
-		return Threads.getThreadsInBoard(this.ID);
+		return Threads.getThreadsInBoard(this.ID).then((threads) => threads.map((thread) => thread.ID));
 	}
 	
 	serialize() {

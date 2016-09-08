@@ -111,5 +111,10 @@ describe('Board model', () => {
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ID: 1, Title: 'A Thread'}]);
 			return board.getThreads().should.eventually.have.length(1);
 		});
+		
+		it('Should return only the thread IDs', () => {
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ID: 1, Title: 'A Thread'}]);
+			return board.getThreads().should.eventually.deep.equal([1]);
+		});
 	});
 });
