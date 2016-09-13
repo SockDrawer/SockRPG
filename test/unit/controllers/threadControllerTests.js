@@ -16,7 +16,7 @@ const Thread = require('../../../src/model/Thread');
 describe('Thread API Controller', () => {
 	let sandbox, mockRequest, mockResponse;
 	
-	let mockBoard = {
+	const mockBoard = {
 		ID: 12, 
 		Name: 'a board'
 	};
@@ -38,16 +38,16 @@ describe('Thread API Controller', () => {
 	});
 
 
-	describe('/board/{ID}/threads', () => {
+	describe('GET /board/{ID}/threads', () => {
 
-		let mockRequest = {
-				params: {
-					id: 1
-				}
-			};
+		mockRequest = {
+			params: {
+				id: 1
+			}
+		};
 		
 		it('Should return 404 if no such board', () => {
-		    sandbox.stub(Board, 'getBoard').resolves(null);
+			sandbox.stub(Board, 'getBoard').resolves(null);
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => mockResponse.status.should.have.been.calledWith(404));
 		});
 		
@@ -55,24 +55,48 @@ describe('Thread API Controller', () => {
 			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([]);
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => {
-			    Thread.getThreadsInBoard.should.have.been.called;
-			    mockResponse.status.should.have.been.calledWith(200);
-			    mockResponse.send.should.have.been.calledWith('[]');
+				Thread.getThreadsInBoard.should.have.been.called;
+				mockResponse.status.should.have.been.calledWith(200);
+				mockResponse.send.should.have.been.calledWith('[]');
 			});
 		});
 		
 		it('Should return a list of threads if there are any', () => {
-		    const threadList  = [new Thread({ID: 1, Title: 'banana'})];
-		    const expected = '[{"ID":1,"Title":"banana","Canonical":"/api/Thread/1"}]';
+			const threadList = [new Thread({ID: 1, Title: 'banana'})];
+			const expected = '[{"ID":1,"Title":"banana","Canonical":"/api/Thread/1"}]';
 			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves(threadList);
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => {
-			    Thread.getThreadsInBoard.should.have.been.called;
-			    mockResponse.status.should.have.been.calledWith(200);
-			    mockResponse.send.should.have.been.called;
-			    mockResponse.send.firstCall.args[0].should.equal(expected);
+				Thread.getThreadsInBoard.should.have.been.called;
+				mockResponse.status.should.have.been.calledWith(200);
+				mockResponse.send.should.have.been.called;
+				mockResponse.send.firstCall.args[0].should.equal(expected);
 			});
 		});
 	});
-
+	
+	describe('GET /thread/{ID}', () => {
+		mockRequest = {
+			params: {
+				id: 1
+			}
+		};
+		
+		it('Should return 404 if no such thread', () => {
+			sandbox.stub(Thread, 'getThread').resolves(null);
+			return threadController.getThread(mockRequest, mockResponse).then(() => mockResponse.status.should.have.been.calledWith(404));
+		});
+		
+		it('Should return a thread if one exists', () => {
+			const data = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1'};
+			sandbox.stub(Thread, 'getThread').resolves(new Thread(data));
+			const expected = JSON.stringify(data);
+			
+			return threadController.getThread(mockRequest, mockResponse).then(() => {
+				mockResponse.status.should.have.been.calledWith(200);
+				mockResponse.send.should.have.been.called;
+				mockResponse.send.firstCall.args[0].should.equal(expected);
+			});
+		});
+	});
 });
