@@ -416,7 +416,7 @@ describe('Game API controller', () => {
 			return boardController.getBoard(mockRequest, mockResponse);
 		});
 
-		it('should return only the first board board if one exists', () => {
+		it('should return only the first board if one exists', () => {
 			const data = [{
 				ID: '1',
 				Name: 'test board',
