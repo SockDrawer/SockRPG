@@ -290,7 +290,7 @@ context('API server', function() {
 		let boardID; 
 		
 		before(() => {
-			boardID = Math.floor(Math.random() * 100) + 1;
+			boardID = Math.floor(Math.random() * 50) + 50;
 			return User.addUser({
 				Username: 'testUser2345'
 			})
