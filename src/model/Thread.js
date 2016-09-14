@@ -14,8 +14,11 @@ const DB = require('./db');
 
 class Thread {
 	constructor (rowData) {
-		this.data = rowData;
+		this.data = {};
+		this.data.ID = rowData.ID;
+		this.data.Title = rowData.Title;
 		this.Canonical = `/api/Thread/${this.ID}`;
+		this.boardName = rowData.Name;
 	}
 	
 	get ID() {

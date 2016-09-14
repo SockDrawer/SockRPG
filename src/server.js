@@ -21,6 +21,7 @@ const DB = require('./model/db');
 //Controllers
 const cStatic = require('./controllers/staticController.js');
 const cBoard = require('./controllers/boardController.js');
+const cThread = require('./controllers/threadController.js');
 const cPage = require('./controllers/pageController.js');
 const cUser = require('./controllers/userController.js');
 
@@ -119,6 +120,13 @@ function setupExpress() {
 				.delete(return405)
 				.put(jsonParser, cBoard.updateBoard);
 				
+			app.route('/api/boards/:id/threads')
+				.get(cThread.getThreadsForBoard)
+				.post(jsonParser, cThread.addThreadToBoard)
+				.patch(return405)
+				.delete(return405)
+				.put(return405);
+				
 			app.route('/api/users')
 				.get(cUser.getAllUsers)
 				.post(jsonParser, cUser.addUser)
@@ -133,6 +141,13 @@ function setupExpress() {
 				.delete(return405)
 				.put(jsonParser, cUser.updateUser);
 			
+			app.route('/api/threads/:id')
+				.get(cThread.getThread)
+				.post(return405)
+				.patch(return405)
+				.delete(return405)
+				.put(return405);
+				
 			resolve();
 		});
 }

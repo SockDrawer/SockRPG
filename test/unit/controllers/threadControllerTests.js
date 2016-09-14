@@ -75,6 +75,35 @@ describe('Thread API Controller', () => {
 		});
 	});
 	
+	describe('POST /board/{ID}/threads', () => {
+
+		before(() => {
+			mockRequest = {
+				params: {
+					id: 3
+				},
+				body: {
+					Title: 'A thread'
+				}
+			};
+		});
+		
+		it('Should return 404 if no such board', () => {
+			sandbox.stub(Board, 'getBoard').resolves(null);
+			return threadController.addThreadToBoard(mockRequest, mockResponse).then(() => mockResponse.status.should.have.been.calledWith(404));
+		});
+		
+		it('Should add a thread', () => {
+			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
+			sandbox.stub(Thread, 'addThread').resolves([1]);
+			return threadController.addThreadToBoard(mockRequest, mockResponse).then(() => {
+				mockResponse.status.should.have.been.calledWith(200);
+				mockResponse.send.should.have.been.called;
+				mockResponse.send.firstCall.args[0].should.equal('{"id":1}');
+			});
+		});
+	});
+	
 	describe('GET /thread/{ID}', () => {
 		mockRequest = {
 			params: {

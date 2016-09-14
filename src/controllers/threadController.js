@@ -43,7 +43,7 @@ function getThreadsForBoard(req, res) {
 			return Promise.resolve();
 		}
 
-		return Thread.getThreadsInBoard(data.id).then((threads) => {
+		return Thread.getThreadsInBoard(data.ID).then((threads) => {
 			res.status(200).send(JSON.stringify(threads.map((thread) => thread.serialize())));
 		});
 	});
@@ -67,9 +67,37 @@ function getThread(req, res) {
 	});
 }
 
+/**
+* Add a thread to the board
+* @param {Request} req Express' request object. Expects an ID under the params key
+* @param {Response} res Express' response object.
+* @returns {Promise} A Promise that is resolved when the thread is added
+*/
+function addThreadToBoard(req, res) {
+	return Board.getBoard(req.params.id).then((data) => {
+		if (!data) {
+			res.status(404).end();
+			return Promise.resolve();
+		}
+
+		const newThread = req.body || {};
+		newThread.Board = req.params.id;
+		
+		return Thread.addThread(newThread).then((ids) => {
+			const ret = {
+				id: ids[0]
+			};
+			
+			res.status(200).send(JSON.stringify(ret));
+			return Promise.resolve();
+		});
+	});
+}
+
 const controller = {
 	getThreadsForBoard: getThreadsForBoard,
-	getThread: getThread
+	getThread: getThread,
+	addThreadToBoard: addThreadToBoard
 };
 
 module.exports = controller;
