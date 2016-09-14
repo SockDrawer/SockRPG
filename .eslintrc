@@ -34,7 +34,7 @@
 		"func-style": [2, "declaration", { "allowArrowFunctions": true }],
 		"guard-for-in": 2,
 		"handle-callback-err": 2,
-		"id-length": [2, {
+		"id-length": [1, {
 			"min": 2,
 			"max": 15,
 			"properties": "always",
@@ -43,7 +43,7 @@
 		"indent": [2, "tab"],
 		"linebreak-style": [2, "unix"],
 		"max-depth": [2, 3],
-		"max-statements": [2, 15],
+		"max-statements": [1, 15],
 		"max-len": [1, 120],
 		"max-nested-callbacks": [1, 4],
 		"new-cap": [2, {
