@@ -35,6 +35,7 @@ const db = {
 				table.integer('GameID').references('Games.ID').nullable();
 				table.string('Name').notNullable();
 				table.boolean('Adult').defaultTo(false);
+				table.string('Description').notNullable().defaultTo('');
 			});
 		}).then(() => {
 			return knex.schema.createTableIfNotExists('ChildBoards', (table) => {
