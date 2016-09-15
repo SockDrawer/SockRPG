@@ -147,6 +147,7 @@ context('API server', function() {
 			const boardInput = {
 				ID: 1,
 				Name: 'surf board',
+				Description: 'surf is up dudes',
 				Adult: false,
 				Owner: userID
 			};
@@ -176,6 +177,7 @@ context('API server', function() {
 				assert.deepEqual(body.Canonical, '/api/boards/1', 'Board canonical link should be returned');
 				assert.equal(body.ID, 1, 'Board ID should match canonical link');
 				assert.equal(body.Name, boardInput.Name, 'Name should be returned okay');
+				assert.equal(body.Description, boardInput.Description, 'Description should be returned okay');
 				assert.equal(body.Adult, boardInput.Adult, 'Adult should be returned okay');
 				assert.equal(body.Owner, boardInput.Owner, 'Owner should be returned okay');
 				
@@ -207,6 +209,7 @@ context('API server', function() {
 				assert.deepEqual(body.Canonical, '/api/boards/1', 'Board canonical link should be returned');
 				assert.equal(body.ID, 1, 'Board ID should match canonical link');
 				assert.equal(body.Name, boardInput.Name, 'Name should be returned okay');
+				assert.equal(body.Description, boardInput.Description, 'Description should be returned okay');
 				assert.equal(body.Adult, boardInput.Adult, 'Adult should be returned okay');
 				assert.equal(body.Owner, boardInput.Owner, 'Owner should be returned okay');
 			});
