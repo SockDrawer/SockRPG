@@ -140,7 +140,7 @@ describe('Thread API Controller', () => {
 			new Post({
 				ID: 2,
 				Body: 'Absorbant and yellow and pourus is he!'
-			})]
+			})];
 			
 			sandbox.stub(Thread, 'getThread').resolves(new Thread(threadData));
 			sandbox.stub(Post, 'getPostsInThread').resolves(postList);
