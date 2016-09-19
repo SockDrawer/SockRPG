@@ -12,6 +12,7 @@ const threadController = require('../../../src/controllers/threadController.js')
 const Game = require('../../../src/model/Game');
 const Board = require('../../../src/model/Board');
 const Thread = require('../../../src/model/Thread');
+const Post = require('../../../src/model/Post');
 
 describe('Thread API Controller', () => {
 	let sandbox, mockRequest, mockResponse;
@@ -118,13 +119,39 @@ describe('Thread API Controller', () => {
 		
 		it('Should return a thread if one exists', () => {
 			const data = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1'};
+			const expected = JSON.stringify({ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1', posts: []});
+
 			sandbox.stub(Thread, 'getThread').resolves(new Thread(data));
-			const expected = JSON.stringify(data);
+			sandbox.stub(Post, 'getPostsInThread').resolves();
 			
 			return threadController.getThread(mockRequest, mockResponse).then(() => {
 				mockResponse.status.should.have.been.calledWith(200);
 				mockResponse.send.should.have.been.called;
 				mockResponse.send.firstCall.args[0].should.equal(expected);
+			});
+		});
+		
+		it('Should return posts in a thread', () => {
+			const threadData = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1'};
+			const postList = [new Post({
+				ID: 1, 
+				Body: 'Who lives in a pineapple under the sea?'
+			}),
+			new Post({
+				ID: 2,
+				Body: 'Absorbant and yellow and pourus is he!'
+			})]
+			
+			sandbox.stub(Thread, 'getThread').resolves(new Thread(threadData));
+			sandbox.stub(Post, 'getPostsInThread').resolves(postList);
+
+			
+			
+			return threadController.getThread(mockRequest, mockResponse).then(() => {
+				Post.getPostsInThread.should.have.been.called;
+
+				mockResponse.status.should.have.been.calledWith(200);
+				mockResponse.send.should.have.been.called;
 			});
 		});
 	});
