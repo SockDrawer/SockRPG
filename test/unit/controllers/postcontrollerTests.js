@@ -9,8 +9,6 @@ Chai.use(sinonChai);
 
 const postController = require('../../../src/controllers/postController.js');
 
-const Game = require('../../../src/model/Game');
-const Board = require('../../../src/model/Board');
 const Thread = require('../../../src/model/Thread');
 const Post = require('../../../src/model/Post');
 
@@ -115,7 +113,7 @@ describe('Post API Controller', () => {
 		
 		it('Should return posts if they exist', () => {
 			let postData = {
-				ID: 1, 
+				ID: 1,
 				Body: 'Somewhere over the rainbow?'
 			};
 			

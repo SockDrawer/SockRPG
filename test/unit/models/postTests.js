@@ -4,8 +4,6 @@
 const chai = require('chai'),
 	chaiAsPromised = require('chai-as-promised');
 
-const expect = chai.expect;
-
 chai.should();
 chai.use(chaiAsPromised);
 
@@ -14,7 +12,6 @@ require('sinon-as-promised');
 
 //Module to test
 const Post = require('../../../src/model/Post.js');
-const Thread = require('../../../src/model/Thread.js');
 const DB = require('../../../src/model/db');
 
 

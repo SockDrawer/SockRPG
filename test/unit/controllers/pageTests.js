@@ -97,7 +97,7 @@ describe('Page API controller', () => {
 				IC: null,
 				Canonical: '/api/games/1',
 				Game: {
-					ID: 1, 
+					ID: 1,
 					gameDescription: ''
 				}
 			}, {
@@ -108,7 +108,7 @@ describe('Page API controller', () => {
 				IC: null,
 				Canonical: '/api/games/2',
 				Game: {
-					ID: 1, 
+					ID: 1,
 					gameDescription: ''
 				}
 			}];

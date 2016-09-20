@@ -85,9 +85,9 @@ const db = {
 
 module.exports = db;
 
-//Support for db.knex: 
+//Support for db.knex:
 Object.defineProperty(module.exports, 'knex', {
-	get: function get() { 
+	get: function get() {
 		return knex;
 	},
 	set: function set(kn) {

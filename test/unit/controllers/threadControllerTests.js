@@ -9,7 +9,6 @@ Chai.use(sinonChai);
 
 const threadController = require('../../../src/controllers/threadController.js');
 
-const Game = require('../../../src/model/Game');
 const Board = require('../../../src/model/Board');
 const Thread = require('../../../src/model/Thread');
 const Post = require('../../../src/model/Post');
@@ -18,7 +17,7 @@ describe('Thread API Controller', () => {
 	let sandbox, mockRequest, mockResponse;
 	
 	const mockBoard = {
-		ID: 12, 
+		ID: 12,
 		Name: 'a board'
 	};
 		
@@ -134,7 +133,7 @@ describe('Thread API Controller', () => {
 		it('Should return posts in a thread', () => {
 			const threadData = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1'};
 			const postList = [new Post({
-				ID: 1, 
+				ID: 1,
 				Body: 'Who lives in a pineapple under the sea?'
 			}),
 			new Post({
