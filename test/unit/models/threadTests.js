@@ -26,7 +26,7 @@ describe('Thread model', () => {
 				filename: ':memory:'
 			},
 			useNullAsDefault: true
-		}).then(() => 
+		}).then(() =>
 			Board.addBoard({
 				Owner: 1,
 				Name: 'Board1'
@@ -41,8 +41,6 @@ describe('Thread model', () => {
 		return DB.teardown();
 	});
     
-	const userID = 1;
-
 	it('should add a thread', () => {
 		return Thread.addThread({
 			Title: 'A Thread',

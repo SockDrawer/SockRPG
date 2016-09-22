@@ -59,7 +59,7 @@ function setupDao() {
 function setupExpress() {
 	debug('Initializing Express');
 	return new Promise(
-		(resolve, reject) => {
+		(resolve) => {
 			app.engine('handlebars', hbs.engine);
 			app.set('view engine', 'handlebars');
 			app.set('views', 'src/views');

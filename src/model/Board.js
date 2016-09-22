@@ -107,7 +107,11 @@ class Board {
 			parentID = parentID || null; //Coerce to null to prevent avoidable errors
 		}
 		
-		return DB.knex('Boards').leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID').where('parentID', parentID).select('Boards.ID', 'Owner', 'Name', 'Description', 'GameID').map((row) => new Board(row));
+		return DB.knex('Boards')
+			.leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID')
+			.where('parentID', parentID)
+			.select('Boards.ID', 'Owner', 'Name', 'Description', 'GameID')
+			.map((row) => new Board(row));
 	}
 	
 	/**
@@ -118,13 +122,15 @@ class Board {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getBoard(id) {
-		return DB.knex('Boards').where('ID', id).select('Boards.ID', 'Owner', 'Name', 'Description', 'GameID', 'Adult').then((rows) => {
-			if (!rows || rows.length <= 0) {
-				return null;
-			}
-			
-			return new Board(rows[0]);
-		});
+		return DB.knex('Boards')
+				.where('ID', id)
+				.select('Boards.ID', 'Owner', 'Name', 'Description', 'GameID', 'Adult')
+				.then((rows) => {
+					if (!rows || rows.length <= 0) {
+						return null;
+					}
+					return new Board(rows[0]);
+				});
 	}
 	
 	/**

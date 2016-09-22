@@ -50,6 +50,12 @@ const db = {
 				table.integer('Board').references('Boards.ID').notNullable();
 			});
 		}).then(() => {
+			return knex.schema.createTableIfNotExists('Posts', (table) => {
+				table.increments('ID').primary();
+				table.integer('Thread').references('Threads.ID').notNullable();
+				table.string('Body').notNullable();
+			});
+		}).then(() => {
 			db.initialised = true;
 			return Promise.resolve(db.initialised);
 		});
@@ -79,9 +85,9 @@ const db = {
 
 module.exports = db;
 
-//Support for db.knex: 
+//Support for db.knex:
 Object.defineProperty(module.exports, 'knex', {
-	get: function get() { 
+	get: function get() {
 		return knex;
 	},
 	set: function set(kn) {

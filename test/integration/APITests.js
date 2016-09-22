@@ -290,7 +290,7 @@ context('API server', function() {
 	
 	
 	describe('Thread API', () => {
-		let boardID; 
+		let boardID;
 		
 		before(() => {
 			boardID = Math.floor(Math.random() * 50) + 50;

@@ -78,7 +78,11 @@ class Game extends Board {
 			parentID = parentID || null; //Coerce to null to prevent avoidable errors
 		}
 		
-		return DB.knex('Boards').leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID').where('parentID', parentID).select('Boards.ID', 'Owner', 'Name', 'GameID').map((row) => new Game(row));
+		return DB.knex('Boards')
+				.leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID')
+				.where('parentID', parentID)
+				.select('Boards.ID', 'Owner', 'Name', 'GameID')
+				.map((row) => new Game(row));
 	}
 	
 	/**

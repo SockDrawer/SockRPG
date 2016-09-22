@@ -24,6 +24,7 @@
 */
 
 const Thread = require('../model/Thread');
+const Post = require('../model/Post');
 const Board = require('../model/Board');
 
 /**
@@ -56,14 +57,26 @@ function getThreadsForBoard(req, res) {
 * @returns {Promise} A Promise that is resolved with the details of a thread
 */
 function getThread(req, res) {
+	let thread;
+	
 	return Thread.getThread(req.params.id).then((data) => {
 		if (!data) {
 			res.status(404).end();
 			return Promise.resolve();
 		}
 		
-		res.status(200).send(JSON.stringify(data.serialize()));
-		return Promise.resolve();
+		thread = data.serialize();
+		
+		return Post.getPostsInThread(thread.ID).then((posts) => {
+			if (posts) {
+				thread.posts = posts.map((post) => post.serialize);
+			} else {
+				thread.posts = [];
+			}
+			
+			res.status(200).send(JSON.stringify(thread));
+			return Promise.resolve();
+		});
 	});
 }
 
