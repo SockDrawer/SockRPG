@@ -4,7 +4,7 @@ if (!window.SockRPG) {
 
 window.SockRPG.Threads = {
 	Thread: Backbone.Model.extend({
-		url: '/api/threads',
+		url: '/api/boards/' + $('#boardname').data('board-id') + '/threads',
 
 		defaults: {
 			Title: 'New Thread'
@@ -19,7 +19,7 @@ window.SockRPG.Threads = {
 	}),
 
 	Threads: Backbone.Collection.extend({
-		url: '/api/threads'
+		url: '/api/boards/' + $('#boardname').data('board-id') + '/threads'
 	}),
 	
 	ThreadEditModal: Backbone.View.extend({
