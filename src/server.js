@@ -43,7 +43,7 @@ function setupDao() {
 	//For now, static config
 	//TODO: make this configurable
 	return DB.initialise({
-		sqlite: 'sampleData.sqlite'
+		sqlite: ':memory:'
 	}).then(() => {
 		if (!DB.isInitialised()) {
 			console.log('Initialization error');
