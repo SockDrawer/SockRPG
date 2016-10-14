@@ -132,6 +132,113 @@ describe('Page API controller', () => {
 		});
 	});
 	
+	describe('Board view', () => {
+		let fakeRes, boardData;
+		
+		beforeEach(() => {
+			sandbox = Sinon.sandbox.create();
+			fakeRes = {
+				render: sandbox.stub(),
+				status: sandbox.stub(),
+				send: sandbox.stub(),
+				end: sandbox.stub()
+			};
+			
+			boardData = {
+				ID: Math.random(),
+				Name: 'some board'
+			};
+		});
+		
+		afterEach( () => {
+			sandbox.restore();
+		});
+		
+		it('should exist', () => {
+			expect(page.getBoardView).to.be.a('function');
+		});
+		
+		it('should fetch board and threads from the api', () => {
+			const board = new Board(boardData);
+			sandbox.stub(Board, 'getBoard').resolves(board);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([]);
+			sandbox.spy(board, 'serialize');
+			
+			const fakeReq = {
+				params: {
+					id: 100
+				}
+			};
+			
+			return page.getBoardView(fakeReq, fakeRes).then(() => {
+				expect(Board.getBoard).to.have.been.calledWith(100);
+				expect(Thread.getThreadsInBoard).to.have.been.calledWith(100);
+				expect(board.serialize).to.have.been.called;
+			});
+		});
+		
+		it('should render the template', () => {
+			const board = new Board(boardData);
+			
+			const threadData = {
+				Title: 'some thread',
+				ID: 2942,
+				Canonical: '/api/threads/2942'
+			};
+			
+			sandbox.stub(Board, 'getBoard').resolves(board);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([new Thread(threadData)]);
+			sandbox.spy(board, 'serialize');
+			
+			const fakeReq = {
+				params: {
+					id: 100
+				}
+			};
+			
+			const expected = {
+				Name: boardData.Name,
+				Adult: false,
+				Canonical: `/api/boards/${boardData.ID}`,
+				ID: boardData.ID,
+				threads: [threadData]
+			};
+			
+			return page.getBoardView(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledWith('board');
+				const actual = fakeRes.render.firstCall.args[1];
+				expect(actual).to.deep.equal(expected);
+			});
+		});
+		
+		it('should return 404 if no board is found', () => {
+			sandbox.stub(Board, 'getBoard').resolves(undefined);
+			const fakeReq = {
+				params: {
+					id: 100
+				}
+			};
+			
+			return page.getBoardView(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledWith(404);
+			});
+		});
+		
+		it('should return 500 if error is thrown', () => {
+			sandbox.stub(Board, 'getBoard').rejects('I AM ERROR');
+			const fakeReq = {
+				params: {
+					id: 100
+				}
+			};
+			
+			return page.getBoardView(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledWith(500);
+			});
+		});
+		
+	});
+	
 	describe('Thread view', () => {
 		let fakeRes, fakeThread;
 		
@@ -172,6 +279,7 @@ describe('Page API controller', () => {
 			
 			return page.getThreadView(fakeReq, fakeRes).then(() => {
 				expect(Thread.getThread).to.have.been.calledWith(100);
+				expect(Post.getPostsInThread).to.have.been.calledWith(100);
 				expect(threadObj.serialize).to.have.been.called;
 			});
 		});
@@ -180,12 +288,12 @@ describe('Page API controller', () => {
 			const fakePostData = {
 				Body: 'The only post in the thread',
 				ID: 23,
-				Canonical: '/api/Posts/23'
+				Canonical: '/api/posts/23'
 			};
 			
 			const expected = {
 				Title: fakeThread.Title,
-				Canonical: `/api/Thread/${fakeThread.ID}`,
+				Canonical: `/api/threads/${fakeThread.ID}`,
 				ID: fakeThread.ID,
 				posts: [fakePostData]
 			};

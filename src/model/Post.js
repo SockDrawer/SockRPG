@@ -17,7 +17,7 @@ class Post {
 		this.data = {};
 		this.data.ID = rowData.ID;
 		this.data.Body = rowData.Body;
-		this.Canonical = `/api/Posts/${this.ID}`;
+		this.Canonical = `/api/posts/${this.ID}`;
 	}
 	
 	get ID() {

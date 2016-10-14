@@ -56,6 +56,34 @@ function getHomePage(req, res) {
 }
 
 /**
+ * Get the page for a board with threads in it
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function getBoardView(req, res) {
+	let board;
+	return Board.getBoard(req.params.id).then((data) => {
+		if (!data) {
+			res.status(404);
+			res.end();
+			return Promise.resolve();
+		}
+		
+		board = data.serialize();
+		return Thread.getThreadsInBoard(req.params.id).then((threads) => {
+			board.threads = threads ? threads.map((thread) => thread.serialize()) : [];
+			
+			res.render('board', board);
+		});
+	})
+	.catch((err) => {
+		res.status(500);
+		res.send({error: err.toString()});
+	});
+}
+
+/**
  * Get the page for a thread with posts on it
  * @param  {Request} req The Express request object
  * @param  {Response} res The Express response object
@@ -85,7 +113,8 @@ function getThreadView(req, res) {
 
 const controller = {
 	getHomePage: getHomePage,
-	getThreadView: getThreadView
+	getThreadView: getThreadView,
+	getBoardView: getBoardView
 };
 
 module.exports = controller;

@@ -17,7 +17,7 @@ class Thread {
 		this.data = {};
 		this.data.ID = rowData.ID;
 		this.data.Title = rowData.Title;
-		this.Canonical = `/api/Thread/${rowData.ID}`;
+		this.Canonical = `/api/threads/${rowData.ID}`;
 		this.boardName = rowData.Name;
 	}
 	

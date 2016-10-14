@@ -98,7 +98,7 @@ describe('Thread model', () => {
 		
 		const expected = {
 			Title: fakeThread.Title,
-			Canonical: `/api/Thread/${fakeThread.ID}`,
+			Canonical: `/api/threads/${fakeThread.ID}`,
 			ID: fakeThread.ID
 		};
 		
@@ -117,6 +117,6 @@ describe('Thread model', () => {
 		};
 		
 		new Thread(fakeThread).data.should.deep.equal(expected);
-		new Thread(fakeThread).Canonical.should.equal(`/api/Thread/${fakeThread.ID}`);
+		new Thread(fakeThread).Canonical.should.equal(`/api/threads/${fakeThread.ID}`);
 	});
 });
