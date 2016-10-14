@@ -20,3 +20,7 @@ body {
 #replyDiv {
 	display: none;
 }
+
+#boardname {
+    margin-left: 50px;
+}
