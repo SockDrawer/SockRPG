@@ -63,7 +63,7 @@ describe('Thread API Controller', () => {
 		
 		it('Should return a list of threads if there are any', () => {
 			const threadList = [new Thread({ID: 1, Title: 'banana'})];
-			const expected = '[{"ID":1,"Title":"banana","Canonical":"/api/Thread/1"}]';
+			const expected = '[{"ID":1,"Title":"banana","Canonical":"/api/threads/1"}]';
 			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves(threadList);
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => {
@@ -117,8 +117,8 @@ describe('Thread API Controller', () => {
 		});
 		
 		it('Should return a thread if one exists', () => {
-			const data = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1'};
-			const expected = JSON.stringify({ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1', posts: []});
+			const data = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/threads/1'};
+			const expected = JSON.stringify({ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/threads/1', posts: []});
 
 			sandbox.stub(Thread, 'getThread').resolves(new Thread(data));
 			sandbox.stub(Post, 'getPostsInThread').resolves();
@@ -131,7 +131,7 @@ describe('Thread API Controller', () => {
 		});
 		
 		it('Should return posts in a thread', () => {
-			const threadData = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/Thread/1'};
+			const threadData = {ID: 1, Title: 'Spongebob Fanclub', Canonical: '/api/threads/1'};
 			const postList = [new Post({
 				ID: 1,
 				Body: 'Who lives in a pineapple under the sea?'
