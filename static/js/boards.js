@@ -1,6 +1,6 @@
 if (!window.SockRPG) {
-	window.SockRPG = {}
-};
+	window.SockRPG = {};
+}
 
 window.SockRPG.Boards = {
 	Board: Backbone.Model.extend({
@@ -56,7 +56,7 @@ window.SockRPG.Boards = {
 
 		render: function(){
 			var data = this.model.toJSON();
-			if (this.model instanceof SockRPG.Boards.Game) {
+			if (this.model instanceof window.SockRPG.Boards.Game) {
 				data.game = true;
 			}
 			var tpl = Handlebars.compile($('#boardModal').html());

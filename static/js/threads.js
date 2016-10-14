@@ -1,6 +1,6 @@
 if (!window.SockRPG) {
-	window.SockRPG = {}
-};
+	window.SockRPG = {};
+}
 
 window.SockRPG.Threads = {
 	Thread: Backbone.Model.extend({

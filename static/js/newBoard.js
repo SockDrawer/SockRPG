@@ -15,12 +15,12 @@ function openNewBoardModal(event) {
 	var model;
 
 	if ($(event.currentTarget).attr('id').toLowerCase().indexOf('game') >= 0) {
-		model = new SockRPG.Boards.Game();
+		model = new window.SockRPG.Boards.Game();
 	} else {
-		model = new SockRPG.Boards.Board();
+		model = new window.SockRPG.Boards.Board();
 	}
 
-	var view = new SockRPG.Boards.BoardEditModal({
+	var view = new window.SockRPG.Boards.BoardEditModal({
 		el: '#bsModal',
 		model: model
 	});
