@@ -334,7 +334,7 @@ context('API server', function() {
 				assert.deepEqual(response.body, [{
 					ID: 1,
 					Title: 'The best thread',
-					Canonical: '/api/Thread/1'
+					Canonical: '/api/threads/1'
 				}], 'Thread retrieval should return thread');
 			});
 		});
