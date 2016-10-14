@@ -31,7 +31,7 @@ const db = {
 		}).then(() => {
 			return knex.schema.createTableIfNotExists('Boards', (table) => {
 				table.increments('ID').primary();
-				table.integer('Owner').references('Users.ID').notNullable();
+				table.integer('Owner').references('Users.ID');//.notNullable();  //This shouldn't be nullable, but we don't have users working yet
 				table.integer('GameID').references('Games.ID').nullable();
 				table.string('Name').notNullable();
 				table.boolean('Adult').defaultTo(false);
