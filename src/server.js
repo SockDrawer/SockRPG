@@ -89,6 +89,8 @@ function setupExpress() {
 			/*Pages*/
 			app.route('/')
 				.get(cPage.getHomePage);
+			app.route('/thread/:id')
+				.get(cPage.getThreadView);
 			
 			const jsonParser = bodyParser.json({type: 'application/json'});
 			/*API*/
