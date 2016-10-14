@@ -89,6 +89,8 @@ function setupExpress() {
 			/*Pages*/
 			app.route('/')
 				.get(cPage.getHomePage);
+			app.route('/board/:id')
+				.get(cPage.getBoardView);
 			app.route('/thread/:id')
 				.get(cPage.getThreadView);
 			
