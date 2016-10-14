@@ -6,7 +6,7 @@ let knex = 'banana';
 const db = {
 	initialized: false,
 	
-	initialise: function initialise() {
+	initialise: function initialise(config) {
 		if (db.initialised) {
 			return Promise.resolve();
 		}
@@ -14,7 +14,7 @@ const db = {
 		knex = require('knex')({
 			client: 'sqlite3',
 			connection: {
-				filename: ':memory:'
+				filename: config.sqlite
 			},
 		//	debug: true,
 			useNullAsDefault: true
