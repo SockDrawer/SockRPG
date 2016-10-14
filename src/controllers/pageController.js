@@ -37,7 +37,7 @@ const Post = require('../model/Post');
  */
 function getHomePage(req, res) {
 	const data = {};
-	
+
 	return Board.getAllBoards().then((boards) => {
 		data.boards = boards ? boards.map((board) => board.serialize()) : boards;
 		return Game.getAllGames();
