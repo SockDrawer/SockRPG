@@ -16,3 +16,7 @@ body {
 .board {
 	border: 1px solid black;
 }
+
+#replyDiv {
+	display: none;
+}

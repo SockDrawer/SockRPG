@@ -16,7 +16,7 @@ class Post {
 	constructor (rowData) {
 		this.data = {};
 		this.data.ID = rowData.ID;
-		this.data.body = rowData.Body;
+		this.data.Body = rowData.Body;
 		this.Canonical = `/api/Posts/${this.ID}`;
 	}
 	
@@ -25,11 +25,11 @@ class Post {
 	}
 	
 	get Body() {
-		return this.data.body;
+		return this.data.Body;
 	}
 	
 	set Body(newBody) {
-		this.data.body = newBody;
+		this.data.Body = newBody;
 	}
 	
 	serialize() {

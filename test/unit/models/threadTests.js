@@ -89,4 +89,34 @@ describe('Thread model', () => {
 			Board: parentID
 		})).then(() => Thread.getThreadsInBoard(parentID)).should.eventually.have.length(2);
 	});
+	
+	it('should serialize', () => {
+		const fakeThread = {
+			ID: Math.random(),
+			Title: 'some thread'
+		};
+		
+		const expected = {
+			Title: fakeThread.Title,
+			Canonical: `/api/Thread/${fakeThread.ID}`,
+			ID: fakeThread.ID
+		};
+		
+		new Thread(fakeThread).serialize().should.deep.equal(expected);
+	});
+	
+	it('should construct', () => {
+		const fakeThread = {
+			ID: Math.random(),
+			Title: 'some thread'
+		};
+		
+		const expected = {
+			Title: fakeThread.Title,
+			ID: fakeThread.ID
+		};
+		
+		new Thread(fakeThread).data.should.deep.equal(expected);
+		new Thread(fakeThread).Canonical.should.equal(`/api/Thread/${fakeThread.ID}`);
+	});
 });

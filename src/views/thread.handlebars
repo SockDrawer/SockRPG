@@ -1,0 +1,52 @@
+<div class="row">
+     <div class="col-md-12">
+        <a href="/">Main</a> > <a href="/board/{{boardName}}">{{boardName}}</a>
+        <h2>{{Title}}</h2>
+    </div>
+</div>
+
+{{#each posts}}
+<div class="row post">
+    <div class="col-md-2 col-md-offset-1 media">
+        <div class="media-left">
+            <img src="http://placehold.it/50x50">
+        </div>
+        <div class="media-body">
+            Username<br/>
+            Timestamp Placeholder
+        </div>
+    </div>
+    <div class="col-md-6">
+    {{body}}
+    </div>
+    <div class="col-md-8 col-md-offset-1">
+        <hr style="gradiant">
+    </div>
+</div>
+{{/each}}
+<div id="replyButton" class="row post">
+    <div class="col-md-1 col-md-offset-8 text-right">
+        <button type="button" class="btn btn-primary">Reply</button>
+    </div>
+</div>
+<div id="replydiv" class="row post">
+    <div class="col-md-2 col-md-offset-1 media">
+        <div class="media-left">
+            <img src="http://placehold.it/50x50">
+        </div>
+        <div class="media-body">
+            You<br/>
+        </div>
+    </div>
+    <div class="col-md-6">
+
+            <textarea name="editor1" id="editor1" rows="10" cols="80">
+                
+            </textarea>
+
+    </div>
+    <div class="col-md-2 col-md-offset-7 text-right">
+        <button type="button" id="replyCancel" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="replySubmit" class="btn btn-primary">Submit</button>
+    </div>
+</div>
