@@ -69,7 +69,7 @@ function getThread(req, res) {
 		
 		return Post.getPostsInThread(thread.ID).then((posts) => {
 			if (posts) {
-				thread.posts = posts.map((post) => post.serialize);
+				thread.posts = posts.map((post) => post.serialize());
 			} else {
 				thread.posts = [];
 			}
