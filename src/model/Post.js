@@ -67,7 +67,7 @@ class Post {
 	static getPostsInThread(threadID) {
 		return DB.knex('Posts')
 		.where('Posts.Thread', threadID)
-		.select('Posts.ID', 'Body')
+		.select('Posts.ID', 'Body', 'Posts.Thread')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));
 		});

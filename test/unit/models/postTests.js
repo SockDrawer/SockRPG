@@ -38,6 +38,11 @@ describe('Post model', () => {
 			ID: 1,
 			Title: 'test thread',
 			Board: 1
+		}))
+		.then(() => DB.knex('Threads').insert({
+			ID: 2,
+			Title: 'test thread 2',
+			Board: 1
 		}));
 	});
 
@@ -68,8 +73,27 @@ describe('Post model', () => {
 			Body: 'Manah manah (do-doo do-do doo)'
 		};
 		
-		return Post.addPost(post).then(() => {
-			Post.getPostsInThread(1).should.eventually.contain.all(new Post(post));
-		});
+		return Post.addPost(post)
+			.then(() => Post.getPostsInThread(1))
+			.should.eventually.contain(new Post(post));
+	});
+	
+	it('should not return other threads', () => {
+		const post1 = {
+			ID: 1,
+			Thread: 1,
+			Body: 'Manah manah (do-doo do-do doo)'
+		};
+		
+		const post2 = {
+			ID: 2,
+			Thread: 2,
+			Body: 'blah'
+		};
+		
+		return Post.addPost(post1)
+			.then(() => Post.addPost(post2))
+			.then(() => Post.getPostsInThread(1))
+			.should.eventually.not.contain(new Post(post2));
 	});
 });
