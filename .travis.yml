@@ -4,7 +4,7 @@ node_js:
 - '4'
 before_script:
 - rm -rf ./coverage
-script: npm test && npm run systemTest
+script: npm test
 after_script:
 - test -e ./coverage/lcov.info && < ./coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js
 notifications:
