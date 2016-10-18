@@ -18,6 +18,7 @@ class Post {
 		this.data.ID = rowData.ID;
 		this.data.Body = rowData.Body;
 		this.Canonical = `/api/posts/${this.ID}`;
+		this.Thread = rowData.Thread;
 	}
 	
 	get ID() {
@@ -65,8 +66,8 @@ class Post {
 	
 	static getPostsInThread(threadID) {
 		return DB.knex('Posts')
-		.leftJoin('Threads', 'Threads.ID', 'Posts.Thread')
-		.where('Threads.ID', threadID).select('Posts.ID', 'Body')
+		.where('Posts.Thread', threadID)
+		.select('Posts.ID', 'Body')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));
 		});

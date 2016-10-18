@@ -22,6 +22,7 @@ const DB = require('./model/db');
 const cStatic = require('./controllers/staticController.js');
 const cBoard = require('./controllers/boardController.js');
 const cThread = require('./controllers/threadController.js');
+const cPost = require('./controllers/postController.js');
 const cPage = require('./controllers/pageController.js');
 const cUser = require('./controllers/userController.js');
 
@@ -129,7 +130,7 @@ function setupExpress() {
 				.post(jsonParser, cThread.addThreadToBoard)
 				.patch(return405)
 				.delete(return405)
-				.put(return405);
+				.put(jsonParser, cPost.addPost);
 				
 			app.route('/api/users')
 				.get(cUser.getAllUsers)
@@ -150,7 +151,7 @@ function setupExpress() {
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
-				.put(return405);
+				.put(jsonParser, cPost.addPost);
 				
 			resolve();
 		});
