@@ -21,11 +21,9 @@ describe('Post model', () => {
 	beforeEach(() => {
 		sandbox = Sinon.sandbox.create();
 		return DB.initialise({
-			client: 'sqlite3',
-			connection: {
+			database: {
 				filename: ':memory:'
-			},
-			useNullAsDefault: true
+			}
 		}).then(() => DB.knex('Users').insert({
 			ID: 1,
 			Username: 'test user'

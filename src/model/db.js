@@ -14,7 +14,7 @@ const db = {
 		knex = require('knex')({
 			client: 'sqlite3',
 			connection: {
-				filename: ':memory:'
+				filename: config.database.filename
 			},
 		//	debug: true,
 			useNullAsDefault: true

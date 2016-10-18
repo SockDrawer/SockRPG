@@ -20,11 +20,9 @@ describe('Game model', () => {
 	beforeEach(() => {
 		sandbox = Sinon.sandbox.create();
 		return DB.initialise({
-			client: 'sqlite3',
-			connection: {
+			database: {
 				filename: ':memory:'
-			},
-			useNullAsDefault: true
+			}
 		});
 	});
 

@@ -14,7 +14,11 @@ context('API server', function() {
 	
 	before(() => {
 		//Start server
-		return server.setup();
+		return server.setup({
+			database: {
+				filename: ':memory:'
+			}
+		});
 	});
 		
 	after(() => {

@@ -37,15 +37,14 @@ let server;
 
 /**
  * Initialise the DAO
+ * @param {Object} config The configuration object to use
  * @returns {Promise} A promise chain that resolves when the DAO is ready to use
  */
-function setupDao() {
+function setupDao(config) {
 	debug('Initializing dao');
 	//For now, static config
 	//TODO: make this configurable
-	return DB.initialise({
-		sqlite: ':memory:'
-	}).then(() => {
+	return DB.initialise(config).then(() => {
 		if (!DB.isInitialised()) {
 			console.log('Initialization error');
 			process.exit(1);
@@ -159,10 +158,11 @@ function setupExpress() {
 
 /**
  * Initialise the server
+ * @param {Object} config The configuration object to use
  * @returns {Promise} A promise chain that resolves when the server is running
  */
-function setup() {
-	return setupDao().then(() => setupExpress()).then(() => {
+function setup(config) {
+	return setupDao(config).then(() => setupExpress()).then(() => {
 		server = app.listen(8080);
 		console.log('Server now listening on port 8080');
 	});
@@ -190,5 +190,11 @@ module.exports = {
 };
 
 if (require.main === module) {
-	setup();
+	//TODO: Make this read from a file
+	setup({
+		database: {
+			engine: 'sqlite3',
+			filename: 'database.sqlite'
+		}
+	});
 }

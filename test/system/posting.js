@@ -11,8 +11,11 @@ describe('SockRPG', function() {
 		`http://localhost:${process.env.PORT}`; //run from c9
 	
 	before(() => {
-		//Start server
-		return server.setup();
+		return server.setup({
+			database: {
+				filename: ':memory:'
+			}
+		});
 	});
 		
 	after(() => {
