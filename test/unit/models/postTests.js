@@ -68,6 +68,8 @@ describe('Post model', () => {
 			Body: 'Manah manah (do-doo do-do doo)'
 		};
 		
-		return Post.addPost(post).then(() => Post.getPostsInThread(1)).should.eventually.contain.all(new Post(post));
+		return Post.addPost(post).then(() => {
+			Post.getPostsInThread(1).should.eventually.contain.all(new Post(post));
+		});
 	});
 });
