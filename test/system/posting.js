@@ -1,6 +1,7 @@
 'use strict';
 /*global describe, it, browser*/
 const Chai = require('chai');
+const expect = Chai.expect;
 const assert = Chai.assert;
 const server = require('../../src/server.js');
 
@@ -52,4 +53,28 @@ describe('SockRPG', function() {
 		assert.ok(browser.element('div.boardList a[href="/thread/1"]'),
 			'A link to the new thread should exist');
 	});
+	
+	//NOTE: I can't get this working :( -yami
+	
+/*	it('should be able to add a post', () => {
+		browser.url(`${url}/thread/1`)
+		.click('#replyButton button'); //Reply
+		
+		browser.element('#replySubmit')
+			.waitForVisible();
+		
+		//Go into the ckeditor iframe
+	//	browser.frame(browser.element('#cke_editor1 iframe'));
+	//	browser.element('body').keys('This is my post, my post this is.');
+	
+		//browser.element('#editor1').keys('This is my post, my post this is.');
+		browser.execute('CKEDITOR.instances["editor1"].setData("This is my post, my post this is.")');
+		browser.click('#replySubmit');
+		
+		//refresh
+		browser.url(`${url}/thread/1`);
+		
+		expect(browser.element('body').getText())
+			.to.contain('This is my post, my post this is');
+	});*/
 });

@@ -34,7 +34,6 @@ const Post = require('../model/Post');
 */
 function addPost(req, res) {
 	//check if thread exists
-	
 	return Thread.getThread(req.params.id).then((thread) => {
 		if (!thread) {
 			res.status(404).end();

@@ -5,6 +5,7 @@ $(() => {
 	$('#replyButton .btn').click(() => {
 		$('#replyButton').hide();
 		$('#replydiv').show();
+		CKEDITOR.instances.editor1.focus();
 	});
 	
 	$('#replyCancel').click(() => {
@@ -19,10 +20,11 @@ $(() => {
 		$.ajax('/api/threads/' + threadID,
 			{
 				method: 'PUT',
-				data: {
-					Body: content,
-					Thread: threadID
-				}
+				data: JSON.stringify({
+					Body: content
+				}),
+				dataType: 'json',
+				contentType: 'application/json; charset=UTF-8'
 			}
 		).done(function () {
 			location.reload();
