@@ -26,6 +26,8 @@
 
 const Board = require('../model/Board');
 const Game = require('../model/Game');
+const Thread = require('../model/Thread');
+const Post = require('../model/Post');
 
 /**
  * Get the home page to hand to the view
@@ -35,7 +37,7 @@ const Game = require('../model/Game');
  */
 function getHomePage(req, res) {
 	const data = {};
-	
+
 	return Board.getAllBoards().then((boards) => {
 		data.boards = boards ? boards.map((board) => board.serialize()) : boards;
 		return Game.getAllGames();
@@ -53,8 +55,66 @@ function getHomePage(req, res) {
 	});
 }
 
+/**
+ * Get the page for a board with threads in it
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function getBoardView(req, res) {
+	let board;
+	return Board.getBoard(req.params.id).then((data) => {
+		if (!data) {
+			res.status(404);
+			res.end();
+			return Promise.resolve();
+		}
+		
+		board = data.serialize();
+		return Thread.getThreadsInBoard(req.params.id).then((threads) => {
+			board.threads = threads ? threads.map((thread) => thread.serialize()) : [];
+			
+			res.render('board', board);
+		});
+	})
+	.catch((err) => {
+		res.status(500);
+		res.send({error: err.toString()});
+	});
+}
+
+/**
+ * Get the page for a thread with posts on it
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function getThreadView(req, res) {
+	let retval;
+	return Thread.getThread(req.params.id).then((data) => {
+		if (!data) {
+			res.status(404);
+			res.end();
+			return Promise.resolve();
+		}
+		
+		retval = data.serialize();
+		return Post.getPostsInThread(req.params.id).then((posts) => {
+			retval.posts = posts ? posts.map((post) => post.serialize()) : [];
+	
+			res.render('thread', retval);
+		});
+	})
+	.catch((err) => {
+		res.status(500);
+		res.send({error: err.toString()});
+	});
+}
+
 const controller = {
-	getHomePage: getHomePage
+	getHomePage: getHomePage,
+	getThreadView: getThreadView,
+	getBoardView: getBoardView
 };
 
 module.exports = controller;

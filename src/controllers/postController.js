@@ -34,18 +34,24 @@ const Post = require('../model/Post');
 */
 function addPost(req, res) {
 	//check if thread exists
-	
 	return Thread.getThread(req.params.id).then((thread) => {
 		if (!thread) {
 			res.status(404).end();
 			return Promise.resolve();
 		}
+
+		const newPost = req.body || {};
+		newPost.Thread = req.params.id;
 		
-		return Post.addPost(req.body).then((ids) => {
+		
+		return Post.addPost(newPost).then((ids) => {
 			const ret = {
 				id: ids[0]
 			};
 			res.status(200).send(JSON.stringify(ret));
+		}).catch((err) => {
+			//debug('ERROR ADDING POST: ' + err);
+			res.status(500).send(`ERROR: ${err.toString()}\n Post was ${JSON.stringify(req.body)}`);
 		});
 	});
 }

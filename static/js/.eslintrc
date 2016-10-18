@@ -21,6 +21,8 @@
 	"globals":{
 	    "Handlebars": true,
         "Backbone": true,
-        "SockRPGBoards": true
+        "SockRPG": true,
+        "$": true,
+        "CKEDITOR": true
 	}
 }

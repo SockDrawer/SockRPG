@@ -42,12 +42,17 @@
     "mocha": "^2.3.3",
     "sinon": "^1.17.1",
     "sinon-as-promised": "^4.0.0",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "wdio-mocha-framework": "^0.4.3",
+    "wdio-phantomjs-service": "^0.2.2",
+    "wdio-selenium-standalone-service": "0.0.7",
+    "webdriverio": "^4.2.16"
   },
   "scripts": {
     "start": "node ./src/server.js",
     "lint": "eslint .",
     "test": "eslint . && istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R dot ./test/unit/**/*.js && mocha --recursive -R dot ./test/integration/*.js",
+    "systemTest": "wdio wdio.conf.js",
     "istanbul": "eslint .; istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R nyan",
     "mocha": "echo 'Unit Tests:';mocha --recursive -R nyan ./test/unit/; echo 'Integration Tests'; mocha --recursive -R nyan ./test/integration/"
   },

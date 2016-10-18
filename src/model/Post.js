@@ -16,8 +16,9 @@ class Post {
 	constructor (rowData) {
 		this.data = {};
 		this.data.ID = rowData.ID;
-		this.data.body = rowData.Body;
-		this.Canonical = `/api/Posts/${this.ID}`;
+		this.data.Body = rowData.Body;
+		this.Canonical = `/api/posts/${this.ID}`;
+		this.Thread = rowData.Thread;
 	}
 	
 	get ID() {
@@ -25,11 +26,11 @@ class Post {
 	}
 	
 	get Body() {
-		return this.data.body;
+		return this.data.Body;
 	}
 	
 	set Body(newBody) {
-		this.data.body = newBody;
+		this.data.Body = newBody;
 	}
 	
 	serialize() {
@@ -65,8 +66,8 @@ class Post {
 	
 	static getPostsInThread(threadID) {
 		return DB.knex('Posts')
-		.leftJoin('Threads', 'Threads.ID', 'Posts.Thread')
-		.where('Threads.ID', threadID).select('Posts.ID', 'Body')
+		.where('Posts.Thread', threadID)
+		.select('Posts.ID', 'Body', 'Posts.Thread')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));
 		});

@@ -16,3 +16,11 @@ body {
 .board {
 	border: 1px solid black;
 }
+
+#replyDiv {
+	display: none;
+}
+
+#boardname {
+    margin-left: 50px;
+}

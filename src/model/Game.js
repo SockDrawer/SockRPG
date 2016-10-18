@@ -63,7 +63,7 @@ class Game extends Board {
 	* @returns {Promise} A Promise that is resolved with a list of vanilla boards
 	*/
 	static getAllGames() {
-		return DB.knex('Boards').innerJoin('Games', 'Board.ID').select().map((row) => new Board(row));
+		return DB.knex('Boards').innerJoin('Games', 'Boards.GameID', 'Games.ID').select().map((row) => new Board(row));
 	}
 	
 	/**
