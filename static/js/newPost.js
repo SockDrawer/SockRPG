@@ -17,13 +17,14 @@ $(() => {
 		var threadID = $('#threadTitle').data('threadid');
 		
 		$.ajax('/api/threads/' + threadID,
-		{
-			method: 'PUT',
-			data: {
-				Body: content,
-				Thread: threadID
+			{
+				method: 'PUT',
+				data: {
+					Body: content,
+					Thread: threadID
+				}
 			}
-		}).done(function () {
+		).done(function () {
 			location.reload();
 		});
 	});

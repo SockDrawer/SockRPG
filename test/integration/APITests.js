@@ -5,6 +5,7 @@ const request = require('request-promise');
 const Sinon = require('sinon');
 const User = require('../../src/model/User');
 const Board = require('../../src/model/Board');
+const Thread = require('../../src/model/Thread');
 require('sinon-as-promised');
 
 context('API server', function() {
@@ -288,7 +289,6 @@ context('API server', function() {
 		});
 	});
 	
-	
 	describe('Thread API', () => {
 		let boardID;
 		
@@ -336,6 +336,62 @@ context('API server', function() {
 					Title: 'The best thread',
 					Canonical: '/api/threads/1'
 				}], 'Thread retrieval should return thread');
+			});
+		});
+	});
+
+	describe('Post API', () => {
+		let boardID, threadID;
+
+		before(() => {
+			boardID = Math.floor(Math.random() * 50) + 50;
+			threadID = Math.floor(Math.random() * 50) + 50;
+			return User.addUser({
+				Username: 'testUser7890'
+			})
+			.then((userIDs) => Board.addBoard({
+				Owner: userIDs[0],
+				id: boardID,
+				Name: 'A board'
+			}))
+			.then(() => Thread.addThread({
+				ID: threadID,
+				Title: 'A Thread',
+				Board: boardID
+			}));
+		});
+		
+		it('Should allow adding posts', () => {
+			const input = {
+				Body: '<p>This is the body</b>'
+			};
+			
+			/*-------------- CREATE -----------------*/
+			return request({
+				uri: `http://localhost:8080/api/threads/${threadID}`,
+				json: true,
+				'resolveWithFullResponse': true,
+				method: 'PUT',
+				body: input
+			}).then((response) => {
+				assert.equal(response.statusCode, 200, 'post creation should return 200 OK');
+				assert.equal(response.body.id, 1, 'post creation should return id');
+			});
+		});
+		
+		it('Should retrieve posts with threads', () => {
+			return request({
+				uri: `http://localhost:8080/api/threads/${threadID}`,
+				json: true,
+				'resolveWithFullResponse': true,
+				method: 'GET'
+			}).then((response) => {
+				assert.equal(response.statusCode, 200, 'Thread retrieval should return 200 OK');
+				assert.deepEqual(response.body.posts, [{
+					ID: 1,
+					Body: '<p>This is the body</b>',
+					Canonical: '/api/posts/1'
+				}], 'Thread retrieval should return post');
 			});
 		});
 	});

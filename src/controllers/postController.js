@@ -52,7 +52,7 @@ function addPost(req, res) {
 			res.status(200).send(JSON.stringify(ret));
 		}).catch((err) => {
 			//debug('ERROR ADDING POST: ' + err);
-			res.status(500).send('ERROR: ' + err.toString() + '\n Post was ' + JSON.stringify(req.body));
+			res.status(500).send(`ERROR: ${err.toString()}\n Post was ${JSON.stringify(req.body)}`);
 		});
 	});
 }
