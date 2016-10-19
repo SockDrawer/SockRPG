@@ -248,7 +248,7 @@ context('API server', function() {
 				/*-------------- RETRIEVE -----------------*/
 				return request({
 					json: true,
-					uri: 'http://localhost:8080/api/games/2',
+					uri: `http://localhost:${port}/api/games/2`,
 					'resolveWithFullResponse': true,
 					method: 'GET'
 				});
@@ -267,7 +267,7 @@ context('API server', function() {
 				boardInput.Name = 'test game';
 				
 				return request({
-					uri: 'http://localhost:8080/api/games/2',
+					uri: `http://localhost:${port}/api/games/2`,
 					json: true,
 					'resolveWithFullResponse': true,
 					method: 'PUT',
