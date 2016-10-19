@@ -163,8 +163,9 @@ function setupExpress() {
  */
 function setup(config) {
 	return setupDao(config).then(() => setupExpress()).then(() => {
-		server = app.listen(8080);
-		console.log('Server now listening on port 8080');
+		const port = process.env['PORT'] || 9000;
+		server = app.listen(port);
+		console.log(`Server now listening on port ${port}`);
 	});
 }
 
