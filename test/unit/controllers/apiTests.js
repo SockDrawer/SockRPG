@@ -16,6 +16,7 @@ const Board = require('../../../src/model/Board');
 const User = require('../../../src/model/User');
 const Thread = require('../../../src/model/Thread');
 
+
 describe('Game API controller', () => {
 	let sandbox;
 

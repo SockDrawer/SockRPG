@@ -8,6 +8,8 @@ const Board = require('../../src/model/Board');
 const Thread = require('../../src/model/Thread');
 require('sinon-as-promised');
 
+const port = process.env['PORT'] || 9000;
+
 context('API server', function() {
 	this.timeout(50000);
 	const server = require('../../src/server.js');
@@ -43,7 +45,7 @@ context('API server', function() {
 			
 			/*-------------- CREATE -----------------*/
 			return request({
-				uri: 'http://localhost:8080/api/users',
+				uri: `http://localhost:${port}/api/users`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'POST',
@@ -55,7 +57,7 @@ context('API server', function() {
 				/*-------------- RETRIEVE -----------------*/
 				return request({
 					json: true,
-					uri: 'http://localhost:8080/api/users/1',
+					uri: `http://localhost:${port}/api/users/1`,
 					'resolveWithFullResponse': true,
 					method: 'GET'
 				});
@@ -70,7 +72,7 @@ context('API server', function() {
 				userInput.userName = 'theRock';
 	
 				return request({
-					uri: 'http://localhost:8080/api/users/1',
+					uri: `http://localhost:${port}/api/users/1`,
 					json: true,
 					'resolveWithFullResponse': true,
 					method: 'PUT',
@@ -82,7 +84,7 @@ context('API server', function() {
 	
 				/*-------------- RETRIEVE AGAIN-----------------*/
 				return request({
-					uri: 'http://localhost:8080/api/users/1',
+					uri: `http://localhost:${port}/api/users/1`,
 					json: true,
 					'resolveWithFullResponse': true,
 					method: 'GET'
@@ -103,7 +105,7 @@ context('API server', function() {
 			let ID;
 			
 			return request({
-				uri: 'http://localhost:8080/api/users',
+				uri: `http://localhost:${port}/api/users`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'POST',
@@ -114,7 +116,7 @@ context('API server', function() {
 				assert.isNumber(ID, 'ID should be a number');
 				
 				return request({
-					uri: `http://localhost:8080/api/users/${userInput.Username}`,
+					uri: `http://localhost:${port}/api/users/${userInput.Username}`,
 					json: true,
 					'resolveWithFullResponse': true,
 					method: 'GET'
@@ -159,7 +161,7 @@ context('API server', function() {
 			
 			/*-------------- CREATE -----------------*/
 			return request({
-				uri: 'http://localhost:8080/api/boards',
+				uri: `http://localhost:${port}/api/boards`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'POST',
@@ -171,7 +173,7 @@ context('API server', function() {
 				/*-------------- RETRIEVE -----------------*/
 				return request({
 					json: true,
-					uri: 'http://localhost:8080/api/boards/1',
+					uri: `http://localhost:${port}/api/boards/1`,
 					'resolveWithFullResponse': true,
 					method: 'GET'
 				});
@@ -191,7 +193,7 @@ context('API server', function() {
 				boardInput.Name = 'test board';
 	
 				return request({
-					uri: 'http://localhost:8080/api/boards/1',
+					uri: `http://localhost:${port}/api/boards/1`,
 					json: true,
 					'resolveWithFullResponse': true,
 					method: 'PUT',
@@ -203,7 +205,7 @@ context('API server', function() {
 	
 				/*-------------- RETRIEVE AGAIN-----------------*/
 				return request({
-					uri: 'http://localhost:8080/api/boards/1',
+					uri: `http://localhost:${port}/api/boards/1`,
 					json: true,
 					'resolveWithFullResponse': true,
 					method: 'GET'
@@ -234,7 +236,7 @@ context('API server', function() {
 			
 			/*-------------- CREATE -----------------*/
 			return request({
-				uri: 'http://localhost:8080/api/games',
+				uri: `http://localhost:${port}/api/games`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'POST',
@@ -276,7 +278,7 @@ context('API server', function() {
 	
 				/*-------------- RETRIEVE AGAIN-----------------*/
 				return request({
-					uri: 'http://localhost:8080/api/games/2',
+					uri: `http://localhost:${port}/api/games/2`,
 					json: true,
 					'resolveWithFullResponse': true,
 					method: 'GET'
@@ -316,7 +318,7 @@ context('API server', function() {
 			
 			/*-------------- CREATE -----------------*/
 			return request({
-				uri: `http://localhost:8080/api/boards/${boardID}/threads`,
+				uri: `http://localhost:${port}/api/boards/${boardID}/threads`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'POST',
@@ -329,7 +331,7 @@ context('API server', function() {
 		
 		it('Should retrieve said threads', () => {
 			return request({
-				uri: `http://localhost:8080/api/boards/${boardID}/threads`,
+				uri: `http://localhost:${port}/api/boards/${boardID}/threads`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'GET'
@@ -372,7 +374,7 @@ context('API server', function() {
 			
 			/*-------------- CREATE -----------------*/
 			return request({
-				uri: `http://localhost:8080/api/threads/${threadID}`,
+				uri: `http://localhost:${port}/api/threads/${threadID}`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'PUT',
@@ -385,7 +387,7 @@ context('API server', function() {
 		
 		it('Should retrieve posts with threads', () => {
 			return request({
-				uri: `http://localhost:8080/api/threads/${threadID}`,
+				uri: `http://localhost:${port}/api/threads/${threadID}`,
 				json: true,
 				'resolveWithFullResponse': true,
 				method: 'GET'
