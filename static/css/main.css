@@ -24,3 +24,7 @@ body {
 #boardname {
     margin-left: 50px;
 }
+
+.clickable {
+    cursor:pointer;
+}
