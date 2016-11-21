@@ -63,6 +63,7 @@ window.SockRPG.Boards = {
 			this.$el.find('.modal-content').html(tpl(data));
 			this.$el.find('#submitModal').click(this.onSave.bind(this));
 			this.$el.modal('show');
+			
 		},
 
 		onSave: function(event) {
@@ -85,6 +86,7 @@ window.SockRPG.Boards = {
 		showSuccess: function() {
 			this.$el.find('.alert-success').text('Saved successfully');
 			this.$el.find('.alert-success').show();
+			window.setTimeout(this.$el.modal.bind(this.$el), 400, 'hide');
 		}
 
 	})
