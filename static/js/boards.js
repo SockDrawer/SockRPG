@@ -1,4 +1,8 @@
-window.SockRPGBoards = {
+if (!window.SockRPG) {
+	window.SockRPG = {};
+}
+
+window.SockRPG.Boards = {
 	Board: Backbone.Model.extend({
 		url: '/api/boards',
 
@@ -52,13 +56,14 @@ window.SockRPGBoards = {
 
 		render: function(){
 			var data = this.model.toJSON();
-			if (this.model instanceof SockRPGBoards.Game) {
+			if (this.model instanceof window.SockRPG.Boards.Game) {
 				data.game = true;
 			}
 			var tpl = Handlebars.compile($('#boardModal').html());
 			this.$el.find('.modal-content').html(tpl(data));
 			this.$el.find('#submitModal').click(this.onSave.bind(this));
 			this.$el.modal('show');
+			
 		},
 
 		onSave: function(event) {
@@ -81,6 +86,7 @@ window.SockRPGBoards = {
 		showSuccess: function() {
 			this.$el.find('.alert-success').text('Saved successfully');
 			this.$el.find('.alert-success').show();
+			window.setTimeout(this.$el.modal.bind(this.$el), 400, 'hide');
 		}
 
 	})

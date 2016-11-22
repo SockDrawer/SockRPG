@@ -1,2 +1,5 @@
 docs/**
 coverage/**
+mockups/**
+static/js/ckeditor/**
+wdio.conf.js

@@ -1,185 +1,119 @@
 'use strict';
 
-/**
- * Database access and management.
- *
- * *Note: This module is _not_ intended to be used directly; use the DAO module for all data access.*
- *
- * @module db
- * @license MIT
- * @author RaceProUK
- */
+let knex = 'banana';
 
-const Sequelize = require('sequelize');
 
-const specs = {
-	/**
-	 * Simple primary key specification.
-	 */
-	pk: {
-		type: Sequelize.INTEGER,
-		primaryKey: true,
-		autoIncrement: true
-	},
-	/**
-	 * Non-nullable foreign key specification.
-	 */
-	fkNonNullable: {
-		foreignKey: {
-			allowNull: false
+const db = {
+	initialized: false,
+	
+	initialise: function initialise(config) {
+		if (db.initialised) {
+			return Promise.resolve();
 		}
+		
+		knex = require('knex')({
+			client: 'sqlite3',
+			connection: {
+				filename: config.database.filename
+			},
+			useNullAsDefault: true
+		});
+		
+		return knex.schema.hasTable('Games').then((exists) => {
+			if (!exists) {
+				return knex.schema.createTable('Games', (table) => {
+					table.increments('ID').primary();
+					table.string('gameDescription');
+				});
+			}
+		})
+		.then(() => knex.schema.hasTable('Users'))
+		.then((exists) => {
+			if (!exists) {
+				return knex.schema.createTable('Users', (table) => {
+					table.increments('ID').primary();
+					table.string('Username').notNullable().unique();
+				});
+			}
+		})
+		.then(() => knex.schema.hasTable('Boards'))
+		.then((exists) => {
+			if (!exists) {
+				return knex.schema.createTableIfNotExists('Boards', (table) => {
+					table.increments('ID').primary();
+					table.integer('Owner').references('Users.ID');//.notNullable();  //This shouldn't be nullable, but we don't have users working yet
+					table.integer('GameID').references('Games.ID').nullable();
+					table.string('Name').notNullable();
+					table.boolean('Adult').defaultTo(false);
+					table.string('Description').notNullable().defaultTo('');
+				});
+			}
+		})
+		.then(() => knex.schema.hasTable('Boards'))
+		.then((exists) => {
+			if (!exists) {
+				return knex.schema.createTableIfNotExists('ChildBoards', (table) => {
+					table.increments('ID').primary();
+					table.integer('ParentID').references('Boards.ID').notNullable();
+					table.integer('ChildID').references('Boards.ID').notNullable();
+				});
+			}
+		})
+		.then(() => knex.schema.hasTable('Threads'))
+		.then((exists) => {
+			if (!exists) {
+				return knex.schema.createTableIfNotExists('Threads', (table) => {
+					table.increments('ID').primary();
+					table.string('Title').notNullable();
+					table.integer('Board').references('Boards.ID').notNullable();
+				});
+			}
+		})
+		.then(() => knex.schema.hasTable('Posts'))
+		.then((exists) => {
+			if (!exists) {
+				return knex.schema.createTableIfNotExists('Posts', (table) => {
+					table.increments('ID').primary();
+					table.integer('Thread').references('Threads.ID').notNullable();
+					table.string('Body').notNullable();
+				});
+			}
+		}).then(() => {
+			db.initialised = true;
+			return Promise.resolve(db.initialised);
+		});
 	},
+	
 	/**
-	 * Nullable foreign key specification.
+	 * Tears down the DAO. *The DAO must be reinitialised before it can be used again.*
+	 *
+	 * @returns {Promise} A Promise that is resolved when the DAO is torn down.
 	 */
-	fkNullable: {
-		foreignKey: {
-			allowNull: true
-		}
+	teardown: function teardown() {
+		knex = null;
+		db.initialised = false;
+		
+		return Promise.resolve();
+	},
+	
+	/**
+	 * Reports if the DAO is initialised.
+	 *
+	 * @returns {boolean} Flag indicating whether the DAO is initialised.
+	 */
+	isInitialised: function isInitialised() {
+		return db.initialised;
 	}
 };
 
-let db;
+module.exports = db;
 
-module.exports = {
-	initialise: initialise,
-	close: close
-};
-
-/**
- * Initialise the database. *Must be called before any other function.*
- *
- * @param {Object} config The necessary information to set up the database
- * @param {String} config.sqlite The location of the SQLite file to use; if it doesn't exist, create it
- * @param {Object} config.postgres The necessary information to connect to a PostgreSQL database
- * @param {String} config.postgres.host The host running the PostGreSQL server
- * @param {String} config.postgres.name The name of the database to connect to
- * @param {String} config.postgres.username The username of the user to connect as
- * @param {String} config.postgres.password The password of the user to connect as
- *
- * @returns {Promise} A Promise that is resolved when the database is initialised.
- */
-function initialise(config) {
-	const err = checkConfig(config);
-	if (err) {
-		return Promise.reject(err);
+//Support for db.knex:
+Object.defineProperty(module.exports, 'knex', {
+	get: function get() {
+		return knex;
+	},
+	set: function set(kn) {
+		knex = kn;
 	}
-
-	//Create the DB
-	if (config.sqlite) {
-		db = new Sequelize('SockRPG', null, null, {
-			host: 'localhost',
-			dialect: 'sqlite',
-			logging: undefined,
-			storage: config.sqlite,
-			timestamps: true,
-			paranoid: true
-		});
-	}
-	if (config.postgres) {
-		const settings = config.postgres;
-		db = new Sequelize(settings.name, settings.username, settings.password, {
-			host: settings.host,
-			dialect: 'postgres',
-			logging: undefined,
-			timestamps: true,
-			paranoid: true
-		});
-	}
-
-	createModel();
-	//It's alive!
-	return db.sync();
-}
-
-/**
- * Validate the configuration. *For internal use only.*
- *
- * @param {Object} config The config object passed to `initialise()`
- *
- * @returns {Error} An error describing the issue with the config, or `null` if it is valid
- */
-function checkConfig(config) {
-	if (!config || !config.sqlite && !config.postgres) {
-		return new Error('A database must be defined');
-	}
-	if (config.sqlite && config.postgres) {
-		return new Error('Only one database can be defined at once');
-	}
-	if (config.sqlite) {
-		return checkSQLite(config.sqlite);
-	}
-	return checkPostgres(config.postgres);
-}
-
-/**
- * Validate the SQLite configuration. *For internal use only.*
- *
- * @param {Object} config The `sqlite` member of the config object passed to `initialise()`
- *
- * @returns {Error} An error describing the issue with the config, or `null` if it is valid
- */
-function checkSQLite(config) {
-	if (typeof config !== 'string') {
-		return new Error('SQLite location must be a string');
-	}
-}
-
-/**
- * Validate the PostgreSQL configuration. *For internal use only.*
- *
- * @param {Object} config The `postgres` member of the config object passed to `initialise()`
- *
- * @returns {Error} An error describing the issue with the config, or `null` if it is valid
- */
-function checkPostgres(config) {
-	if (typeof config.name !== 'string' || typeof config.host !== 'string'
-		|| typeof config.username !== 'string' || typeof config.password !== 'string') {
-		return new Error('PostgreSQL settings must be strings');
-	}
-}
-
-/**
- * Creates the database model. *For internal use only.*
- */
-function createModel() {
-	//Define the tables
-	const User = require('./User')(db, specs);
-	const Board = require('./Board')(db, specs);
-	const Game = require('./Game')(db, specs);
-
-	//Set up the 1:1 relationships
-	Board.belongsTo(Game, specs.fkNullable);
-
-	//Set up the 1:N relationships
-	User.hasMany(Board, specs.fkNullable);
-	Board.hasMany(Board, specs.fkNullable);
-
-	//Set up the M:N relationships
-	User.belongsToMany(Game, {through: 'Gamemaster', allowNull: true});
-	Game.belongsToMany(User, {through: 'Gamemaster', allowNull: true});
-
-	//Set table exports
-	module.exports.Users = User;
-	module.exports.Boards = Board;
-	module.exports.Games = Game;
-}
-
-/**
- * Closes the database. *Database must be reinitialised before it can be used again.*
- *
- * @returns {Promise} A Promise that is resolved when the database is closed.
- */
-function close() {
-	return new Promise((resolve) => {
-		//Remove table exports
-		module.exports.Users = undefined;
-		module.exports.Boards = undefined;
-		module.exports.Games = undefined;
-
-		//Good night, good night! Parting is such sweet sorrow,
-		//That I shall say good night till it be morrow.
-		db.close();
-		resolve();
-	});
-}
+});

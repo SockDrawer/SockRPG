@@ -1,0 +1,176 @@
+<html>
+    <head>
+        	<!--Import Google Icon Font-->
+		<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+		<!--Import bootstrap.css-->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        
+        
+        <!-- <script src="//cdn.ckeditor.com/4.5.10/standard/ckeditor.js"></script> -->
+        <script src="ckeditor/ckeditor.js"></script>
+
+        <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+        <style>
+            .post {
+                margin-top: 20px;
+            }
+            
+            hr.gradiant {
+                border: 0;
+                height: 1px;
+                background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+            }
+        </style>
+        
+        <script>
+            $(() => {
+                $('#replydiv').hide();
+                $('#userPost').hide();
+                
+                $('#replyButton .btn').click(() => {
+                    $('#replyButton').hide();
+                    $('#replydiv').show();
+                })
+                
+                $('#replyCancel').click(() => {
+                    $('#replyButton').show();
+                    $('#replydiv').hide();
+                })                
+                
+                $('#replySubmit').click(() => {
+                    var content = CKEDITOR.instances.editor1.getData()
+                    $('#userPost .content').append(content);
+                    $('#replyButton').show();
+                    $('#replydiv').hide();
+                    $('#userPost').show();
+                })
+            })
+        </script>
+    </head>
+    
+    <body>
+        <div class="row">
+             <div class="col-md-12">
+                <a href="threadstats.html">Home</a> > <a href="threadlist.html">Board Name</a>
+                <h2>Thead: Murder Investigation</h2>
+            </div>
+        </div>
+                <div class="row post">
+            <div class="col-md-2 col-md-offset-1 media">
+                <div class="media-left">
+                    <img src="http://placehold.it/50x50">
+                </div>
+                <div class="media-body">
+                    Username<br/>
+                    2016-07-23 4:14pm
+                </div>
+            </div>
+            <div class="col-md-6">
+            <i> No name… shit… Oh well, no sense worrying about that now; got plenty enough to worry about as it is. OK, so… next question… what should it be…</i><br/>
+                <br>
+                "Can you read my future?" <br>
+                 <br>
+               <i> Why the fuck did I ask that?</i> <br>
+            </div>
+            <div class="col-md-8 col-md-offset-1">
+                <hr style="gradiant">
+            </div>
+        </div>
+        <div class="row post">
+            <div class="col-md-2 col-md-offset-1 media">
+                <div class="media-left">
+                    <img src="http://placehold.it/50x50">
+                </div>
+                <div class="media-body">
+                    Username<br/>
+                    2016-07-23 4:14pm
+                </div>
+            </div>
+            <div class="col-md-6">
+                 <br>
+                    Mordrianna gave Rob a smile. "I could...and have, indirectly. Your future ties into the Fates of several others." She takes a moment before speaking again, her voice seeming to reverbarate through the room. "You are on the right track for your needs. You will need both of their help to solve the mystery before you are removed from the board. Beware the seeker, he will hound your trail to the end." <br>
+                     <br>
+                    Mordrianna shakes her head. "It would seem that you have a very...particular Fate. That would explain much, considering no one but the two of you tried to come to my aid." <br>
+                     <br>
+            </div>
+            <div class="col-md-8 col-md-offset-1">
+                <hr style="gradiant">
+            </div>
+        </div>       
+        <div class="row post">
+            <div class="col-md-2 col-md-offset-1 media">
+                <div class="media-left">
+                    <img src="http://placehold.it/50x50">
+                </div>
+                <div class="media-body">
+                    Username<br/>
+                    2016-07-23 4:14pm
+                </div>
+            </div>
+            <div class="col-md-6">
+                 <p><em>It's good to know I'm on the right track at least… but it seems I have to take that note more seriously than I thought. Who is this 'seeker' anyway? Could that be Harrox's real role in all this? Surely that would mean he's</em> not <em>the one trying to manipulate the City… unless he plays a double-role.</em><br>
+<em>But I can't ignore Obsidian's actions; he managed to be seen as Welcomed, even though he isn't. The question is, how? It's not inconceivable that</em> he <em>is the one trying to manipulate the City. Then when the City turned on him, he'd have a reason to disappear to protect his daughter.</em><br>
+<em>But then if T really is his daughter, how could he allow her to fall so far down the social order? Then there's the Lost, the poor souls who are consumed by the City in order to protect itself and its citizens; surely no-one would willingly condemn innocent people in that manner. Unless, of course, they don't know that's what's happening…</em><br>
+<em>This is some seriously fucked up shit going on here… it feels like I have a thousand jigsaw pieces, each from a different jigsaw…</em><br>
+<em>Well, whatever is going on, I'm in too deep to pull out now; may as well go all the way, even if it kills me.</em></p>
+<p>Realising he'd been in silent thought for over a minute, Rob decides it's time for the next question.<br>
+"Most people have little or no experience of situations like that; panic sets in, and they just freeze or cower. I stepped up because, in the absence of police, I felt it was my duty to do so. So my next question is this: out of all the people there that night, why her? Why did she step up to help? And where did she get that crystal from?"</p>
+            </div>
+            <div class="col-md-8 col-md-offset-1">
+                <hr style="gradiant">
+            </div>
+        </div>
+        
+        <div id="userPost" class="row post">
+            <div class="col-md-2 col-md-offset-1 media">
+                <div class="media-left">
+                    <img src="http://placehold.it/50x50">
+                </div>
+                <div class="media-body">
+                    You<br/>
+                    Now
+                </div>
+            </div>
+            <div class="col-md-6 content">
+         </div>
+            <div class="col-md-8 col-md-offset-1">
+                <hr style="gradiant">
+            </div>
+        </div>
+
+        <div id="replyButton" class="row post">
+            <div class="col-md-1 col-md-offset-8 text-right">
+                <button type="button" class="btn btn-primary">Reply</button>
+            </div>
+        </div>
+        <div id ="replydiv" class="row post">
+            <div class="col-md-2 col-md-offset-1 media">
+                <div class="media-left">
+                    <img src="http://placehold.it/50x50">
+                </div>
+                <div class="media-body">
+                    You<br/>
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                    <textarea name="editor1" id="editor1" rows="10" cols="80">
+                        
+                    </textarea>
+                    <script>
+                        // Replace the <textarea id="editor1"> with a CKEditor
+                        // instance, using default configuration.
+                        CKEDITOR.replace( 'editor1' );
+                    </script>
+    
+            </div>
+            <div class="col-md-2 col-md-offset-7 text-right">
+                <button type="button" id="replyCancel" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="replySubmit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+        
+        
+    </body>
+</html>
