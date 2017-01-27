@@ -48,6 +48,7 @@ function getHomePage(req, res) {
 		return Text.getTextForSlot('home_overview');
 	})
 	.then((overviewText) => {
+		console.log(overviewText)
 		data.home_overview = overviewText.text;
 	})
 	.then(() => {

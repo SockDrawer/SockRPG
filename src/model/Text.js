@@ -40,7 +40,7 @@ class Text {
 	
 	static getTextForSlot(name) {
 		return DB.knex('Text')
-		.where('Text.slotName', name).select('slotName', 'text')
+		.where('Text.slotName', name).select('slotName', 'data')
 		.then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
