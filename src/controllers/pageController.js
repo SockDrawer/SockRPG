@@ -48,7 +48,6 @@ function getHomePage(req, res) {
 		return Text.getTextForSlot('home_overview');
 	})
 	.then((overviewText) => {
-		console.log(overviewText)
 		data.home_overview = overviewText.text;
 	})
 	.then(() => {
@@ -131,7 +130,6 @@ function updateText(req, res) {
 			return Promise.resolve();
 		}
 		
-		console.log(req.body)
 		//req.body is input from client; cannot be trusted
 		//I know there's a reflected XSS here, but for now, let's get it working:
 		text.text = req.body;

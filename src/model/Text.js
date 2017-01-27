@@ -39,7 +39,6 @@ class Text {
 	}
 	
 	save() {
-		console.log(this.data.data)
 		return DB.knex('Text').where('slotName', this.name).update(this.data);
 	}
 	
