@@ -15,17 +15,21 @@ const DB = require('./db');
 class Text {
 	constructor (rowData) {
 		this.data = {};
-		this.data.name = rowData.slotName;
-		this.data.text = rowData.data;
+		this.data.slotName = rowData.slotName;
+		this.data.data = rowData.data;
 		this.Canonical = `/api/text/${this.name}`;
 	}
 	
+	get name() {
+		return this.data.slotName;
+	}
+	
 	get text() {
-		return this.data.text;
+		return this.data.data;
 	}
 	
 	set text(newText) {
-		this.data.text = newText;
+		this.data.data = newText;
 	}
 	
 	serialize() {
@@ -35,6 +39,7 @@ class Text {
 	}
 	
 	save() {
+		console.log(this.data.data)
 		return DB.knex('Text').where('slotName', this.name).update(this.data);
 	}
 	

@@ -95,6 +95,7 @@ function setupExpress() {
 				.get(cPage.getThreadView);
 			
 			const jsonParser = bodyParser.json({type: 'application/json'});
+			const textParser = bodyParser.text();
 			/*API*/
 			app.route('/api/games')
 				.get(cBoard.getAllGames)
@@ -157,7 +158,7 @@ function setupExpress() {
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
-				.put(jsonParser, cPage.updateText);
+				.put(textParser, cPage.updateText);
 				
 			resolve();
 		});
