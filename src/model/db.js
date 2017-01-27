@@ -78,6 +78,21 @@ const db = {
 					table.string('Body').notNullable();
 				});
 			}
+		})
+		.then(() => knex.schema.hasTable('Text'))
+		.then((exists) => {
+			if (!exists) {
+				return knex.schema.createTableIfNotExists('Text', (table) => {
+					table.string('slotName').primary();
+					table.text('data');
+				}).then(() => {
+					//Insert the default text
+					return knex('Text').insert({
+						slotName: 'home_overview',
+						data: 'Welcome to the site! This text is customizable if you are the admin. It should talk about why someone should join your roleplaying site.'
+					});
+				});
+			}
 		}).then(() => {
 			db.initialised = true;
 			return Promise.resolve(db.initialised);
