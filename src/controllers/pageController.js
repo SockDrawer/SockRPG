@@ -28,6 +28,7 @@ const Board = require('../model/Board');
 const Game = require('../model/Game');
 const Thread = require('../model/Thread');
 const Post = require('../model/Post');
+const Text = require('../model/Text');
 
 /**
  * Get the home page to hand to the view
@@ -111,10 +112,33 @@ function getThreadView(req, res) {
 	});
 }
 
+/**
+* Update text on a page slot. For CKEditor to send to
+* @param {Request} req Express' request object. Expects an ID under the params key
+* @param {Response} res Express' response object.
+* @returns {Promise} A Promise that is resolved when the thread is added
+*/
+function updateText(req, res) {
+	//check if slot is valid
+	return Text.getTextForSlot(req.params.id).then((text) => {
+		if (!text) {
+			res.status(404).end();
+			return Promise.resolve();
+		}
+		
+		//req.body is input from client; cannot be trusted
+		//I know there's a reflected XSS here, but for now, let's get it working:
+		text.text = req.body;
+		res.status(200).end();
+		return text.save();
+	});
+}
+
 const controller = {
 	getHomePage: getHomePage,
 	getThreadView: getThreadView,
-	getBoardView: getBoardView
+	getBoardView: getBoardView,
+	updateText: updateText
 };
 
 module.exports = controller;

@@ -14,6 +14,7 @@ const Board = require('../../../src/model/Board');
 const Game = require('../../../src/model/Game');
 const Thread = require('../../../src/model/Thread');
 const Post = require('../../../src/model/Post');
+const Text = require('../../../src/model/Text');
 
 describe('Page API controller', () => {
 	let sandbox;
@@ -337,6 +338,63 @@ describe('Page API controller', () => {
 			
 			return page.getThreadView(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.status).to.have.been.calledWith(500);
+			});
+		});
+	});
+	
+	describe('Text updater', () => {
+		let fakeRes, fakeText;
+		
+		beforeEach(() => {
+			sandbox = Sinon.sandbox.create();
+			fakeRes = {
+				render: sandbox.stub(),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub(),
+				end: sandbox.stub()
+			};
+			
+			fakeText = {
+				name: 'home_sometext',
+				text: 'some text',
+				save: sandbox.stub()
+			};
+		});
+		
+		afterEach( () => {
+			sandbox.restore();
+		});
+		
+		it('should exist', () => {
+			expect(page.updateText).to.be.a('function');
+		});
+		
+		it('should return 404 if no text is found', () => {
+			sandbox.stub(Text, 'getTextForSlot').resolves(undefined);
+			const fakeReq = {
+				params: {
+					id: 'home_nonexistant'
+				},
+				body: 'stupid shit'
+			};
+			
+			return page.updateText(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledWith(404);
+			});
+		});
+		
+		it('should update text', () => {
+			sandbox.stub(Text, 'getTextForSlot').resolves(fakeText);
+			const fakeReq = {
+				params: {
+					id: 'home_nonexistant'
+				},
+				body: 'stupid shit'
+			};
+			
+			return page.updateText(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledWith(200);
+				expect(fakeText.text).to.equal('stupid shit');
 			});
 		});
 	});
