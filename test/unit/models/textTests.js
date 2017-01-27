@@ -38,14 +38,14 @@ describe('Static text model', () => {
 	
 	it('should set text for a slot', () => {
 		return Text.getTextForSlot('home_overview').then((text) => {
-		    text.text = 'This shit is bananas';
-		    Text.getTextForSlot('home_overview').should.eventually.deep.equal({
-		        data: {
-		            name: 'home_overview',
-		            text: 'This shit is bananas'
-		        },
-		        Canonical: '/api/text/home_overview'
-		    });
+			text.text = 'This shit is bananas';
+			Text.getTextForSlot('home_overview').should.eventually.deep.equal({
+				data: {
+					name: 'home_overview',
+					text: 'This shit is bananas'
+				},
+				Canonical: '/api/text/home_overview'
+			});
 		});
 	});
 });
