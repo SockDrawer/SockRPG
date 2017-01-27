@@ -29,6 +29,12 @@ describe('Page API controller', () => {
 	
 	describe('Home page', () => {
 		
+		beforeEach(() => {
+			sandbox.stub(Text, 'getTextForSlot').resolves({
+				text: 'sample text'
+			});
+		});
+
 		it('should exist', () => {
 			expect(page.getHomePage).to.be.a('function');
 		});
@@ -47,6 +53,24 @@ describe('Page API controller', () => {
 			const fakeReq = {};
 			return page.getHomePage(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
+			});
+		});
+		
+		it('should render the admin-editable text', () => {
+			sandbox.stub(Board, 'getAllBoards').resolves();
+			sandbox.stub(Game, 'getAllGames').resolves();
+			
+			const fakeRes = {
+				render: sandbox.stub(),
+				status: (num) => {
+					expect(num).to.equal(200);
+				}
+			};
+			
+			const fakeReq = {};
+			return page.getHomePage(fakeReq, fakeRes).then(() => {
+				const data = fakeRes.render.args[0][1];
+				expect(data.home_overview).to.equal('sample text');
 			});
 		});
 		

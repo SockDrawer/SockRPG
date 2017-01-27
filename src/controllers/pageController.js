@@ -45,6 +45,10 @@ function getHomePage(req, res) {
 	})
 	.then((games) => {
 		data.games = games ? games.map((game) => game.serialize()) : games;
+		return Text.getTextForSlot('home_overview');
+	})
+	.then((overviewText) => {
+		data.home_overview = overviewText.text;
 	})
 	.then(() => {
 		res.render('home', data);
