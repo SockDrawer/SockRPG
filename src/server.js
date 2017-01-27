@@ -152,6 +152,13 @@ function setupExpress() {
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
 				
+			app.route('/api/text/:id')
+				.get(cThread.getThread)
+				.post(return405)
+				.patch(return405)
+				.delete(return405)
+				.put(jsonParser, cPage.updateText);
+				
 			resolve();
 		});
 }
