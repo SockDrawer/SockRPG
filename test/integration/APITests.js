@@ -393,11 +393,9 @@ context('API server', function() {
 				method: 'GET'
 			}).then((response) => {
 				assert.equal(response.statusCode, 200, 'Thread retrieval should return 200 OK');
-				assert.deepEqual(response.body.posts, [{
-					ID: 1,
-					Body: '<p>This is the body</b>',
-					Canonical: '/api/posts/1'
-				}], 'Thread retrieval should return post');
+				assert.propertyVal(response.body.posts[0], 'ID', 1);
+				assert.propertyVal(response.body.posts[0], 'Body', '<p>This is the body</b>');
+				assert.propertyVal(response.body.posts[0], 'Canonical', '/api/posts/1');
 			});
 		});
 	});

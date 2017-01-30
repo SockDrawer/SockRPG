@@ -19,7 +19,6 @@ describe('Post model', () => {
 	let sandbox;
     
 	beforeEach(() => {
-		sandbox = Sinon.sandbox.create();
 		return DB.initialise({
 			database: {
 				filename: ':memory:'
@@ -45,7 +44,6 @@ describe('Post model', () => {
 	});
 
 	afterEach(() => {
-		sandbox.restore();
 		return DB.teardown();
 	});
 	
@@ -54,6 +52,15 @@ describe('Post model', () => {
 			Thread: 1,
 			Body: 'This is a post'
 		}).should.eventually.contain(1);
+	});
+	
+	it('should expose post create time', () => {
+		return Post.addPost({
+			Thread: 1,
+			Body: 'This is a post'
+		})
+		.then(() => Post.getPostByID(1))
+		.then((post) => post.Created.should.be.a('string'));
 	});
 	
 	
@@ -68,7 +75,8 @@ describe('Post model', () => {
 		const post = {
 			ID: 1,
 			Thread: 1,
-			Body: 'Manah manah (do-doo do-do doo)'
+			Body: 'Manah manah (do-doo do-do doo)',
+			Created: 'fake timestamp'
 		};
 		
 		return Post.addPost(post)

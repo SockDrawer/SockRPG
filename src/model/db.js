@@ -76,7 +76,7 @@ const db = {
 					table.increments('ID').primary();
 					table.integer('Thread').references('Threads.ID').notNullable();
 					table.string('Body').notNullable();
-					table.timestamp('post_time').defaultTo(knex.fn.now());
+					table.timestamp('Created').defaultTo(knex.fn.now()).notNullable();
 				});
 			}
 		})

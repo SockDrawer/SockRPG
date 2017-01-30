@@ -17,8 +17,15 @@ class Post {
 		this.data = {};
 		this.data.ID = rowData.ID;
 		this.data.Body = rowData.Body;
+		if (rowData.Created) {
+			this.data.Created = rowData.Created;
+		}
 		this.Canonical = `/api/posts/${this.ID}`;
 		this.Thread = rowData.Thread;
+	}
+	
+	get Created() {
+		return this.data.Created;
 	}
 	
 	get ID() {
@@ -54,12 +61,11 @@ class Post {
 	
 	static getPostByID(id) {
 		return DB.knex('Posts')
-		.where('Posts.ID', id).select('ID', 'Body')
+		.where('Posts.ID', id).select('ID', 'Body', 'Created')
 		.then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}
-	
 			return new Post(rows[0]);
 		});
 	}
@@ -67,7 +73,7 @@ class Post {
 	static getPostsInThread(threadID) {
 		return DB.knex('Posts')
 		.where('Posts.Thread', threadID)
-		.select('Posts.ID', 'Body', 'Posts.Thread')
+		.select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.Created')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));
 		});
