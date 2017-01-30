@@ -6,7 +6,6 @@ const DB = require('./db');
 /**
  * The Game table.
  *
- * *Note: This module is _not_ intended to be used directly; use the DAO module for all data access.*
  *
  * @module Game
  * @license MIT
@@ -42,6 +41,24 @@ class Game extends Board {
 		this.data.Game.gameDescription = des;
 	}
 	
+	getTags() {
+		return DB.knex('Tags').innerJoin('Games', 'Tags.GameID', 'Games.ID').select('Tag').map((row) => row.Tag);
+	}
+	
+	addTag(tag) {
+		return DB.knex('Tags').insert({
+			GameID: this.data.Game.ID,
+			Tag: tag
+		});
+	}
+	
+	removeTag(tag) {
+		return DB.knex('Tags')
+			.where('GameID', this.data.Game.ID)
+			.where('Tag', tag)
+			.del();
+	}
+	
 	serialize() {
 		return super.serialize();
 	}
@@ -58,9 +75,9 @@ class Game extends Board {
 	}
 	
 	/**
-	* Get all vanilla boards in the forum.
+	* Get all games in the forum.
 	*
-	* @returns {Promise} A Promise that is resolved with a list of vanilla boards
+	* @returns {Promise} A Promise that is resolved with a list of games
 	*/
 	static getAllGames() {
 		return DB.knex('Boards').innerJoin('Games', 'Boards.GameID', 'Games.ID').select().map((row) => new Board(row));

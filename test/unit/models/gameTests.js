@@ -107,4 +107,52 @@ describe('Game model', () => {
 			return game.getThreads().should.eventually.have.length(1);
 		});
 	});
+	
+	describe('with tags', () => {
+		let game;
+		
+		beforeEach(() => {
+			return Game.addGame({
+				Owner: userID,
+				Name: 'Board1',
+				Game: {
+					gameDescription: 'A cool game'
+				}
+			}).then((ids) => Game.getGame(ids[0]))
+			.then((oot) => {
+				game = oot;
+			});
+		});
+		
+		it('Should return an array of tags', () => {
+			return game.getTags().should.eventually.be.an('Array');
+		});
+		
+		it('Should start with no tags', () => {
+			return game.getTags().should.eventually.be.empty;
+		});
+		
+		it('Should add a tag', () => {
+			return game.addTag('banana').should.resolve;
+		});
+		
+		it('Should retrieve added tags', () => {
+			return game.addTag('kitten').then(() => {
+				return game.getTags().should.eventually.contain('kitten');
+			});
+		});
+		
+		it('Should remove tags', () => {
+			return DB.knex('Tags').insert([{
+				GameID: game.GameID,
+				Tag: 'kitten'
+			}, {
+				GameID: game.GameID,
+				Tag: 'puppy'
+			}])
+			.then(() => game.removeTag('kitten'))
+			.then(() => game.getTags().should.eventually.contain['puppy'])
+			.then(() => game.getTags().should.eventually.not.contain['kitten']);
+		});
+	});
 });

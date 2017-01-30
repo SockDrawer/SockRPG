@@ -24,6 +24,7 @@ const db = {
 				return knex.schema.createTable('Games', (table) => {
 					table.increments('ID').primary();
 					table.string('gameDescription');
+					table.integer('gameMaster').references('Users.ID');
 				});
 			}
 		})
@@ -76,6 +77,17 @@ const db = {
 					table.increments('ID').primary();
 					table.integer('Thread').references('Threads.ID').notNullable();
 					table.string('Body').notNullable();
+					table.timestamp('post_time').defaultTo(knex.fn.now());
+				});
+			}
+		})
+		.then(() => knex.schema.hasTable('Tags'))
+		.then((exists) => {
+			if (!exists) {
+				return knex.schema.createTableIfNotExists('Tags', (table) => {
+					table.integer('GameID').references('Games.ID').notNullable();
+					table.string('Tag').notNullable();
+					table.primary(['GameID', 'Tag']);
 				});
 			}
 		})
