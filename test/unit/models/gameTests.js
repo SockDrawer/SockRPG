@@ -116,6 +116,22 @@ describe('Game model', () => {
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ID: 1, Title: 'A Thread'}]);
 			return game.getThreads().should.eventually.have.length(1);
 		});
+		
+		it('Should expose a count of threads', () => {
+			return chai.expect(game.threadCount).to.equal(0);
+		});
+		
+		it('Should expose a count of threads greater than 0', () => {
+			return DB.knex('Threads').insert([{
+				Board: game.GameID,
+				Title: 'Stuff and nonsense'
+			}, {
+				Board: game.GameID,
+				Title: 'Music and rainbows'
+			}])
+			.then(() => Game.getGame(game.GameID))
+			.then((g) => g.threadCount.should.equal(2));
+		});
 	});
 	
 	describe('with tags', () => {

@@ -27,6 +27,11 @@ class Game extends Board {
 			this.data.Game.gameDescription = rowData.gameDescription;
 			delete this.data.gameDescription;
 		}
+		
+		//Stats that are computed rather than serialized
+		this.stats = {
+			threadCount: 0
+		};
 	}
 	
 	get gameMaster() {
@@ -43,6 +48,14 @@ class Game extends Board {
 	
 	set description(des) {
 		this.data.Game.gameDescription = des;
+	}
+	
+	get threadCount() {
+		return this.stats.threadCount;
+	}
+	
+	set threadCount(count) {
+		this.stats.threadCount = count;
 	}
 	
 	getTags() {
@@ -114,15 +127,29 @@ class Game extends Board {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getGame(id) {
+		let game;
 		return DB.knex('Boards')
 			.innerJoin('Games', 'Boards.GameID', 'Games.ID')
 			.where('Boards.ID', id)
-			.select('Boards.ID', 'Owner', 'Name', 'Adult', 'GameID', 'gameDescription').then((rows) => {
+			.select('Boards.ID', 'Owner', 'Name', 'Adult', 'GameID', 'gameDescription')
+			.then((rows) => {
 				if (!rows || rows.length <= 0) {
-					return null;
+					game = null;
+				} else {
+					game = new Game(rows[0]);
 				}
-
-				return new Game(rows[0]);
+			})
+			.then(() => DB.knex('Threads').count('ID').where('Board', id))
+			.then((rows) => {
+				if (game) {
+					if (rows.length > 0) {
+						game.threadCount = rows[0]['count("ID")'];
+					} else {
+						game.threadCount = 0;
+					}
+				}
+				
+				return game;
 			});
 	}
 	

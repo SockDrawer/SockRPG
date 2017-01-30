@@ -2,40 +2,29 @@
 <h2>Games</h2>
 <div class="boardList">
 
-{{#each games}}
-	<div class="row">
-		<div class="col-md-6 col-md-offset-1 media board shadow">
-			<div class="media-left">
-				<i class="large material-icons img">chat_bubble</i>
-			</div>
 
-		  <div class="media-body">
-		     <h4 class="media-heading"><a href="/board/{{ID}}">{{Name}}</a></h4>
-		    This is a description of the board. It goes here.
-		  </div>
-
-		</div>
-	</div>
-{{/each}}
-
-</div>
-
-<div class="row">
-		<div class="col-md-4 col-md-offset-5 media" id="addGame">
-			<div class="media-left">
-				<i class="large material-icons img">games</i>
-			</div>
-
-		  <div class="media-body">
-		     <h4 class="media-heading">Add Game</h4>
-		  </div>
-
-		</div>
-	</div>
 -->
 <div id="home_overview" contenteditable="true">
     {{{home_overview}}}
 </div>
+<h2>Games</h2>
+{{#each games}}
+{{>game}}
+{{/each}}
+
+<div class="row">
+	<div class="col-md-4 col-md-offset-5 media clickable" id="addGame">
+		<div class="media-left">
+			<i class="large material-icons img">note_add</i>
+		</div>
+
+	  <div class="media-body">
+	     <h4 class="media-heading">Add Game</h4>
+	  </div>
+
+	</div>
+</div>
+
 <h2>Boards</h2>
 <div class="boardList">
 {{#each boards}}
