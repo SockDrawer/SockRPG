@@ -72,6 +72,16 @@ describe('Game model', () => {
 			}
 		}).then(() => Game.getGame(1)).should.eventually.contain.all({ID: 1});
 	});
+	
+	it('should expose owner as GM', () => {
+		return Game.addGame({
+			Owner: userID,
+			Name: 'Board1',
+			Game: {
+				gameDescription: 'a cool game'
+			}
+		}).then(() => Game.getGame(1)).should.eventually.contain.all({gameMaster: userID});
+	});
 
 	it('should not find a non-existant board by ID', () => {
 		return Game.getGame(0).should.eventually.equal(null);

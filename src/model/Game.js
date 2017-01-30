@@ -29,6 +29,10 @@ class Game extends Board {
 		}
 	}
 	
+	get gameMaster() {
+		return this.data.Owner;
+	}
+	
 	get GameID() {
 		return this.data.Game.ID;
 	}

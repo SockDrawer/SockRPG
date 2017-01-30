@@ -24,7 +24,6 @@ const db = {
 				return knex.schema.createTable('Games', (table) => {
 					table.increments('ID').primary();
 					table.string('gameDescription');
-					table.integer('gameMaster').references('Users.ID');
 				});
 			}
 		})
