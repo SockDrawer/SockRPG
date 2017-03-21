@@ -28,6 +28,7 @@ const Board = require('../model/Board');
 const Game = require('../model/Game');
 const Thread = require('../model/Thread');
 const Post = require('../model/Post');
+const User = require('../model/User');
 
 /**
  * Get the home page to hand to the view
@@ -46,7 +47,33 @@ function getHomePage(req, res) {
 		data.games = games ? games.map((game) => game.serialize()) : games;
 	})
 	.then(() => {
+		if (req.user) {
+			data.user = req.user;
+			data.loggedIn = true;
+		} else {
+			data.loggedIn = false;
+		}
 		res.render('home', data);
+	})
+	.catch((err) => {
+		//TODO: logging errors
+		console.log(err);
+		res.status(500).send({error: err.toString()});
+	});
+}
+
+/**
+ * Get the login page to hand to the view
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function getLoginView(req, res) {
+	const data = {};
+
+	return User.getAllUsers().then((users) => {
+		data.users = users ? users.map((user) => user.serialize()) : users;
+		res.render('login', data);
 	})
 	.catch((err) => {
 		//TODO: logging errors
@@ -114,7 +141,8 @@ function getThreadView(req, res) {
 const controller = {
 	getHomePage: getHomePage,
 	getThreadView: getThreadView,
-	getBoardView: getBoardView
+	getBoardView: getBoardView,
+	getLoginView: getLoginView
 };
 
 module.exports = controller;

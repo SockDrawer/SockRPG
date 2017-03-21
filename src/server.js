@@ -13,10 +13,14 @@ const exphbs = require('express-handlebars');
 const app = express();
 const bodyParser = require('body-parser');
 const debug = require('debug')('server');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+
 
 
 //Model
 const DB = require('./model/db');
+const User = require('./model/User');
 
 //Controllers
 const cStatic = require('./controllers/staticController.js');
@@ -52,6 +56,35 @@ function setupDao(config) {
 	});
 }
 
+/* Passport*/
+
+var passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy;
+  
+passport.serializeUser(function(user, done) {
+  done(null, user.ID);
+});
+
+passport.deserializeUser(function(user, done) {
+	User.getUser(user).then((u) => done(null, u));
+});
+
+  
+ passport.use(new LocalStrategy({
+ 	usernameField: 'user',
+    passwordField: 'password',
+    passReqToCallback: true
+ },
+  function(req, userID, password, done) {
+  	User.getUser(userID).then((user) => {
+  		if (!user) {
+  			return done(null, false, { message: 'Incorrect username.' });
+  		}
+  		
+  		return done(null, user);
+  	})
+  }
+));
 /**
  * Initialise the Express server
  * @returns {Promise} A promise chain that resolves when the server is ready to use
@@ -64,23 +97,12 @@ function setupExpress() {
 			app.set('view engine', 'handlebars');
 			app.set('views', 'src/views');
 			
-			
-			//This is purely an example to show how the routing will be implemented for each endpoint
-			//Any unsupported methods will be omitted
-			app.route('/example')
-				.get((req, res) => {
-					res.send('GETs will read things!');
-				})
-				.post((req, res) => {
-					res.send('POSTs will create things!');
-				})
-				.put((req, res) => {
-					res.send('PUTs will edit things!');
-				})
-				.delete((req, res) => {
-					res.send('Danger Will Robinson!');
-				});
-			
+			//<Middleware
+			app.use(bodyParser.urlencoded({ extended: false }))
+			app.use(cookieParser());
+			app.use(session({ secret: 'keyboard cat' }));
+			app.use(passport.initialize());
+			app.use(passport.session());
 			
 			//Static content and uploads
 			app.route('/static/*').get(cStatic.serve);
@@ -93,6 +115,12 @@ function setupExpress() {
 				.get(cPage.getBoardView);
 			app.route('/thread/:id')
 				.get(cPage.getThreadView);
+				
+			app.route('/login')
+				.get(cPage.getLoginView)
+				.post(passport.authenticate('local', { successRedirect: '/',
+				                                   failureRedirect: '/login'})
+				);
 			
 			const jsonParser = bodyParser.json({type: 'application/json'});
 			/*API*/

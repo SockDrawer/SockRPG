@@ -17,6 +17,7 @@ class User {
 		this.data = {};
 		this.data.ID = row.ID;
 		this.data.Username = row.Username;
+		this.data.Admin = row.Admin;
 		
 		//Canonical link
 		this.Canonical = `/api/users/${this.data.ID}`;
@@ -37,6 +38,14 @@ class User {
 	
 	set Username(us) {
 		this.data.Username = us;
+	}
+	
+	get Admin() {
+		return this.data.Admin;
+	}
+	
+	set Admin(a) {
+		this.data.Admin = a;
 	}
 	
 	serialize() {
@@ -95,7 +104,8 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUserByName(name) {
-		return DB.knex('Users').where('Username', name).select('ID', 'Username').then((rows) => {
+		console.log(name)
+		return DB.knex('Users').where('Username', name).select('ID', 'Username', 'Admin').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}

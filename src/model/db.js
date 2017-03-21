@@ -32,6 +32,7 @@ const db = {
 			if (!exists) {
 				return knex.schema.createTable('Users', (table) => {
 					table.increments('ID').primary();
+					table.boolean('Admin').notNullable().defaultTo(false);
 					table.string('Username').notNullable().unique();
 				});
 			}
