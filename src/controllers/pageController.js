@@ -47,7 +47,7 @@ function getHomePage(req, res) {
 		data.games = games ? games.map((game) => game.serialize()) : games;
 	})
 	.then(() => {
-		if (req.user) {
+		if (req.isAuthenticated()) {
 			data.user = req.user;
 			data.loggedIn = true;
 		} else {

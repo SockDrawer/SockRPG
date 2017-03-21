@@ -122,6 +122,12 @@ function setupExpress() {
 				                                   failureRedirect: '/login'})
 				);
 			
+			app.route('/logout')
+				.get(function(req, res) {
+					req.logout();
+					res.redirect('/');
+				})
+			
 			const jsonParser = bodyParser.json({type: 'application/json'});
 			/*API*/
 			app.route('/api/games')
