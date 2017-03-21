@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Site made with Mobirise Website Builder v3.9.0, https://mobirise.com -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Mobirise v3.9.0, mobirise.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="home_assets/logo.png" type="image/x-icon">
+  <meta name="description" content="">
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:700,400&amp;subset=cyrillic,latin,greek,vietnamese">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="wizard_assets/bootstrap-wizard.css">
+</head>
+<body>
+    
+    <div class="wizard" id="firstTimeWizard" data-title="Welcome to SockRPG">
+        <div class="wizard-card" data-cardname="card1">
+            <h3>Welcome</h3>
+            Welcome! Your install is almost complete. We just need you to finish setting things up.
+        </div>
+        <div class="wizard-card" data-cardname="card2">
+            <h3>Credentials</h3>
+            <p>In order to get started, we need to configure your username and password. You will use this to administrate the forums.</p>
+            <form>
+                <label>Username:</label><input type="text" name="username"><br/>
+                <label>Password:</label><input type="password" name="password">
+            </form>
+        </div>
+        <div class="wizard-card" data-cardname="card3">
+            <h3>Options</h3>
+            Now we are going to set up some options: <br/>
+            <form>
+                <input type="checkbox" name="dice"><label> My games use dice</label></input><br/>
+                <input type="checkbox" name="avatrs"><label> I want to allow people to upload avatars</label></input><br/>
+                <input type="checkbox" name="approval"><label> I want to approve new users individually</label></input><br/>
+            </form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="wizard_assets/bootstrap-wizard.min.js" type="text/javascript"></script>
+    <script>
+        $(function() {
+            var options = {};
+            var wizard = $("#firstTimeWizard").wizard(options);
+            wizard.show();
+        });
+    </script>
+</body>
