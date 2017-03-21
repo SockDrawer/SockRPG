@@ -27,6 +27,9 @@ describe('Page API controller', () => {
 	});
 	
 	describe('Home page', () => {
+		const fakeReq = {
+			isAuthenticated: () => false
+		};
 		
 		it('should exist', () => {
 			expect(page.getHomePage).to.be.a('function');
@@ -43,7 +46,6 @@ describe('Page API controller', () => {
 				}
 			};
 			
-			const fakeReq = {};
 			return page.getHomePage(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
 			});
@@ -73,7 +75,6 @@ describe('Page API controller', () => {
 				Canonical: '/api/boards/2'
 			}];
 			
-			const fakeReq = {};
 			
 			sandbox.stub(Board, 'getAllBoards').resolves(boardList.map((board) => new Board(board)));
 			sandbox.stub(Game, 'getAllGames').resolves();
@@ -117,8 +118,6 @@ describe('Page API controller', () => {
 					gameDescription: ''
 				}
 			}];
-			
-			const fakeReq = {};
 			
 			sandbox.stub(Board, 'getAllBoards').resolves();
 			sandbox.stub(Game, 'getAllGames').resolves(gameList.map((game) => new Game(game)));
