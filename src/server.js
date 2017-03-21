@@ -58,32 +58,30 @@ function setupDao(config) {
 
 /* Passport*/
 
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
   
-passport.serializeUser(function(user, done) {
-  done(null, user.ID);
+passport.serializeUser((user, done) => {
+	done(null, user.ID);
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser((user, done) => {
 	User.getUser(user).then((u) => done(null, u));
 });
 
-  
- passport.use(new LocalStrategy({
- 	usernameField: 'user',
-    passwordField: 'password',
-    passReqToCallback: true
+passport.use(new LocalStrategy({
+	usernameField: 'user',
+	passwordField: 'password',
+	passReqToCallback: true
  },
-  function(req, userID, password, done) {
-  	User.getUser(userID).then((user) => {
-  		if (!user) {
-  			return done(null, false, { message: 'Incorrect username.' });
-  		}
-  		
-  		return done(null, user);
-  	})
-  }
+	(req, userID, password, done) => {
+		User.getUser(userID).then((user) => {
+			if (!user) {
+				return done(null, false, {message: 'Incorrect username.'});
+			}
+			
+			return done(null, user);
+		});
+	}
 ));
 /**
  * Initialise the Express server
@@ -98,9 +96,9 @@ function setupExpress() {
 			app.set('views', 'src/views');
 			
 			//<Middleware
-			app.use(bodyParser.urlencoded({ extended: false }))
+			app.use(bodyParser.urlencoded({extended: false}));
 			app.use(cookieParser());
-			app.use(session({ secret: 'keyboard cat' }));
+			app.use(session({secret: 'keyboard cat'}));
 			app.use(passport.initialize());
 			app.use(passport.session());
 			
@@ -118,15 +116,15 @@ function setupExpress() {
 				
 			app.route('/login')
 				.get(cPage.getLoginView)
-				.post(passport.authenticate('local', { successRedirect: '/',
-				                                   failureRedirect: '/login'})
+				.post(passport.authenticate('local', {successRedirect: '/',
+													failureRedirect: '/login'})
 				);
 			
 			app.route('/logout')
-				.get(function(req, res) {
+				.get((req, res) => {
 					req.logout();
 					res.redirect('/');
-				})
+				});
 			
 			const jsonParser = bodyParser.json({type: 'application/json'});
 			/*API*/

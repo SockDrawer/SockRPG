@@ -104,7 +104,6 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUserByName(name) {
-		console.log(name)
 		return DB.knex('Users').where('Username', name).select('ID', 'Username', 'Admin').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
