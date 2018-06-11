@@ -18,7 +18,7 @@
     "email": "support@sockdrawer.io"
   },
   "engines": {
-    "node": ">=4.0"
+    "node": ">=8.0"
   },
   "dependencies": {
     "async": "^2.0.1",
@@ -26,11 +26,11 @@
     "debug": "^2.2.0",
     "express": "^4.13.3",
     "express-handlebars": "^3.0.0",
-    "knex": "^0.11.10",
+    "knex": "^0.14.6",
     "pg": "^4.4.3",
     "pg-hstore": "^2.3.2",
     "request-promise": "^1.0.2",
-    "sqlite3": "^3.1.0"
+    "sqlite3": "^4.0.0"
   },
   "devDependencies": {
     "chai": "^3.3.0",

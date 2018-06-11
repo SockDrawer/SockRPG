@@ -39,7 +39,7 @@ const db = {
 		.then(() => knex.schema.hasTable('Boards'))
 		.then((exists) => {
 			if (!exists) {
-				return knex.schema.createTableIfNotExists('Boards', (table) => {
+				return knex.schema.createTable('Boards', (table) => {
 					table.increments('ID').primary();
 					table.integer('Owner').references('Users.ID');//.notNullable();  //This shouldn't be nullable, but we don't have users working yet
 					table.integer('GameID').references('Games.ID').nullable();
@@ -52,7 +52,7 @@ const db = {
 		.then(() => knex.schema.hasTable('Boards'))
 		.then((exists) => {
 			if (!exists) {
-				return knex.schema.createTableIfNotExists('ChildBoards', (table) => {
+				return knex.schema.createTable('ChildBoards', (table) => {
 					table.increments('ID').primary();
 					table.integer('ParentID').references('Boards.ID').notNullable();
 					table.integer('ChildID').references('Boards.ID').notNullable();
@@ -62,7 +62,7 @@ const db = {
 		.then(() => knex.schema.hasTable('Threads'))
 		.then((exists) => {
 			if (!exists) {
-				return knex.schema.createTableIfNotExists('Threads', (table) => {
+				return knex.schema.createTable('Threads', (table) => {
 					table.increments('ID').primary();
 					table.string('Title').notNullable();
 					table.integer('Board').references('Boards.ID').notNullable();
@@ -72,7 +72,7 @@ const db = {
 		.then(() => knex.schema.hasTable('Posts'))
 		.then((exists) => {
 			if (!exists) {
-				return knex.schema.createTableIfNotExists('Posts', (table) => {
+				return knex.schema.createTable('Posts', (table) => {
 					table.increments('ID').primary();
 					table.integer('Thread').references('Threads.ID').notNullable();
 					table.string('Body').notNullable();
