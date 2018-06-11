@@ -5,6 +5,7 @@ let knex = 'banana';
 
 const db = {
 	initialized: false,
+	firstRun: false,
 	
 	initialise: function initialise(config) {
 		if (db.initialised) {
@@ -30,6 +31,7 @@ const db = {
 		.then(() => knex.schema.hasTable('Users'))
 		.then((exists) => {
 			if (!exists) {
+				firstRun = true;
 				return knex.schema.createTable('Users', (table) => {
 					table.increments('ID').primary();
 					table.boolean('Admin').notNullable().defaultTo(false);

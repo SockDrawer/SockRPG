@@ -671,7 +671,8 @@ describe('User API Controller', () => {
 			const mockRequest = {
 				params: {
 					id: 1
-				}
+				},
+				isAuthenticated: () => true
 			};
 
 			const mockResponse = {

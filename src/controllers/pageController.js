@@ -29,6 +29,7 @@ const Game = require('../model/Game');
 const Thread = require('../model/Thread');
 const Post = require('../model/Post');
 const User = require('../model/User');
+const db = require('../model/db');
 
 /**
  * Get the home page to hand to the view
@@ -38,6 +39,10 @@ const User = require('../model/User');
  */
 function getHomePage(req, res) {
 	const data = {};
+	
+	if (db.firstRun) {
+		
+	}
 
 	return Board.getAllBoards().then((boards) => {
 		data.boards = boards ? boards.map((board) => board.serialize()) : boards;
