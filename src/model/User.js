@@ -18,6 +18,7 @@ class User {
 		this.data.ID = row.ID;
 		this.data.Username = row.Username;
 		this.data.Admin = row.Admin;
+		this.data.AuthSecret = row.AuthSecret;
 		
 		//Canonical link
 		this.Canonical = `/api/users/${this.data.ID}`;
@@ -48,9 +49,18 @@ class User {
 		this.data.Admin = a;
 	}
 	
+	get AuthSecret() {
+		return this.data.AuthSecret;
+	}
+	
+	set AuthSecret(a) {
+		this.data.AuthSecret = a;
+	}
+	
 	serialize() {
 		const serial = JSON.parse(JSON.stringify(this.data));
 		serial.Canonical = this.Canonical;
+		delete serial.AuthSecret; // Users of serailization don't need this... it really really shouldn't leave the server
 		return serial;
 	}
 	
@@ -87,7 +97,7 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUser(id) {
-		return DB.knex('Users').where('ID', id).select('ID', 'Username').then((rows) => {
+		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'AuthSecret').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}

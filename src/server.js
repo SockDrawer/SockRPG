@@ -15,8 +15,7 @@ const bodyParser = require('body-parser');
 const debug = require('debug')('server');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-
-
+const bcrypt = require('bcrypt')
 
 //Model
 const DB = require('./model/db');
@@ -79,7 +78,27 @@ passport.use(new LocalStrategy({
 				return done(null, false, {message: 'Incorrect username.'});
 			}
 			
-			return done(null, user);
+			const authSecret = user.AuthSecret.split(':');
+			const authMethod = authSecret[0];
+			const authHash = authSecret[1];
+			
+			if (authMethod == "bcrypt")
+			{
+				return bcrypt.compare(password, authHash).then(res => {
+					if (res)
+					{
+						return done(null, user);
+					}
+					else
+					{
+						return done(null, false, {message: 'Incorrect password.'});
+					}
+				});
+			}
+			else
+			{
+				return done(null, false, {message: 'Incorrect auth data.'});
+			}
 		});
 	}
 ));

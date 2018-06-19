@@ -30,6 +30,7 @@ const Thread = require('../model/Thread');
 const Post = require('../model/Post');
 const User = require('../model/User');
 const db = require('../model/db');
+const bcrypt = require('bcrypt');
 
 /**
  * Get the home page to hand to the view
@@ -161,15 +162,24 @@ function getSignupView(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function postSignup(req, res) {
-	var username = req.body.username;
-	var password = req.body.password;
+	const username = req.body.username;
+	const password = req.body.password;
+	const rounds = 10; // TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
 	
-	var userObj = {Username: username, Admin: false};
+	// TODO: Probably move password->authSecret to User.addUser later
 	
-	return User.addUser(userObj).then(() => {
-		res.redirect('/signup');
+	return bcrypt.hash(password, rounds)
+	.then((hash) => {
+		const authSecret = "bcrypt:" + hash;
+		return {Username: username, Admin: false, AuthSecret: authSecret};
+	})
+	.then(User.addUser)
+	.then(() => {
+		// TODO: Tell the user about success, or just log them in?
+		res.redirect('/');
 	})
 	.catch((err) => {
+		// TODO: Obviously need to handle failures with proper user friendly errors
 		res.status(500);
 		res.send({error: err.toString()});
 	});
