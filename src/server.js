@@ -120,6 +120,10 @@ function setupExpress() {
 													failureRedirect: '/login'})
 				);
 			
+			app.route('/signup')
+				.get(cPage.getSignupView)
+				.post(cPage.postSignup);
+			
 			app.route('/logout')
 				.get((req, res) => {
 					req.logout();

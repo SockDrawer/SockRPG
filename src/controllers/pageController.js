@@ -143,11 +143,45 @@ function getThreadView(req, res) {
 	});
 }
 
+/**
+ * Get the signup page to hand to the view
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+  */
+function getSignupView(req, res) {
+	const data = {};
+
+	res.render('signup', data);
+}
+
+/**
+ * Handle signup page post
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function postSignup(req, res) {
+	var username = req.body.username;
+	var password = req.body.password;
+	
+	var userObj = {Username: username, Admin: false};
+	
+	return User.addUser(userObj).then(() => {
+		res.redirect('/signup');
+	})
+	.catch((err) => {
+		res.status(500);
+		res.send({error: err.toString()});
+	});
+}
+
 const controller = {
 	getHomePage: getHomePage,
 	getThreadView: getThreadView,
 	getBoardView: getBoardView,
-	getLoginView: getLoginView
+	getLoginView: getLoginView,
+	getSignupView: getSignupView,
+	postSignup: postSignup
 };
 
 module.exports = controller;
