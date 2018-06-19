@@ -31,7 +31,7 @@ const db = {
 		.then(() => knex.schema.hasTable('Users'))
 		.then((exists) => {
 			if (!exists) {
-				firstRun = true;
+				db.firstRun = true;
 				return knex.schema.createTable('Users', (table) => {
 					table.increments('ID').primary();
 					table.boolean('Admin').notNullable().defaultTo(false);
