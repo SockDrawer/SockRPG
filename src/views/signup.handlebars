@@ -3,6 +3,7 @@
 <h2>Sign Up:</h2>
 <!-- This is super WIPish messing around currently -->
 <form method="post">
+	<input type="hidden" name="_csrf" value="{{csrfToken}}">
     <label for="username">Username:</label><input type="text" name="username"/>
     <label for="password">Password:</label><input type="password" name="password" value="">
     <input type="submit" value="Sign up"/>

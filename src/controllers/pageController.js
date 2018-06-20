@@ -75,7 +75,7 @@ function getHomePage(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function getLoginView(req, res) {
-	const data = {};
+	const data = { csrfToken: req.csrfToken() };
 
 	return User.getAllUsers().then((users) => {
 		data.users = users ? users.map((user) => user.serialize()) : users;
@@ -150,7 +150,7 @@ function getThreadView(req, res) {
  * @param  {Response} res The Express response object
   */
 function getSignupView(req, res) {
-	const data = {};
+	const data = { csrfToken: req.csrfToken() };
 
 	res.render('signup', data);
 }

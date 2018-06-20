@@ -2,6 +2,7 @@
 
 <h2>Become User:</h2>
 <form action="/login" method="post" multipart='urlencoded'>
+	<input type="hidden" name="_csrf" value="{{csrfToken}}">
     <select name="user">
         {{#each users}}
             <option value="{{ID}}">{{Username}}</li>

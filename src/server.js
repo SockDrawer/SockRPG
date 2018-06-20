@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 const debug = require('debug')('server');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const csurf = require('csurf');
 const bcrypt = require('bcrypt')
 
 //Model
@@ -118,6 +119,7 @@ function setupExpress() {
 			app.use(bodyParser.urlencoded({extended: false}));
 			app.use(cookieParser());
 			app.use(session({secret: 'keyboard cat'}));
+			app.use(csurf({ cookie: false }))
 			app.use(passport.initialize());
 			app.use(passport.session());
 			
