@@ -31,6 +31,7 @@ const Post = require('../model/Post');
 const User = require('../model/User');
 const db = require('../model/db');
 const bcrypt = require('bcrypt');
+const { check, validationResult } = require('express-validator/check');
 
 /**
  * Get the home page to hand to the view
@@ -152,29 +153,49 @@ function getSignupView(req, res) {
  * @param  {Response} res The Express response object
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
-function postSignup(req, res) {
-	const username = req.body.username;
-	const password = req.body.password;
-	const rounds = 10; // TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
+const postSignup = [
+	check('username').isLength({ min: 1 }).withMessage('Username must be specified.'),
+	check('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters.'),
+	check('passwordconfirm').custom((value,{req, loc, path}) => {
+		if (value !== req.body.password)
+		{
+			throw new Error()
+		}
+		return value;
+	}).withMessage('Passwords do not match.'),
 	
-	// TODO: Probably move password->authSecret to User.addUser later
-	
-	return bcrypt.hash(password, rounds)
-	.then((hash) => {
-		const authSecret = "bcrypt:" + hash;
-		return {Username: username, Admin: false, AuthSecret: authSecret};
-	})
-	.then(User.addUser)
-	.then(() => {
-		// TODO: Tell the user about success, or just log them in?
-		res.redirect('/');
-	})
-	.catch((err) => {
-		// TODO: Obviously need to handle failures with proper user friendly errors
-		res.status(500);
-		res.send({error: err.toString()});
-	});
-}
+	(req, res, next) => {
+		const errors = validationResult(req);
+		
+		// Render the page again with validation errors if any
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+            res.render('signup', { data: req.body, errors: errors.array() });
+            return;
+        }
+		
+		// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
+		const rounds = 10;
+		
+		// TODO: Probably move password->authSecret to User.addUser later
+		
+		return bcrypt.hash(req.body.password, rounds)
+		.then((hash) => {
+			const authSecret = "bcrypt:" + hash;
+			return {Username: req.body.username, Admin: false, AuthSecret: authSecret};
+		})
+		.then(User.addUser)
+		.then(() => {
+			// TODO: Tell the user about success, or just log them in?
+			res.redirect('/');
+		})
+		.catch((err) => {
+			// TODO: Obviously need to handle failures here with proper user friendly errors
+			res.status(500);
+			res.send({error: err.toString()});
+		});
+	}
+];
 
 const controller = {
 	getHomePage: getHomePage,

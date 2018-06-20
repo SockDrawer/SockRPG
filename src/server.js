@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 const debug = require('debug')('server');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const validator = require('express-validator');
 const bcrypt = require('bcrypt')
 
 //Model
@@ -116,6 +117,7 @@ function setupExpress() {
 			
 			//<Middleware
 			app.use(bodyParser.urlencoded({extended: false}));
+			app.use(validator());
 			app.use(cookieParser());
 			app.use(session({secret: 'keyboard cat'}));
 			app.use(passport.initialize());
