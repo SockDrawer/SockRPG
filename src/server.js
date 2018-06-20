@@ -68,14 +68,14 @@ passport.deserializeUser((user, done) => {
 });
 
 passport.use(new LocalStrategy({
-	usernameField: 'user',
+	usernameField: 'username',
 	passwordField: 'password',
 	passReqToCallback: true
  },
-	(req, userID, password, done) => {
-		User.getUser(userID).then((user) => {
+	(req, username, password, done) => {
+		User.getUserByName(username).then((user) => {
 			if (!user) {
-				return done(null, false, {message: 'Incorrect username.'});
+				return done(null, false, {message: 'Incorrect username or password.'});
 			}
 			
 			const authSecret = user.AuthSecret.split(':');
@@ -91,7 +91,7 @@ passport.use(new LocalStrategy({
 					}
 					else
 					{
-						return done(null, false, {message: 'Incorrect password.'});
+						return done(null, false, {message: 'Incorrect username or password.'});
 					}
 				});
 			}

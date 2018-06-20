@@ -97,7 +97,7 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUser(id) {
-		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'AuthSecret').then((rows) => {
+		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'Admin', 'AuthSecret').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}
@@ -114,7 +114,7 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUserByName(name) {
-		return DB.knex('Users').where('Username', name).select('ID', 'Username', 'Admin').then((rows) => {
+		return DB.knex('Users').where('Username', name).select('ID', 'Username', 'Admin', 'AuthSecret').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}

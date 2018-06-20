@@ -1,12 +1,8 @@
 /* This is a dummy login page. NOT PRODUCTION SAFE~ */
 
-<h2>Become User:</h2>
+<h2>Log in:</h2>
 <form action="/login" method="post" multipart='urlencoded'>
-    <select name="user">
-        {{#each users}}
-            <option value="{{ID}}">{{Username}}</li>
-        {{/each}}
-    </select>
+	<label for="username">Username:</label><input type="text" name="username"/>
     <label for="password">Password:</label><input type="password" name="password" value="">
     <input type="submit" value="Log In"/>
 </form>

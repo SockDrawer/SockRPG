@@ -72,20 +72,11 @@ function getHomePage(req, res) {
  * Get the login page to hand to the view
  * @param  {Request} req The Express request object
  * @param  {Response} res The Express response object
- * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function getLoginView(req, res) {
 	const data = {};
 
-	return User.getAllUsers().then((users) => {
-		data.users = users ? users.map((user) => user.serialize()) : users;
-		res.render('login', data);
-	})
-	.catch((err) => {
-		//TODO: logging errors
-		console.log(err);
-		res.status(500).send({error: err.toString()});
-	});
+	res.render('login', data);
 }
 
 /**
