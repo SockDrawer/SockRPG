@@ -13,13 +13,13 @@ const exphbs = require('express-handlebars');
 const app = express();
 const bodyParser = require('body-parser');
 const debug = require('debug')('server');
+const path = require('path');
 
 
 //Model
 const DB = require('./model/db');
 
 //Controllers
-const cStatic = require('./controllers/staticController.js');
 const cBoard = require('./controllers/boardController.js');
 const cThread = require('./controllers/threadController.js');
 const cPost = require('./controllers/postController.js');
@@ -83,8 +83,8 @@ function setupExpress() {
 			
 			
 			//Static content and uploads
-			app.route('/static/*').get(cStatic.serve);
-			app.route('/uploads/*').get(cStatic.serve);
+			app.use('/static', express.static('static'));
+			app.use('/uploads', express.static('uploads'));
 			
 			/*Pages*/
 			app.route('/')
