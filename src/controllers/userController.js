@@ -105,7 +105,7 @@ function addUser(req, res) {
 function updateUser(req, res) {
 	if (!req.isAuthenticated()) {
 		res.status(401).end();
-		return;
+		return null;
 	}
 	
 	return User.getUser(req.params.id).then((user) => {
