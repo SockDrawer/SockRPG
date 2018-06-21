@@ -169,7 +169,6 @@ const postSignup = [
 		
 		// Render the page again with validation errors if any
 		if (!errors.isEmpty()) {
-			console.log(errors.array());
             res.render('signup', { data: req.body, errors: errors.array() });
             return;
         }

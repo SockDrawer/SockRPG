@@ -1,8 +1,9 @@
 /* This is a dummy login page. NOT PRODUCTION SAFE~ */
 
 <h2>Sign Up:</h2>
-<!-- This is super WIPish messing around currently -->
+{{! This is super WIPish messing around currently }}
 <form method="post">
+	{{! We should probably have a template for generic error list stuff }}
 	{{#if errors}}
 	<ul>
 		{{#each errors}}
@@ -10,7 +11,7 @@
 		{{/each}}
 	</ul>
 	{{/if}}
-    <label for="username">Username:</label><input type="text" name="username"/>
+    <label for="username">Username:</label><input type="text" name="username" value="{{data.username}}"/>
     <label for="password">Password:</label><input type="password" name="password" value=""/>
 	<label for="password">Confirm Password:</label><input type="password" name="passwordconfirm" value=""/>
     <input type="submit" value="Sign up"/>
