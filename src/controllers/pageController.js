@@ -31,7 +31,7 @@ const Post = require('../model/Post');
 const User = require('../model/User');
 const db = require('../model/db');
 const bcrypt = require('bcrypt');
-const { check, validationResult } = require('express-validator/check');
+const {check, validationResult} = require('express-validator/check');
 
 /**
  * Get the home page to hand to the view
@@ -155,12 +155,11 @@ function getSignupView(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 const postSignup = [
-	check('username').isLength({ min: 1 }).withMessage('Username must be specified.'),
-	check('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters.'),
-	check('passwordconfirm').custom((value,{req, loc, path}) => {
-		if (value !== req.body.password)
-		{
-			throw new Error()
+	check('username').isLength({min: 1}).withMessage('Username must be specified.'),
+	check('password').isLength({min: 8}).withMessage('Password must be at least 8 characters.'),
+	check('passwordconfirm').custom((value, {req, loc, path}) => {
+		if (value !== req.body.password) {
+			throw new Error();
 		}
 		return value;
 	}).withMessage('Passwords do not match.'),
@@ -170,9 +169,9 @@ const postSignup = [
 		
 		// Render the page again with validation errors if any
 		if (!errors.isEmpty()) {
-            res.render('signup', { data: req.body, errors: errors.array() });
-            return;
-        }
+			res.render('signup', {data: req.body, errors: errors.array()});
+			return null;
+		}
 		
 		// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
 		const rounds = 10;
@@ -181,7 +180,7 @@ const postSignup = [
 		
 		return bcrypt.hash(req.body.password, rounds)
 		.then((hash) => {
-			const authSecret = "bcrypt:" + hash;
+			const authSecret = `bcrypt:${hash}`;
 			return {Username: req.body.username, Admin: false, AuthSecret: authSecret};
 		})
 		.then(User.addUser)
