@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 const debug = require('debug')('server');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const path = require('path');
 const validator = require('express-validator');
 const bcrypt = require('bcrypt');
 
@@ -23,7 +24,6 @@ const DB = require('./model/db');
 const User = require('./model/User');
 
 //Controllers
-const cStatic = require('./controllers/staticController.js');
 const cBoard = require('./controllers/boardController.js');
 const cThread = require('./controllers/threadController.js');
 const cPost = require('./controllers/postController.js');
@@ -116,8 +116,8 @@ function setupExpress() {
 			app.use(passport.session());
 			
 			//Static content and uploads
-			app.route('/static/*').get(cStatic.serve);
-			app.route('/uploads/*').get(cStatic.serve);
+			app.use('/static', express.static('static'));
+			app.use('/uploads', express.static('uploads'));
 			
 			/*Pages*/
 			app.route('/')
