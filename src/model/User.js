@@ -1,6 +1,7 @@
 'use strict';
 
 const DB = require('./db');
+const bcrypt = require('bcrypt');
 
 /**
  * The User table.
@@ -76,7 +77,25 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the user added
 	*/
 	static addUser(user) {
-		return DB.knex('Users').insert(user);
+		// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
+		const hashRounds = 10;
+		
+		// TODO: Various anti-abuse checks eventually should probably go here.
+		
+		if (user.Admin) {
+			// TODO: Validate whether this is a situation where the created user can be an admin.
+		}
+		
+		return bcrypt.hash(user.Password, hashRounds)
+		.then((hash) => {
+			// Create copy of the user object with an AuthSecret instead of Password.
+			const newUser = {
+				Username: user.Username,
+				Admin: user.Admin,
+				AuthSecret: `bcrypt:${hash}`
+			};
+			return Promise.resolve(DB.knex('Users').insert(newUser));
+		});
 	}
 	
 	/**
@@ -120,6 +139,56 @@ class User {
 			}
 			
 			return new User(rows[0]);
+		});
+	}
+	
+	/**
+	* Authenticate a user by passwordpassword is correct
+	*
+	* @param {String} user The user being checked for authentication
+	* @param {String} pass The password for the user
+	*
+	* @returns {Promise} A Promise that is resolved with true if the user is authenticated, false otherwise
+	*/
+	static authUserByPassword(user, pass) {		
+		const authSecret = user.AuthSecret.split(':');
+		const authMethod = authSecret[0];
+		const authHash = authSecret[1];
+			
+		if (authMethod === 'bcrypt') {
+			return bcrypt.compare(pass, authHash);
+		}
+		
+		// No valid auth method, return null.
+		return Promise.resolve(false);
+	}
+	
+	/**
+	* Get a user by name, but only if the supplied password is correct
+	*
+	* @param {String} name The username of the user requested
+	* @param {String} pass The password for the user
+	*
+	* @returns {Promise} A Promise that is resolved with the user or null
+	*/
+	static getAuthenticatedUserByNameAndPassword(name, pass) {		
+		// TODO: Anti-abuse rate limiting should perhaps eventually go here.
+		
+		return User.getUserByName(name).then((user) => {
+			// If no user is found, return null.
+			if (!user) {
+				return null;
+			}
+			
+			return Promise.resolve(User.authUserByPassword(user, pass).then((ret) => {
+				if (ret) {
+					// Success, return logged in user.
+					return user;
+				}
+				
+				// Wrong password, return null.
+				return null;
+			}));
 		});
 	}
 }

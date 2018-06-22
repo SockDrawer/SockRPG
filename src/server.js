@@ -17,7 +17,6 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const path = require('path');
 const validator = require('express-validator');
-const bcrypt = require('bcrypt');
 
 //Model
 const DB = require('./model/db');
@@ -74,24 +73,13 @@ passport.use(new LocalStrategy({
 	passReqToCallback: true
  },
 	(req, username, password, done) => {
-		User.getUserByName(username).then((user) => {
+		User.getAuthenticatedUserByNameAndPassword(username, password).then((user) => {
 			if (!user) {
 				return done(null, false, {message: 'Incorrect username or password.'});
 			}
 			
-			const authSecret = user.AuthSecret.split(':');
-			const authMethod = authSecret[0];
-			const authHash = authSecret[1];
-			
-			if (authMethod === 'bcrypt') {
-				return bcrypt.compare(password, authHash).then((res) => {
-					if (res) {
-						return done(null, user);
-					}
-					return done(null, false, {message: 'Incorrect username or password.'});
-				});
-			}
-			return done(null, false, {message: 'Incorrect auth data.'});
+			// Successful authentication.
+			return done(null, user);
 		});
 	}
 ));

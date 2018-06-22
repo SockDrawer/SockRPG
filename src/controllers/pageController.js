@@ -30,7 +30,6 @@ const Thread = require('../model/Thread');
 const Post = require('../model/Post');
 const User = require('../model/User');
 const db = require('../model/db');
-const bcrypt = require('bcrypt');
 const {check, validationResult} = require('express-validator/check');
 
 /**
@@ -173,17 +172,9 @@ const postSignup = [
 			return null;
 		}
 		
-		// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
-		const rounds = 10;
+		const user = {Username: req.body.username, Admin: false, Password: req.body.password};
 		
-		// TODO: Probably move password->authSecret to User.addUser later
-		
-		return bcrypt.hash(req.body.password, rounds)
-		.then((hash) => {
-			const authSecret = `bcrypt:${hash}`;
-			return {Username: req.body.username, Admin: false, AuthSecret: authSecret};
-		})
-		.then(User.addUser)
+		return User.addUser(user)
 		.then(() => {
 			// TODO: Tell the user about success, or just log them in?
 			res.redirect('/');
