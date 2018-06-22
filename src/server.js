@@ -28,6 +28,7 @@ const cThread = require('./controllers/threadController.js');
 const cPost = require('./controllers/postController.js');
 const cPage = require('./controllers/pageController.js');
 const cUser = require('./controllers/userController.js');
+const cSession = require('./controllers/sessionController.js');
 
 //Views
 const hbs = exphbs.create({
@@ -188,6 +189,20 @@ function setupExpress() {
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
+			
+			app.route('/api/sessions')
+				.get(cSession.getSession)
+				.post(jsonParser, cSession.addSession)
+				.patch(return405)
+				.delete(cSession.deleteSession)
+				.put(jsonParser, cSession.addSession);
+			
+			app.route('/api/sessions/:id')
+				.get(cSession.getSession)
+				.post(jsonParser, cSession.addSession)
+				.patch(return405)
+				.delete(cSession.deleteSession)
+				.put(jsonParser, cSession.addSession);
 				
 			resolve();
 		});
