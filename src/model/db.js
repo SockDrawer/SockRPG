@@ -52,7 +52,7 @@ const db = {
 				});
 			}
 		})
-		.then(() => knex.schema.hasTable('Boards'))
+		.then(() => knex.schema.hasTable('ChildBoards'))
 		.then((exists) => {
 			if (!exists) {
 				return knex.schema.createTable('ChildBoards', (table) => {
