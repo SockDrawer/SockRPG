@@ -32,9 +32,9 @@ const passport = require('passport');
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function getSession(req, res) {
-	// Return 401 (forbidden) if requestion a session that isn't one's own
+	// Return 403 (forbidden) if requestion a session that isn't one's own
 	if (req.params.id && req.params.id !== req.sessionID) {
-		res.status(401).end();
+		res.status(403).end();
 		return Promise.resolve(null);
 	}
 	
@@ -51,10 +51,11 @@ function getSession(req, res) {
  * where Username and Passport fields are passed in to attempt to cause login.
  */
 const addSession = [
-	(req, rew) => {
+	(req, rew, next) => {
 		if (req.body) {
 			req.body = {username: req.body.Username, password: req.body.Password};
 		}
+		next();
 	},
 	passport.authenticate('local'),
 	getSession
@@ -68,7 +69,7 @@ const addSession = [
 function deleteSession(req, res) {
 	// Return 401 (forbidden) if deleting a session that isn't one's own
 	if (req.params.id && req.params.id !== req.sessionID) {
-		res.status(401).end();
+		res.status(403).end();
 		return;
 	}
 	
