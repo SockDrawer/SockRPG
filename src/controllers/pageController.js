@@ -75,7 +75,7 @@ function getHomePage(req, res) {
  * @param  {Response} res The Express response object
  */
 function getLoginView(req, res) {
-	const data = {};
+	const data = { csrfToken: req.csrfToken() };
 
 	res.render('login', data);
 }
@@ -142,7 +142,7 @@ function getThreadView(req, res) {
  * @param  {Response} res The Express response object
   */
 function getSignupView(req, res) {
-	const data = {};
+	const data = { csrfToken: req.csrfToken() };
 
 	res.render('signup', data);
 }
@@ -168,7 +168,7 @@ const postSignup = [
 		
 		// Render the page again with validation errors if any
 		if (!errors.isEmpty()) {
-			res.render('signup', {data: req.body, errors: errors.array()});
+			res.render('signup', {csrfToken: req.csrfToken(), data: req.body, errors: errors.array()});
 			return null;
 		}
 		

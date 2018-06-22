@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 const debug = require('debug')('server');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const csurf = require('csurf');
 const path = require('path');
 const validator = require('express-validator');
 
@@ -101,6 +102,7 @@ function setupExpress() {
 			app.use(validator());
 			app.use(cookieParser());
 			app.use(session({secret: 'keyboard cat'}));
+			app.use(csurf({ cookie: false }))
 			app.use(passport.initialize());
 			app.use(passport.session());
 			

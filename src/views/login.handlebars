@@ -2,7 +2,8 @@
 
 <h2>Log in:</h2>
 <form action="/login" method="post" multipart='urlencoded'>
+	<input type="hidden" name="_csrf" value="{{csrfToken}}">
 	<label for="username">Username:</label><input type="text" name="username"/>
-    <label for="password">Password:</label><input type="password" name="password" value=""/>
-    <input type="submit" value="Log In"/>
+	<label for="password">Password:</label><input type="password" name="password" value=""/>
+	<input type="submit" value="Log In"/>
 </form>
