@@ -102,7 +102,7 @@ function setupExpress() {
 			app.use(validator());
 			app.use(cookieParser());
 			app.use(session({secret: 'keyboard cat'}));
-			app.use(csurf({ cookie: false }))
+			app.use(csurf({cookie: false}));
 			app.use(passport.initialize());
 			app.use(passport.session());
 			

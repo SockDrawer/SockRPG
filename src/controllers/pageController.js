@@ -75,7 +75,7 @@ function getHomePage(req, res) {
  * @param  {Response} res The Express response object
  */
 function getLoginView(req, res) {
-	const data = { csrfToken: req.csrfToken() };
+	const data = {csrfToken: req.csrfToken()};
 
 	res.render('login', data);
 }
@@ -142,7 +142,7 @@ function getThreadView(req, res) {
  * @param  {Response} res The Express response object
   */
 function getSignupView(req, res) {
-	const data = { csrfToken: req.csrfToken() };
+	const data = {csrfToken: req.csrfToken()};
 
 	res.render('signup', data);
 }

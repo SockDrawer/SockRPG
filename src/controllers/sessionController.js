@@ -33,7 +33,7 @@ const passport = require('passport');
  */
 function getSession(req, res) {
 	// Return 401 (forbidden) if requestion a session that isn't one's own
-	if (req.params.id && (req.params.id !== req.sessionID)) {
+	if (req.params.id && req.params.id !== req.sessionID) {
 		res.status(401).end();
 		return Promise.resolve(null);
 	}
@@ -67,9 +67,9 @@ const addSession = [
   */
 function deleteSession(req, res) {
 	// Return 401 (forbidden) if deleting a session that isn't one's own
-	if (req.params.id && (req.params.id !== req.sessionID)) {
+	if (req.params.id && req.params.id !== req.sessionID) {
 		res.status(401).end();
-		return Promise.resolve(null);
+		return;
 	}
 	
 	req.logout();
