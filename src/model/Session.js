@@ -11,11 +11,12 @@
  */
 
 class Session {
-	constructor(sid, username, userID) {
+	constructor(sid, username, userID, csrfToken) {
 		this.data = {};
 		this.data.ID = sid;
 		this.data.Username = username;
 		this.data.UserID = userID;
+		this.data.CsrfToken = csrfToken;
 		
 		//Canonical link
 		this.Canonical = `/api/sessions/${this.data.ID}`;
@@ -31,6 +32,10 @@ class Session {
 	
 	get UserID() {
 		return this.data.UserID;
+	}
+	
+	get CsrfToken() {
+		return this.data.CsrfToken;
 	}
 		
 	serialize() {
@@ -50,7 +55,7 @@ class Session {
 		const username = req.user ? req.user.Username : null;
 		const userID = req.user ? req.user.ID : null;
 	
-		return Promise.resolve(new Session(req.sessionID, username, userID));
+		return Promise.resolve(new Session(req.sessionID, username, userID, req.csrfToken()));
 	}
 }
 
