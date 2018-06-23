@@ -8,7 +8,7 @@ const Board = require('../../src/model/Board');
 const Thread = require('../../src/model/Thread');
 require('sinon-as-promised');
 
-const port = process.env['PORT'] || 9000;
+const port = process.env.PORT || 9000;
 
 context('API server', function() {
 	this.timeout(50000);

@@ -12,7 +12,7 @@ $(() => {
 	$('#replyCancel').click(() => {
 		$('#replyButton').show();
 		$('#replydiv').hide();
-	});         
+	});
 	
 	$('#replySubmit').click(() => {
 		var content = CKEDITOR.instances.editor1.getData();
