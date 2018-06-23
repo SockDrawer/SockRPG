@@ -26,6 +26,7 @@ const db = {
 					table.string('gameDescription');
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Users'))
 		.then((exists) => {
@@ -35,6 +36,7 @@ const db = {
 					table.string('Username').notNullable().unique();
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Boards'))
 		.then((exists) => {
@@ -48,6 +50,7 @@ const db = {
 					table.string('Description').notNullable().defaultTo('');
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('ChildBoards'))
 		.then((exists) => {
@@ -58,6 +61,7 @@ const db = {
 					table.integer('ChildID').references('Boards.ID').notNullable();
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Threads'))
 		.then((exists) => {
@@ -68,6 +72,7 @@ const db = {
 					table.integer('Board').references('Boards.ID').notNullable();
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Posts'))
 		.then((exists) => {
@@ -78,6 +83,7 @@ const db = {
 					table.string('Body').notNullable();
 				});
 			}
+			return Promise.resolve();
 		}).then(() => {
 			db.initialised = true;
 			return Promise.resolve(db.initialised);
