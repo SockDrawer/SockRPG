@@ -32,34 +32,13 @@ const passport = require('passport');
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function getSession(req, res) {
-	// Return 403 (forbidden) if requestion a session that isn't one's own
-	if (req.params.id && req.params.id !== req.sessionID) {
-		res.status(403).end();
-		return Promise.resolve(null);
-	}
-	
 	return Session.getSession(req).then((data) => {
 		res.status(200).send(data).end();
 	}).catch((err) => {
 		console.log(err);
-		res.status(500).send({error: err.toString()});
+		res.status(500).send({error: err.toString()}).end();
 	});
 }
-
-/**
- * Express handler list to put together for PUT/POST session request handling
- * where Username and Passport fields are passed in to attempt to cause login.
- */
-const addSession = [
-	(req, rew, next) => {
-		if (req.body) {
-			req.body = {username: req.body.Username, password: req.body.Password};
-		}
-		next();
-	},
-	passport.authenticate('local'),
-	getSession
-];
 
 /**
  * Log out of the current setting
@@ -67,15 +46,29 @@ const addSession = [
  * @param {Response} res Express' response object.
   */
 function deleteSession(req, res) {
-	// Return 401 (forbidden) if deleting a session that isn't one's own
-	if (req.params.id && req.params.id !== req.sessionID) {
-		res.status(403).end();
-		return;
-	}
-	
 	req.logout();
-	res.status(200).send({});
+	res.status(200).end();
 }
+
+/**
+ * Express handler list to put together for PUT/POST session request handling
+ * where Username and Passport fields are passed in to attempt to cause login.
+ */
+const addSession = [
+	(req, res, next) => {
+		if (req.body.Username === null) {
+			req.logout();
+			return getSession(req, res);
+		}
+		
+		if (req.body) {
+			req.body = {username: req.body.Username, password: req.body.Password};
+		}
+		return next();
+	},
+	passport.authenticate('local'),
+	getSession
+];
 
 const controller = {
 	getSession: getSession,

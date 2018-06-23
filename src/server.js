@@ -192,20 +192,13 @@ function setupExpress() {
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
 			
-			app.route('/api/sessions')
+			app.route('/api/session')
 				.get(cSession.getSession)
 				.post(jsonParser, cSession.addSession)
 				.patch(return405)
 				.delete(cSession.deleteSession)
 				.put(jsonParser, cSession.addSession);
 			
-			app.route('/api/sessions/:id')
-				.get(cSession.getSession)
-				.post(jsonParser, cSession.addSession)
-				.patch(return405)
-				.delete(cSession.deleteSession)
-				.put(jsonParser, cSession.addSession);
-				
 			resolve();
 		});
 }
