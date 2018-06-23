@@ -30,7 +30,7 @@
     "pg": "^4.4.3",
     "pg-hstore": "^2.3.2",
     "request-promise": "^1.0.2",
-    "sqlite3": "^4.0.0"
+    "sqlite3": "^4.0.1"
   },
   "devDependencies": {
     "chai": "^3.3.0",
@@ -43,7 +43,7 @@
     "sinon": "^1.17.1",
     "sinon-as-promised": "^4.0.0",
     "sinon-chai": "^2.8.0",
-    "wdio-mocha-framework": "^0.4.3",
+    "wdio-mocha-framework": "^0.6.1",
     "wdio-phantomjs-service": "^0.2.2",
     "wdio-selenium-standalone-service": "0.0.7",
     "webdriverio": "^4.2.16"
