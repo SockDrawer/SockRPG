@@ -34,11 +34,11 @@
   "devDependencies": {
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
-    "coveralls": "^2.11.4",
+    "coveralls": "^3.0.1",
     "cz-conventional-changelog": "^1.1.7",
-    "eslint": "^1.7.3",
+    "eslint": "^5.0.0",
     "istanbul": "^0.4.0",
-    "mocha": "^2.3.3",
+    "mocha": "^5.2.0",
     "request-promise": "^4.2.2",
     "sinon": "^1.17.1",
     "sinon-as-promised": "^4.0.0",
@@ -51,7 +51,7 @@
   "scripts": {
     "start": "node ./src/server.js",
     "lint": "eslint .",
-    "test": "eslint . && istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R dot ./test/unit/**/*.js && mocha --recursive -R dot ./test/integration/*.js",
+    "test": "eslint . && istanbul cover node_modules/mocha/bin/_mocha -- --exit --recursive -R dot ./test/unit/**/*.js && mocha --exit --recursive -R dot ./test/integration/*.js",
     "systemTest": "wdio wdio.conf.js",
     "istanbul": "eslint .; istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R nyan",
     "mocha": "echo 'Unit Tests:';mocha --recursive -R nyan ./test/unit/; echo 'Integration Tests'; mocha --recursive -R nyan ./test/integration/"
