@@ -78,6 +78,11 @@ describe('DB model', () => {
 	});
 	
 	it('a subsequent later initialization of the same database should work', () => {
+		// This test (unfortunately) has to make use a of a temporary file and
+		// Travis sometimes handles this very slow, such that a default 2000ms
+		// timeout is exceeded! For this reason, at 60s timeout is set at the
+		// end.
+		
 		return Promise.resolve().then(() => new Promise((resolve, reject) => {
 			fs.unlink('tmpfile.sqlite', (_) => {
 				return resolve();
@@ -118,5 +123,5 @@ describe('DB model', () => {
 				return resolve();
 			});
 		}));
-	});
+	}).timeout(60000);
 });
