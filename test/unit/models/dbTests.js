@@ -110,7 +110,6 @@ describe('DB model', () => {
 		})
 		.then(() => DB.teardown())
 		.then(() => {
-			console.log('town down!');
 			DB.isInitialised().should.equal(false);
 		})
 		.then(() => new Promise((resolve, reject) => {
