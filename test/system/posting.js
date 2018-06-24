@@ -1,7 +1,7 @@
 'use strict';
 /*global describe, it, browser*/
 const Chai = require('chai');
-const expect = Chai.expect;
+//const expect = Chai.expect; // Unused constant... delete?
 const assert = Chai.assert;
 const server = require('../../src/server.js');
 

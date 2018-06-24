@@ -8,12 +8,14 @@ const Board = require('../../src/model/Board');
 const Thread = require('../../src/model/Thread');
 require('sinon-as-promised');
 
+// TODO: we really shouldnt rely on environment in tests.... yeah? :-)
+// eslint-disable-next-line no-process-env
 const port = process.env.PORT || 9000;
 
 context('API server', function() {
 	this.timeout(50000);
 	const server = require('../../src/server.js');
-	
+
 	before(() => {
 		//Start server
 		return server.setup({
@@ -22,27 +24,27 @@ context('API server', function() {
 			}
 		});
 	});
-		
+
 	after(() => {
 		return server.stop();
 	});
-	
+
 	describe('User API', () => {
 		let sandbox;
 		beforeEach(() => {
 			sandbox = Sinon.sandbox;
 		});
-	
+
 		afterEach(() => {
 			sandbox.restore();
 		});
-	
+
 		it('Should CRUD users', () => {
 			const userInput = {
 				ID: 1,
 				Username: 'johnCena'
 			};
-			
+
 			/*-------------- CREATE -----------------*/
 			return request({
 				uri: `http://localhost:${port}/api/users`,
@@ -53,7 +55,7 @@ context('API server', function() {
 			}).then((response) => {
 				assert.equal(response.statusCode, 200, 'User creation should return 200 OK');
 				assert.equal(response.body.id, 1, 'User creation should return id');
-				
+
 				/*-------------- RETRIEVE -----------------*/
 				return request({
 					json: true,
@@ -67,10 +69,10 @@ context('API server', function() {
 				assert.deepEqual(body.Canonical, '/api/users/1', 'Board canonical link should be returned');
 				assert.equal(body.ID, 1, 'Board ID should match canonical link');
 				assert.equal(body.Username, userInput.Username, 'Name should be returned okay');
-	
+
 				/*-------------- UPDATE -----------------*/
 				userInput.userName = 'theRock';
-	
+
 				return request({
 					uri: `http://localhost:${port}/api/users/1`,
 					json: true,
@@ -80,8 +82,8 @@ context('API server', function() {
 				});
 			}).then((response) => {
 				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
-			
-	
+
+
 				/*-------------- RETRIEVE AGAIN-----------------*/
 				return request({
 					uri: `http://localhost:${port}/api/users/1`,
@@ -97,13 +99,13 @@ context('API server', function() {
 				assert.equal(body.Username, userInput.Username, 'Username should be returned okay');
 			});
 		});
-		
+
 		it('Should retrieve by name', () => {
 			const userInput = {
 				Username: 'johnCena1234'
 			};
 			let ID;
-			
+
 			return request({
 				uri: `http://localhost:${port}/api/users`,
 				json: true,
@@ -114,7 +116,7 @@ context('API server', function() {
 				assert.equal(response.statusCode, 200, 'User creation should return 200 OK');
 				ID = response.body.id;
 				assert.isNumber(ID, 'ID should be a number');
-				
+
 				return request({
 					uri: `http://localhost:${port}/api/users/${userInput.Username}`,
 					json: true,
@@ -130,10 +132,10 @@ context('API server', function() {
 			});
 		});
 	});
-	
+
 	describe('Board/Game API', () => {
 		let userID, sandbox;
-		
+
 		before(() => {
 			return User.addUser({
 				Username: 'testUser'
@@ -141,15 +143,15 @@ context('API server', function() {
 				userID = id[0];
 			});
 		});
-	
+
 		beforeEach(() => {
 			sandbox = Sinon.sandbox;
 		});
-	
+
 		afterEach(() => {
 			sandbox.restore();
 		});
-	
+
 		it('Should CRUD boards', () => {
 			const boardInput = {
 				ID: 1,
@@ -158,7 +160,7 @@ context('API server', function() {
 				Adult: false,
 				Owner: userID
 			};
-			
+
 			/*-------------- CREATE -----------------*/
 			return request({
 				uri: `http://localhost:${port}/api/boards`,
@@ -169,7 +171,7 @@ context('API server', function() {
 			}).then((response) => {
 				assert.equal(response.statusCode, 200, 'Board creation should return 200 OK');
 				assert.equal(response.body.id, 1, 'Board creation should return id');
-				
+
 				/*-------------- RETRIEVE -----------------*/
 				return request({
 					json: true,
@@ -187,11 +189,11 @@ context('API server', function() {
 				assert.equal(body.Description, boardInput.Description, 'Description should be returned okay');
 				assert.equal(body.Adult, boardInput.Adult, 'Adult should be returned okay');
 				assert.equal(body.Owner, boardInput.Owner, 'Owner should be returned okay');
-				
-	
+
+
 				/*-------------- UPDATE -----------------*/
 				boardInput.Name = 'test board';
-	
+
 				return request({
 					uri: `http://localhost:${port}/api/boards/1`,
 					json: true,
@@ -201,8 +203,8 @@ context('API server', function() {
 				});
 			}).then((response) => {
 				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
-			
-	
+
+
 				/*-------------- RETRIEVE AGAIN-----------------*/
 				return request({
 					uri: `http://localhost:${port}/api/boards/1`,
@@ -221,7 +223,7 @@ context('API server', function() {
 				assert.equal(body.Owner, boardInput.Owner, 'Owner should be returned okay');
 			});
 		});
-		
+
 		it('Should CRUD games', () => {
 			const boardInput = {
 				ID: 2,
@@ -233,7 +235,7 @@ context('API server', function() {
 					gameDescription: 'a cool game'
 				}
 			};
-			
+
 			/*-------------- CREATE -----------------*/
 			return request({
 				uri: `http://localhost:${port}/api/games`,
@@ -244,7 +246,7 @@ context('API server', function() {
 			}).then((response) => {
 				assert.equal(response.statusCode, 200, 'Game creation should return 200 OK');
 				assert.equal(response.body.id, 2, 'Game creation should return id');
-				
+
 				/*-------------- RETRIEVE -----------------*/
 				return request({
 					json: true,
@@ -261,11 +263,11 @@ context('API server', function() {
 				assert.equal(body.Adult, boardInput.Adult, 'Adult should be returned okay');
 				assert.equal(body.Owner, boardInput.Owner, 'Owner should be returned okay');
 				assert.deepEqual(body.Game, boardInput.Game, 'Game data should be returned okay');
-				
-			
+
+
 				/*-------------- UPDATE -----------------*/
 				boardInput.Name = 'test game';
-				
+
 				return request({
 					uri: `http://localhost:${port}/api/games/2`,
 					json: true,
@@ -275,7 +277,7 @@ context('API server', function() {
 				});
 			}).then((response) => {
 				assert.equal(response.statusCode, 200, 'Status code should be 200 OK');
-	
+
 				/*-------------- RETRIEVE AGAIN-----------------*/
 				return request({
 					uri: `http://localhost:${port}/api/games/2`,
@@ -294,10 +296,10 @@ context('API server', function() {
 			});
 		});
 	});
-	
+
 	describe('Thread API', () => {
 		let boardID;
-		
+
 		before(() => {
 			return User.addUser({
 				Username: 'testUser2345'
@@ -310,13 +312,13 @@ context('API server', function() {
 				boardID = boardIDs[0];
 			});
 		});
-		
+
 		it('Should allow adding threads', () => {
 			const input = {
 				ID: 1,
 				Title: 'The best thread'
 			};
-			
+
 			/*-------------- CREATE -----------------*/
 			return request({
 				uri: `http://localhost:${port}/api/boards/${boardID}/threads`,
@@ -329,7 +331,7 @@ context('API server', function() {
 				assert.equal(response.body.id, 1, 'Thread creation should return id');
 			});
 		});
-		
+
 		it('Should retrieve said threads', () => {
 			return request({
 				uri: `http://localhost:${port}/api/boards/${boardID}/threads`,
@@ -369,12 +371,12 @@ context('API server', function() {
 				threadID = threadIDs[0];
 			});
 		});
-		
+
 		it('Should allow adding posts', () => {
 			const input = {
 				Body: '<p>This is the body</b>'
 			};
-			
+
 			/*-------------- CREATE -----------------*/
 			return request({
 				uri: `http://localhost:${port}/api/threads/${threadID}`,
@@ -387,7 +389,7 @@ context('API server', function() {
 				assert.equal(response.body.id, 1, 'post creation should return id');
 			});
 		});
-		
+
 		it('Should retrieve posts with threads', () => {
 			return request({
 				uri: `http://localhost:${port}/api/threads/${threadID}`,
