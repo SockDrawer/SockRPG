@@ -131,7 +131,7 @@
 		"no-unexpected-multiline": 2,
 		"no-unreachable": 2,
 		"no-unused-expressions": 2,
-		"no-unused-vars": 1,
+		"no-unused-vars": ["warn", { "argsIgnorePattern": "^_+$" }],
 		"no-useless-call": 1,
 		"no-useless-concat": 2,
 		"no-var": 2,
