@@ -18,17 +18,21 @@ describe('Game model', () => {
 	let sandbox;
     
 	beforeEach(() => {
-		sandbox = Sinon.sandbox.create();
-		return DB.initialise({
+		return Promise.resolve().then(() => {
+			sandbox = Sinon.sandbox.create();
+		})
+		.then(() => DB.initialise({
 			database: {
 				filename: ':memory:'
 			}
-		});
+		}));
 	});
 
 	afterEach(() => {
-		sandbox.restore();
-		return DB.teardown();
+		return Promise.resolve().then(() => DB.teardown())
+		.then(() => {
+			sandbox.restore();
+		});
 	});
     
 	const userID = 1;

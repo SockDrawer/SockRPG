@@ -27,6 +27,7 @@ const db = {
 					table.string('gameDescription');
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Users'))
 		.then((exists) => {
@@ -39,6 +40,7 @@ const db = {
 					table.string('AuthSecret').notNullable();
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Boards'))
 		.then((exists) => {
@@ -52,6 +54,7 @@ const db = {
 					table.string('Description').notNullable().defaultTo('');
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('ChildBoards'))
 		.then((exists) => {
@@ -62,6 +65,7 @@ const db = {
 					table.integer('ChildID').references('Boards.ID').notNullable();
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Threads'))
 		.then((exists) => {
@@ -72,6 +76,7 @@ const db = {
 					table.integer('Board').references('Boards.ID').notNullable();
 				});
 			}
+			return Promise.resolve();
 		})
 		.then(() => knex.schema.hasTable('Posts'))
 		.then((exists) => {
@@ -82,6 +87,7 @@ const db = {
 					table.string('Body').notNullable();
 				});
 			}
+			return Promise.resolve();
 		}).then(() => {
 			db.initialised = true;
 			return Promise.resolve(db.initialised);
@@ -94,10 +100,15 @@ const db = {
 	 * @returns {Promise} A Promise that is resolved when the DAO is torn down.
 	 */
 	teardown: function teardown() {
-		knex = null;
-		db.initialised = false;
+		let destroyer = Promise.resolve();
+		if (knex) {
+			destroyer = destroyer.then(() => knex.destroy());
+		}
 		
-		return Promise.resolve();
+		return destroyer.then(() => {
+			knex = null;
+			db.initialised = false;
+		});
 	},
 	
 	/**

@@ -16,6 +16,7 @@ window.SockRPG.Boards = {
 			if (attrs.Name.length <= 0) {
 				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.Name + '"';
 			}
+			return null;
 		}
 
 	}),
@@ -37,6 +38,7 @@ window.SockRPG.Boards = {
 			if (attrs.Name.length <= 0) {
 				return 'Name invalid; must be longer than 0 characters. You entered:"' + attrs.Name + '"';
 			}
+			return null;
 		}
 
 	}),
