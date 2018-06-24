@@ -20,7 +20,9 @@ describe('DB model', () => {
 	let sandbox;
     
 	beforeEach(() => {
-		sandbox = Sinon.sandbox.create();
+		return Promise.resolve().then(() => {
+			sandbox = Sinon.sandbox.create();
+		});
 	});
 
 	afterEach(() => {
