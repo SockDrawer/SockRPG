@@ -14,6 +14,7 @@ window.SockRPG.Threads = {
 			if (attrs.Title.length <= 0) {
 				return 'Title invalid; must be longer than 0 characters. You entered:"' + attrs.Title + '"';
 			}
+			return null;
 		}
 
 	}),

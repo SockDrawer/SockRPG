@@ -70,6 +70,7 @@ function getPost(req, res) {
 		}
 		
 		res.status(200).send(JSON.stringify(post.serialize()));
+		return Promise.resolve();
 	});
 }
 

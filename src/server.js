@@ -163,7 +163,7 @@ function setupExpress() {
  */
 function setup(config) {
 	return setupDao(config).then(() => setupExpress()).then(() => {
-		const port = process.env['PORT'] || 9000;
+		const port = process.env.PORT || 9000;
 		server = app.listen(port);
 		console.log(`Server now listening on port ${port}`);
 	});
