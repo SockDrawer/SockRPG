@@ -8,7 +8,7 @@ const Board = require('../../src/model/Board');
 const Thread = require('../../src/model/Thread');
 require('sinon-as-promised');
 
-const port = process.env['PORT'] || 9000;
+const port = process.env.PORT || 9000;
 
 context('API server', function() {
 	this.timeout(50000);
@@ -299,15 +299,16 @@ context('API server', function() {
 		let boardID;
 		
 		before(() => {
-			boardID = Math.floor(Math.random() * 50) + 50;
 			return User.addUser({
 				Username: 'testUser2345'
 			})
 			.then((userIDs) => Board.addBoard({
 				Owner: userIDs[0],
-				id: boardID,
 				Name: 'A board'
-			}));
+			}))
+			.then((boardIDs) => {
+				boardID = boardIDs[0];
+			});
 		});
 		
 		it('Should allow adding threads', () => {
@@ -350,21 +351,23 @@ context('API server', function() {
 		let boardID, threadID;
 
 		before(() => {
-			boardID = Math.floor(Math.random() * 50) + 50;
-			threadID = Math.floor(Math.random() * 50) + 50;
 			return User.addUser({
 				Username: 'testUser7890'
 			})
 			.then((userIDs) => Board.addBoard({
 				Owner: userIDs[0],
-				id: boardID,
 				Name: 'A board'
 			}))
+			.then((boardIDs) => {
+				boardID = boardIDs[0];
+			})
 			.then(() => Thread.addThread({
-				ID: threadID,
 				Title: 'A Thread',
 				Board: boardID
-			}));
+			}))
+			.then((threadIDs) => {
+				threadID = threadIDs[0];
+			});
 		});
 		
 		it('Should allow adding posts', () => {

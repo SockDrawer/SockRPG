@@ -19,12 +19,14 @@ describe('Post model', () => {
 	let sandbox;
     
 	beforeEach(() => {
-		sandbox = Sinon.sandbox.create();
-		return DB.initialise({
+		return Promise.resolve().then(() => {
+			sandbox = Sinon.sandbox.create();
+		})
+		.then(() => DB.initialise({
 			database: {
 				filename: ':memory:'
 			}
-		}).then(() => DB.knex('Users').insert({
+		})).then(() => DB.knex('Users').insert({
 			ID: 1,
 			Username: 'test user',
 			Admin: false,
@@ -47,8 +49,10 @@ describe('Post model', () => {
 	});
 
 	afterEach(() => {
-		sandbox.restore();
-		return DB.teardown();
+		return Promise.resolve().then(() => DB.teardown())
+		.then(() => {
+			sandbox.restore();
+		});
 	});
 	
 	it('should add a post to a thread', () => {

@@ -1,8 +1,4 @@
 {
-	"ecmaFeatures": {
-		"regexYFlag": true,
-		"regexUFlag": true
-	},
 	"env": {
 		"es6": true,
 		"node": true
@@ -40,7 +36,7 @@
 			"properties": "always",
 			"exceptions": ["x", "y", "i", "j", "_"]
 		}],
-		"indent": [2, "tab"],
+		"indent": [2, "tab", { "MemberExpression": "off" }],
 		"linebreak-style": [2, "unix"],
 		"max-depth": [2, 3],
 		"max-statements": [1, 15],
@@ -98,7 +94,6 @@
 		"no-irregular-whitespace": 2,
 		"no-iterator": 2,
 		"no-label-var": 2,
-		"no-labels": 2,
 		"no-lone-blocks": 2,
 		"no-lonely-if": 1,
 		"no-loop-func": 2,
@@ -153,7 +148,7 @@
 		"radix": 2,
 		"require-jsdoc": 2,
 		"semi": [2, "always"],
-		"space-after-keywords": [2, "always"],
+		"keyword-spacing": 2,
 		"space-infix-ops": 2,
 		"space-unary-ops": 2,
 		"strict": [2, "global"],
