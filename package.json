@@ -37,6 +37,7 @@
     "coveralls": "^3.0.1",
     "cz-conventional-changelog": "^1.1.7",
     "eslint": "^5.0.0",
+    "husky": "^0.14.3",
     "istanbul": "^0.4.0",
     "mocha": "^5.2.0",
     "request-promise": "^4.2.2",
@@ -51,10 +52,17 @@
   "scripts": {
     "start": "node ./src/server.js",
     "lint": "eslint .",
-    "test": "eslint . && istanbul cover node_modules/mocha/bin/_mocha -- --exit --recursive -R dot ./test/unit/**/*.js && mocha --exit --recursive -R dot ./test/integration/*.js",
+    "unitTests": "istanbul cover node_modules/mocha/bin/_mocha -- --exit --recursive -R dot ./test/unit/**/*.js",
+    "integrationTests": "mocha --exit --recursive -R dot ./test/integration/*.js",
+    "pretest": "npm run lint",
+    "test": "npm run unitTests && npm run integrationTests",
     "systemTest": "wdio wdio.conf.js",
-    "istanbul": "eslint .; istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R nyan",
-    "mocha": "echo 'Unit Tests:';mocha --recursive -R nyan ./test/unit/; echo 'Integration Tests'; mocha --recursive -R nyan ./test/integration/"
+    "mocha": "mocha -- --exit --recursive -R dot ./test/unit/**/*.js",
+    "commit": "git-cz",
+    "postmocha": "npm run integrationTests",
+    "prepush": "npm test",
+    "postmerge": "npm install",
+    "postrewrite": "npm install"
   },
   "config": {
     "commitizen": {
