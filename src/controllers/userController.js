@@ -24,6 +24,8 @@
 */
 
 const User = require('../model/User');
+const debug = require('debug')('SockRPG:controller:User');
+const debugDeeper = require('debug')('SockRPG:controller:User:detailed');
 
 /**
  * Get all users in the system
@@ -61,8 +63,8 @@ function getUser(req, res) {
 	};
 
 	const handleError = (err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Retrieving User: ${err.toString()}`);
+		debugDeeper(err.stack);
 		res.status(500).send({error: err.toString()});
 	};
 
@@ -90,8 +92,8 @@ function addUser(req, res) {
 	return User.addUser(req.body).then((index) => {
 		res.status(200).send({id: index[0]}).end();
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Adding User: ${err.toString()}`);
+		debugDeeper(err.stack);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -105,13 +107,14 @@ function addUser(req, res) {
 function updateUser(req, res) {
 	return User.getUser(req.params.id).then((user) => {
 		user.Username = req.body.Username || user.Username;
-		
+
 		return user.save();
 	}).then(() => {
 		res.status(200).end();
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Updating User: ${err.toString()}`);
+		debugDeeper(err.stack);
+		// TODO: Remove switching on string in favor of better method
 		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});
 		} else {
@@ -124,9 +127,9 @@ const controller = {
 	getAllUsers: getAllUsers,
 
 	getUser: getUser,
-	
+
 	addUser: addUser,
-	
+
 	updateUser: updateUser
 
 };

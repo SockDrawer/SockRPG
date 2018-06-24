@@ -46,6 +46,7 @@ function setupDao(config) {
 	//TODO: make this configurable
 	return DB.initialise(config).then(() => {
 		if (!DB.isInitialised()) {
+			// eslint-disable-next-line no-console
 			console.log('Initialization error');
 			process.exit(1);
 		}
@@ -63,8 +64,8 @@ function setupExpress() {
 			app.engine('handlebars', hbs.engine);
 			app.set('view engine', 'handlebars');
 			app.set('views', 'src/views');
-			
-			
+
+
 			//This is purely an example to show how the routing will be implemented for each endpoint
 			//Any unsupported methods will be omitted
 			app.route('/example')
@@ -80,12 +81,12 @@ function setupExpress() {
 				.delete((req, res) => {
 					res.send('Danger Will Robinson!');
 				});
-			
-			
+
+
 			//Static content and uploads
 			app.use('/static', express.static('static'));
 			app.use('/uploads', express.static('uploads'));
-			
+
 			/*Pages*/
 			app.route('/')
 				.get(cPage.getHomePage);
@@ -93,7 +94,7 @@ function setupExpress() {
 				.get(cPage.getBoardView);
 			app.route('/thread/:id')
 				.get(cPage.getThreadView);
-			
+
 			const jsonParser = bodyParser.json({type: 'application/json'});
 			/*API*/
 			app.route('/api/games')
@@ -102,56 +103,56 @@ function setupExpress() {
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
-			
+
 			app.route('/api/games/:id')
 				.get(cBoard.getGame)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cBoard.updateGame);
-			
+
 			app.route('/api/boards')
 				.get(cBoard.getAllBoards)
 				.post(jsonParser, cBoard.addBoard)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
-			
+
 			app.route('/api/boards/:id')
 				.get(cBoard.getBoard)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cBoard.updateBoard);
-				
+
 			app.route('/api/boards/:id/threads')
 				.get(cThread.getThreadsForBoard)
 				.post(jsonParser, cThread.addThreadToBoard)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
-				
+
 			app.route('/api/users')
 				.get(cUser.getAllUsers)
 				.post(jsonParser, cUser.addUser)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
-			
+
 			app.route('/api/users/:id')
 				.get(cUser.getUser)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cUser.updateUser);
-			
+
 			app.route('/api/threads/:id')
 				.get(cThread.getThread)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
-				
+
 			resolve();
 		});
 }
@@ -165,6 +166,7 @@ function setup(config) {
 	return setupDao(config).then(() => setupExpress()).then(() => {
 		const port = process.env.PORT || 9000;
 		server = app.listen(port);
+		// eslint-disable-next-line no-console
 		console.log(`Server now listening on port ${port}`);
 	});
 }
@@ -174,6 +176,7 @@ function setup(config) {
  */
 function stop() {
 	server.close();
+	// eslint-disable-next-line no-console
 	console.log('Server stopped');
 }
 /**

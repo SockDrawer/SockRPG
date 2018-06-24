@@ -23,7 +23,7 @@
   "dependencies": {
     "async": "^2.0.1",
     "body-parser": "^1.14.1",
-    "debug": "^2.2.0",
+    "debug": "^2.6.9",
     "express": "^4.13.3",
     "express-handlebars": "^3.0.0",
     "knex": "^0.14.6",
