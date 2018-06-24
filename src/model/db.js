@@ -96,10 +96,15 @@ const db = {
 	 * @returns {Promise} A Promise that is resolved when the DAO is torn down.
 	 */
 	teardown: function teardown() {
-		knex = null;
-		db.initialised = false;
+		let destroyer = Promise.resolve();
+		if (knex) {
+			destroyer = destroyer.then(() => knex.destroy());
+		}
 		
-		return Promise.resolve();
+		return destroyer.then(() => {
+			knex = null;
+			db.initialised = false;
+		});
 	},
 	
 	/**
