@@ -30,7 +30,7 @@ const Thread = require('../model/Thread');
 const Post = require('../model/Post');
 
 const debug = require('debug')('SockRPG:controller:Page');
-const debugDeeper = require('debug')('SockRPG:controller:Page:detailed');
+
 /**
  * Get the home page to hand to the view
  * @param  {Request} req The Express request object
@@ -52,7 +52,7 @@ function getHomePage(req, res) {
 	})
 	.catch((err) => {
 		debug(`Error Getting Page: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -81,7 +81,7 @@ function getBoardView(req, res) {
 	})
 	.catch((err) => {
 		debug(`Error Getting Board View: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500);
 		res.send({error: err.toString()});
 	});
@@ -111,7 +111,7 @@ function getThreadView(req, res) {
 	})
 	.catch((err) => {
 		debug(`Error Getting Thread View: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500);
 		res.send({error: err.toString()});
 	});

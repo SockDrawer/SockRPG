@@ -25,7 +25,6 @@
 
 const User = require('../model/User');
 const debug = require('debug')('SockRPG:controller:User');
-const debugDeeper = require('debug')('SockRPG:controller:User:detailed');
 
 /**
  * Get all users in the system
@@ -37,7 +36,8 @@ function getAllUsers(_, res) {
 	return User.getAllUsers().then((data) => {
 		res.send(data.map((user) => user.serialize()));
 	}).catch((err) => {
-		//TODO: logging errors
+		debug(`Error Retrieving Users: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -64,7 +64,7 @@ function getUser(req, res) {
 
 	const handleError = (err) => {
 		debug(`Error Retrieving User: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	};
 
@@ -93,7 +93,7 @@ function addUser(req, res) {
 		res.status(200).send({id: index[0]}).end();
 	}).catch((err) => {
 		debug(`Error Adding User: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -113,7 +113,8 @@ function updateUser(req, res) {
 		res.status(200).end();
 	}).catch((err) => {
 		debug(`Error Updating User: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
+
 		// TODO: Remove switching on string in favor of better method
 		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});

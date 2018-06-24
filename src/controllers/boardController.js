@@ -26,7 +26,6 @@
 const Board = require('../model/Board');
 const Game = require('../model/Game');
 const debug = require('debug')('SockRPG:controller:Board');
-const debugDeeper = require('debug')('SockRPG:controller:Board:detailed');
 
 /**
  * Get all games in the esystem
@@ -40,7 +39,7 @@ function getAllGames(_, res) {
 		res.send(data);
 	}).catch((err) => {
 		debug(`Error Getting Games: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -75,7 +74,7 @@ function getGame(req, res) {
 		});
 	}).catch((err) => {
 		debug(`Error Getting Game: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -91,7 +90,7 @@ function addGame(req, res) {
 		res.status(200).send({id: index[0]}).end();
 	}).catch((err) => {
 		debug(`Error Adding Game: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -116,7 +115,8 @@ function updateGame(req, res) {
 		res.status(200).end();
 	}).catch((err) => {
 		debug(`Error Updating Game: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
+
 		//TODO: we shouldn't be switching behavior based on text matches. let's find a better way at some point.
 		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});
@@ -141,7 +141,7 @@ function getAllBoards(_, res) {
 		res.send(data);
 	}).catch((err) => {
 		debug(`Error Getting Boards: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -175,7 +175,7 @@ function getBoard(req, res) {
 		});
 	}).catch((err) => {
 		debug(`Error Getting Board: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -193,7 +193,7 @@ function addBoard(req, res) {
 		}).end();
 	}).catch((err) => {
 		debug(`Error Adding Board: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -217,7 +217,8 @@ function updateBoard(req, res) {
 		res.status(200).end();
 	}).catch((err) => {
 		debug(`Error Updating Board: ${err.toString()}`);
-		debugDeeper(err.stack);
+		//TODO: Add Proper Logging
+
 		//TODO: Let's not switch on text when we don't need to.
 		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});
