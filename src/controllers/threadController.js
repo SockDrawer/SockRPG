@@ -45,7 +45,7 @@ function getThreadsForBoard(req, res) {
 		}
 
 		return Thread.getThreadsInBoard(data.ID).then((threads) => {
-			res.status(200).send(JSON.stringify(threads.map((thread) => thread.serialize())));
+			res.status(200).send(threads.map((thread) => thread.serialize()));
 		});
 	});
 }
@@ -74,7 +74,7 @@ function getThread(req, res) {
 				thread.posts = [];
 			}
 			
-			res.status(200).send(JSON.stringify(thread));
+			res.status(200).send(thread);
 			return Promise.resolve();
 		});
 	});
@@ -100,8 +100,8 @@ function addThreadToBoard(req, res) {
 			const ret = {
 				id: ids[0]
 			};
-			
-			res.status(200).send(JSON.stringify(ret));
+
+			res.status(200).send(ret);
 			return Promise.resolve();
 		});
 	});
