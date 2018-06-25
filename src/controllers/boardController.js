@@ -63,14 +63,14 @@ function getGame(req, res) {
 
 		if (!data) {
 			res.status(404).end();
-			return;
+			return undefined;
 		}
 
 		const output = data.serialize();
 
-		data.getThreads().then((threadIDs) => {
+		return data.getThreads().then((threadIDs) => {
 			output.threadList = threadIDs;
-			res.send(output);
+			res.status(200).send(output);
 		});
 	}).catch((err) => {
 		debug(`Error Getting Game: ${err.toString()}`);
@@ -164,14 +164,14 @@ function getBoard(req, res) {
 		}
 		if (!data) {
 			res.status(404).end();
-			return;
+			return undefined;
 		}
 
 		const output = data.serialize();
 
-		data.getThreads().then((threadIDs) => {
+		return data.getThreads().then((threadIDs) => {
 			output.threadList = threadIDs;
-			res.send(output);
+			res.status(200).send(output);
 		});
 	}).catch((err) => {
 		debug(`Error Getting Board: ${err.toString()}`);
