@@ -74,7 +74,7 @@ class Board {
 
 	getThreads() {
 		return Threads.getThreadsInBoard(this.ID)
-			.then((threads) => threads && threads.length ? threads.map((thread) => thread.ID): []);
+			.then((threads) => threads && threads.length ? threads.map((thread) => thread.ID) : []);
 	}
 
 	serialize() {

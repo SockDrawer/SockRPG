@@ -185,10 +185,10 @@ describe('Game API controller', () => {
 			};
 
 			return gameController.getGame(mockRequest, mockResponse).then(() => {
-					data.Canonical = '/api/games/1';
-					assert.deepEqual(data, actualResponse);
-					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+				data.Canonical = '/api/games/1';
+				assert.deepEqual(data, actualResponse);
+				assert.isTrue(Thread.getThreadsInBoard.called);
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
 			});
 		});
 
@@ -229,9 +229,9 @@ describe('Game API controller', () => {
 			};
 
 			return gameController.getGame(mockRequest, mockResponse).then(() => {
-					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.deepEqual(actualResponse.threadList, [1, 2, 3]);
-					assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+				assert.isTrue(Thread.getThreadsInBoard.called);
+				assert.deepEqual(actualResponse.threadList, [1, 2, 3]);
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
 			});
 		});
 
@@ -284,9 +284,9 @@ describe('Game API controller', () => {
 			};
 
 			return gameController.getGame(mockRequest, mockResponse).then(() => {
-					assert.equal(200, actualCode, 'Should return a 200 ok if anything');
-					data[0].Canonical = '/api/games/1';
-					assert.deepEqual(data[0], actualResponse);
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+				data[0].Canonical = '/api/games/1';
+				assert.deepEqual(data[0], actualResponse);
 
 			});
 		});
@@ -442,9 +442,9 @@ describe('Game API controller', () => {
 			};
 
 			return gameController.getBoard(mockRequest, mockResponse).then(() => {
-					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.deepEqual(actualResponse.threadList, [1, 2, 3]);
-					assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+				assert.isTrue(Thread.getThreadsInBoard.called);
+				assert.deepEqual(actualResponse.threadList, [1, 2, 3]);
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
 			});
 		});
 
