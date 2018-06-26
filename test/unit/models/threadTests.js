@@ -19,12 +19,14 @@ describe('Thread model', () => {
 	let sandbox, parentID;
     
 	beforeEach(() => {
-		sandbox = Sinon.sandbox.create();
-		return DB.initialise({
+		return Promise.resolve().then(() => {
+			sandbox = Sinon.sandbox.create();
+		})
+		.then(() => DB.initialise({
 			database: {
 				filename: ':memory:'
 			}
-		}).then(() =>
+		})).then(() =>
 			Board.addBoard({
 				Owner: 1,
 				Name: 'Board1'
@@ -35,8 +37,10 @@ describe('Thread model', () => {
 	});
 
 	afterEach(() => {
-		sandbox.restore();
-		return DB.teardown();
+		return Promise.resolve().then(() => DB.teardown())
+		.then(() => {
+			sandbox.restore();
+		});
 	});
     
 	it('should add a thread', () => {
