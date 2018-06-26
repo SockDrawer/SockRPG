@@ -8,7 +8,6 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const Sinon = require('sinon');
-require('sinon-as-promised');
 
 //Module to test
 const Board = require('../../../src/model/Board.js');
@@ -20,7 +19,7 @@ describe('Thread model', () => {
 
 	beforeEach(() => {
 		return Promise.resolve().then(() => {
-			sandbox = Sinon.sandbox.create();
+			sandbox = Sinon.createSandbox();
 		})
 		.then(() => DB.initialise({
 			database: {
