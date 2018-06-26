@@ -25,6 +25,7 @@
 
 const Board = require('../model/Board');
 const Game = require('../model/Game');
+const debug = require('debug')('SockRPG:controller:Board');
 
 /**
  * Get all games in the esystem
@@ -37,7 +38,8 @@ function getAllGames(_, res) {
 	return Game.getAllGames().then((data) => {
 		res.send(data);
 	}).catch((err) => {
-		//TODO: logging errors
+		debug(`Error Getting Games: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -61,18 +63,18 @@ function getGame(req, res) {
 
 		if (!data) {
 			res.status(404).end();
-			return;
+			return undefined;
 		}
-		
+
 		const output = data.serialize();
-		
-		data.getThreads().then((threadIDs) => {
+
+		return data.getThreads().then((threadIDs) => {
 			output.threadList = threadIDs;
-			res.send(output);
+			res.status(200).send(output);
 		});
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Getting Game: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -87,8 +89,8 @@ function addGame(req, res) {
 	return Game.addGame(req.body).then((index) => {
 		res.status(200).send({id: index[0]}).end();
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Adding Game: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -104,7 +106,7 @@ function updateGame(req, res) {
 		board.Name = req.body.Name || board.Name;
 		board.Owner = req.body.Owner || board.Owner;
 		board.description = req.body.Game.gameDescription || board.description;
-		
+
 		if ('Adult' in req.body) {
 			board.Adult = req.body.Adult;
 		}
@@ -112,8 +114,10 @@ function updateGame(req, res) {
 	}).then(() => {
 		res.status(200).end();
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Updating Game: ${err.toString()}`);
+		//TODO: Add Proper Logging
+
+		//TODO: we shouldn't be switching behavior based on text matches. let's find a better way at some point.
 		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});
 		} else {
@@ -136,8 +140,8 @@ function getAllBoards(_, res) {
 		}
 		res.send(data);
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Getting Boards: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -160,18 +164,18 @@ function getBoard(req, res) {
 		}
 		if (!data) {
 			res.status(404).end();
-			return;
+			return undefined;
 		}
 
 		const output = data.serialize();
-		
-		data.getThreads().then((threadIDs) => {
+
+		return data.getThreads().then((threadIDs) => {
 			output.threadList = threadIDs;
-			res.send(output);
+			res.status(200).send(output);
 		});
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Getting Board: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -188,8 +192,8 @@ function addBoard(req, res) {
 			id: index[0]
 		}).end();
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Adding Board: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -201,7 +205,7 @@ function addBoard(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateBoard(req, res) {
-	
+
 	return Board.getBoard(req.params.id).then((board) => {
 		board.Name = req.body.Name || board.Name;
 		board.Owner = req.body.Owner || board.Owner;
@@ -212,8 +216,10 @@ function updateBoard(req, res) {
 	}).then(() => {
 		res.status(200).end();
 	}).catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Updating Board: ${err.toString()}`);
+		//TODO: Add Proper Logging
+
+		//TODO: Let's not switch on text when we don't need to.
 		if (err.toString().indexOf('No such') > -1) {
 			res.status(404).send({error: err.toString()});
 		} else {

@@ -31,6 +31,8 @@ const Post = require('../model/Post');
 const User = require('../model/User');
 const db = require('../model/db');
 
+const debug = require('debug')('SockRPG:controller:Page');
+
 /**
  * Get the home page to hand to the view
  * @param  {Request} req The Express request object
@@ -62,8 +64,8 @@ function getHomePage(req, res) {
 		res.render('home', data);
 	})
 	.catch((err) => {
-		//TODO: logging errors
-		console.log(err);
+		debug(`Error Getting Page: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -102,15 +104,17 @@ function getBoardView(req, res) {
 			res.end();
 			return Promise.resolve();
 		}
-		
+
 		board = data.serialize();
 		return Thread.getThreadsInBoard(req.params.id).then((threads) => {
 			board.threads = threads ? threads.map((thread) => thread.serialize()) : [];
-			
+
 			res.render('board', board);
 		});
 	})
 	.catch((err) => {
+		debug(`Error Getting Board View: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500);
 		res.send({error: err.toString()});
 	});
@@ -130,15 +134,17 @@ function getThreadView(req, res) {
 			res.end();
 			return Promise.resolve();
 		}
-		
+
 		retval = data.serialize();
 		return Post.getPostsInThread(req.params.id).then((posts) => {
 			retval.posts = posts ? posts.map((post) => post.serialize()) : [];
-	
+
 			res.render('thread', retval);
 		});
 	})
 	.catch((err) => {
+		debug(`Error Getting Thread View: ${err.toString()}`);
+		//TODO: Add Proper Logging
 		res.status(500);
 		res.send({error: err.toString()});
 	});

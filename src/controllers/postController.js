@@ -48,7 +48,7 @@ function addPost(req, res) {
 			const ret = {
 				id: ids[0]
 			};
-			res.status(200).send(JSON.stringify(ret));
+			res.status(200).send(ret);
 		}).catch((err) => {
 			//debug('ERROR ADDING POST: ' + err);
 			res.status(500).send(`ERROR: ${err.toString()}\n Post was ${JSON.stringify(req.body)}`);
@@ -69,7 +69,7 @@ function getPost(req, res) {
 			return Promise.resolve();
 		}
 		
-		res.status(200).send(JSON.stringify(post.serialize()));
+		res.status(200).send(post.serialize());
 		return Promise.resolve();
 	});
 }
