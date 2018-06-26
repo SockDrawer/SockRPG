@@ -73,17 +73,16 @@ passport.use(new LocalStrategy({
 	usernameField: 'user',
 	passwordField: 'password',
 	passReqToCallback: true
- },
-	(req, userID, password, done) => {
-		User.getUser(userID).then((user) => {
-			if (!user) {
-				return done(null, false, {message: 'Incorrect username.'});
-			}
+},
+(req, userID, password, done) => {
+	User.getUser(userID).then((user) => {
+		if (!user) {
+			return done(null, false, {message: 'Incorrect username.'});
+		}
 
-			return done(null, user);
-		});
-	}
-));
+		return done(null, user);
+	});
+}));
 /**
  * Initialise the Express server
  * @returns {Promise} A promise chain that resolves when the server is ready to use

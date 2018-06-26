@@ -85,7 +85,7 @@ function getLoginView(req, res) {
 	})
 	.catch((err) => {
 		//TODO: logging errors
-		console.log(err);
+		debug(`Error Getting Login View: ${err.toString()}`);
 		res.status(500).send({error: err.toString()});
 	});
 }
