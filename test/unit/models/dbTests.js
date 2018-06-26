@@ -9,19 +9,18 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const Sinon = require('sinon');
-require('sinon-as-promised');
 
 //Module to test
-const Post = require('../../../src/model/Post.js');
+//const Post = require('../../../src/model/Post.js'); // Currently unused.... delete?
 const DB = require('../../../src/model/db');
 
 
 describe('DB model', () => {
 	let sandbox;
-    
+
 	beforeEach(() => {
 		return Promise.resolve().then(() => {
-			sandbox = Sinon.sandbox.create();
+			sandbox = Sinon.createSandbox();
 		});
 	});
 
@@ -31,7 +30,7 @@ describe('DB model', () => {
 			sandbox.restore();
 		});
 	});
-	
+
 	it('initialise should work', () => {
 		return Promise.resolve().then(() => DB.initialise({
 			database: {
@@ -42,7 +41,7 @@ describe('DB model', () => {
 			DB.isInitialised().should.equal(true);
 		});
 	});
-	
+
 	it('teardown should work', () => {
 		return Promise.resolve().then(() => DB.initialise({
 			database: {
@@ -57,7 +56,7 @@ describe('DB model', () => {
 			DB.isInitialised().should.equal(false);
 		});
 	});
-	
+
 	it('redundant initialization should not error', () => {
 		return Promise.resolve().then(() => DB.initialise({
 			database: {
@@ -76,14 +75,14 @@ describe('DB model', () => {
 			DB.isInitialised().should.equal(true);
 		});
 	});
-	
+
 	it('a subsequent later initialization of the same database should work', () => {
 		// This test (unfortunately) has to make use a of a temporary file and
 		// Travis sometimes handles this very slow, such that a default 2000ms
 		// timeout is exceeded! For this reason, at 60s timeout is set at the
 		// end.
-		
-		return Promise.resolve().then(() => new Promise((resolve, reject) => {
+
+		return Promise.resolve().then(() => new Promise((resolve) => {
 			fs.unlink('tmpfile.sqlite', (_) => {
 				return resolve();
 			});
@@ -110,15 +109,14 @@ describe('DB model', () => {
 		})
 		.then(() => DB.teardown())
 		.then(() => {
-			console.log('town down!');
 			DB.isInitialised().should.equal(false);
 		})
-		.then(() => new Promise((resolve, reject) => {
+		.then(() => new Promise((resolve) => {
 			fs.unlink('tmpfile.sqlite', (_) => {
 				return resolve();
 			});
 		}))
-		.catch(() => new Promise((resolve, reject) => {
+		.catch(() => new Promise((resolve) => {
 			fs.unlink('tmpfile.sqlite', (_) => {
 				return resolve();
 			});

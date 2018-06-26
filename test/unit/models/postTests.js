@@ -8,7 +8,6 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const Sinon = require('sinon');
-require('sinon-as-promised');
 
 //Module to test
 const Post = require('../../../src/model/Post.js');
@@ -20,7 +19,7 @@ describe('Post model', () => {
     
 	beforeEach(() => {
 		return Promise.resolve().then(() => {
-			sandbox = Sinon.sandbox.create();
+			sandbox = Sinon.createSandbox();
 		})
 		.then(() => DB.initialise({
 			database: {
@@ -79,7 +78,7 @@ describe('Post model', () => {
 		
 		return Post.addPost(post)
 			.then(() => Post.getPostsInThread(1))
-			.should.eventually.contain(new Post(post));
+			.should.eventually.deep.contain(new Post(post));
 	});
 	
 	it('should not return other threads', () => {
@@ -98,6 +97,6 @@ describe('Post model', () => {
 		return Post.addPost(post1)
 			.then(() => Post.addPost(post2))
 			.then(() => Post.getPostsInThread(1))
-			.should.eventually.not.contain(new Post(post2));
+			.should.eventually.not.deep.contain(new Post(post2));
 	});
 });

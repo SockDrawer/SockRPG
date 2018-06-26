@@ -3,7 +3,6 @@ const Chai = require('chai');
 Chai.should();
 
 const Sinon = require('sinon');
-require('sinon-as-promised');
 const sinonChai = require('sinon-chai');
 Chai.use(sinonChai);
 
@@ -20,7 +19,7 @@ describe('Post API Controller', () => {
 	});
 
 	beforeEach(() => {
-		sandbox = Sinon.sandbox;
+		sandbox = Sinon.createSandbox();
 		mockResponse = {};
 		mockResponse.status = sandbox.stub().returns(mockResponse);
 		mockResponse.send = sandbox.stub().returns(mockResponse);
@@ -89,9 +88,9 @@ describe('Post API Controller', () => {
 		it('Should return ID of added post', () => {
 			sandbox.stub(Thread, 'getThread').resolves(new Thread({id: 3, Title: 'some thread'}));
 			sandbox.stub(Post, 'addPost').resolves([10]);
-			const expected = JSON.stringify({
+			const expected = {
 				id: 10
-			});
+			};
 			
 			return postController.addPost(mockRequest, mockResponse).then(() => mockResponse.send.should.have.been.calledWith(expected));
 		});
@@ -128,7 +127,7 @@ describe('Post API Controller', () => {
 				Post.getPostByID.should.have.been.calledWith(100);
 
 				mockResponse.status.should.have.been.calledWith(200);
-				mockResponse.send.should.have.been.calledWith(JSON.stringify(postData));
+				mockResponse.send.should.have.been.calledWith(postData);
 			});
 		});
 	});

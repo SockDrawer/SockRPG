@@ -8,7 +8,6 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const Sinon = require('sinon');
-require('sinon-as-promised');
 
 //Module to test
 const Board = require('../../../src/model/Board.js');
@@ -17,10 +16,10 @@ const DB = require('../../../src/model/db');
 
 describe('Thread model', () => {
 	let sandbox, parentID;
-    
+
 	beforeEach(() => {
 		return Promise.resolve().then(() => {
-			sandbox = Sinon.sandbox.create();
+			sandbox = Sinon.createSandbox();
 		})
 		.then(() => DB.initialise({
 			database: {
@@ -42,14 +41,14 @@ describe('Thread model', () => {
 			sandbox.restore();
 		});
 	});
-    
+
 	it('should add a thread', () => {
 		return Thread.addThread({
 			Title: 'A Thread',
 			Board: parentID
 		}).should.eventually.contain(1);
 	});
-	
+
 	it('should add a second thread', () => {
 		return Thread.addThread({
 			Title: 'Thread 1',
@@ -74,14 +73,14 @@ describe('Thread model', () => {
 	it('should not find a non-existant thread by ID', () => {
 		return Thread.getThread(0).should.eventually.equal(null);
 	});
-	
+
 	it('should find threads by parent board', () => {
 		return Thread.addThread({
 			Title: 'A Thread',
 			Board: parentID
 		}).then(() => Thread.getThreadsInBoard(parentID)).should.eventually.have.length(1);
 	});
-	
+
 	it('should find all by parent board', () => {
 		return Thread.addThread({
 			Title: 'Thread 1',
@@ -91,33 +90,33 @@ describe('Thread model', () => {
 			Board: parentID
 		})).then(() => Thread.getThreadsInBoard(parentID)).should.eventually.have.length(2);
 	});
-	
+
 	it('should serialize', () => {
 		const fakeThread = {
 			ID: Math.random(),
 			Title: 'some thread'
 		};
-		
+
 		const expected = {
 			Title: fakeThread.Title,
 			Canonical: `/api/threads/${fakeThread.ID}`,
 			ID: fakeThread.ID
 		};
-		
+
 		new Thread(fakeThread).serialize().should.deep.equal(expected);
 	});
-	
+
 	it('should construct', () => {
 		const fakeThread = {
 			ID: Math.random(),
 			Title: 'some thread'
 		};
-		
+
 		const expected = {
 			Title: fakeThread.Title,
 			ID: fakeThread.ID
 		};
-		
+
 		new Thread(fakeThread).data.should.deep.equal(expected);
 		new Thread(fakeThread).Canonical.should.equal(`/api/threads/${fakeThread.ID}`);
 	});

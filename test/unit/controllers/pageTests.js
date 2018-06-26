@@ -3,7 +3,6 @@ const Path = require('path');
 const Chai = require('chai');
 const expect = Chai.expect;
 const Sinon = require('sinon');
-require('sinon-as-promised');
 
 const sinonChai = require('sinon-chai');
 Chai.use(sinonChai);
@@ -19,7 +18,7 @@ describe('Page API controller', () => {
 	let sandbox;
 
 	beforeEach(() => {
-		sandbox = Sinon.sandbox.create();
+		sandbox = Sinon.createSandbox();
 	});
 
 	afterEach( () => {
@@ -135,7 +134,7 @@ describe('Page API controller', () => {
 		let fakeRes, boardData;
 		
 		beforeEach(() => {
-			sandbox = Sinon.sandbox.create();
+			sandbox = Sinon.createSandbox();
 			fakeRes = {
 				render: sandbox.stub(),
 				status: sandbox.stub(),
@@ -242,7 +241,7 @@ describe('Page API controller', () => {
 		let fakeRes, fakeThread;
 		
 		beforeEach(() => {
-			sandbox = Sinon.sandbox.create();
+			sandbox = Sinon.createSandbox();
 			fakeRes = {
 				render: sandbox.stub(),
 				status: sandbox.stub(),

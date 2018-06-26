@@ -51,6 +51,7 @@ function setupDao(config) {
 	//TODO: make this configurable
 	return DB.initialise(config).then(() => {
 		if (!DB.isInitialised()) {
+			// eslint-disable-next-line no-console
 			console.log('Initialization error');
 			process.exit(1);
 		}
@@ -73,18 +74,19 @@ passport.use(new LocalStrategy({
 	usernameField: 'username',
 	passwordField: 'password',
 	passReqToCallback: true
- },
+},
 	(req, username, password, done) => {
 		User.getAuthenticatedUserByNameAndPassword(username, password).then((user) => {
 			if (!user) {
 				return done(null, false, {message: 'Incorrect username or password.'});
 			}
-			
+
 			// Successful authentication.
 			return done(null, user);
 		});
 	}
 ));
+
 /**
  * Initialise the Express server
  * @returns {Promise} A promise chain that resolves when the server is ready to use
@@ -96,20 +98,25 @@ function setupExpress() {
 			app.engine('handlebars', hbs.engine);
 			app.set('view engine', 'handlebars');
 			app.set('views', 'src/views');
-			
+
 			//<Middleware
 			app.use(bodyParser.urlencoded({extended: false}));
 			app.use(validator());
 			app.use(cookieParser());
-			app.use(session({secret: 'keyboard cat'}));
+			app.use(session({
+				secret: 'keyboard cat',
+				resave: false,
+				saveUninitialized: false
+			}));
 			app.use(csurf({cookie: false}));
 			app.use(passport.initialize());
 			app.use(passport.session());
 			
+
 			//Static content and uploads
 			app.use('/static', express.static('static'));
 			app.use('/uploads', express.static('uploads'));
-			
+
 			/*Pages*/
 			app.route('/')
 				.get(cPage.getHomePage);
@@ -117,23 +124,22 @@ function setupExpress() {
 				.get(cPage.getBoardView);
 			app.route('/thread/:id')
 				.get(cPage.getThreadView);
-				
+
 			app.route('/login')
 				.get(cPage.getLoginView)
-				.post(passport.authenticate('local', {successRedirect: '/',
-													failureRedirect: '/login'})
+				.post(passport.authenticate('local', {successRedirect: '/', failureRedirect: '/login'})
 				);
-			
+
 			app.route('/signup')
 				.get(cPage.getSignupView)
 				.post(cPage.postSignup);
-			
+
 			app.route('/logout')
 				.get((req, res) => {
 					req.logout();
 					res.redirect('/');
 				});
-			
+
 			const jsonParser = bodyParser.json({type: 'application/json'});
 			/*API*/
 			app.route('/api/games')
@@ -142,63 +148,63 @@ function setupExpress() {
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
-			
+
 			app.route('/api/games/:id')
 				.get(cBoard.getGame)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cBoard.updateGame);
-			
+
 			app.route('/api/boards')
 				.get(cBoard.getAllBoards)
 				.post(jsonParser, cBoard.addBoard)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
-			
+
 			app.route('/api/boards/:id')
 				.get(cBoard.getBoard)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cBoard.updateBoard);
-				
+
 			app.route('/api/boards/:id/threads')
 				.get(cThread.getThreadsForBoard)
 				.post(jsonParser, cThread.addThreadToBoard)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
-				
+
 			app.route('/api/users')
 				.get(cUser.getAllUsers)
 				.post(jsonParser, cUser.addUser)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
-			
+
 			app.route('/api/users/:id')
 				.get(cUser.getUser)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cUser.updateUser);
-			
+
 			app.route('/api/threads/:id')
 				.get(cThread.getThread)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
-			
+
 			app.route('/api/session')
 				.get(cSession.getSession)
 				.post(jsonParser, cSession.addSession)
 				.patch(return405)
 				.delete(cSession.deleteSession)
 				.put(jsonParser, cSession.addSession);
-			
+
 			resolve();
 		});
 }
@@ -212,6 +218,7 @@ function setup(config) {
 	return setupDao(config).then(() => setupExpress()).then(() => {
 		const port = process.env.PORT || 9000;
 		server = app.listen(port);
+		// eslint-disable-next-line no-console
 		console.log(`Server now listening on port ${port}`);
 	});
 }
@@ -221,6 +228,7 @@ function setup(config) {
  */
 function stop() {
 	server.close();
+	// eslint-disable-next-line no-console
 	console.log('Server stopped');
 }
 /**
