@@ -157,7 +157,8 @@ describe('Game API controller', () => {
 				Game: {
 					ID: 2,
 					gameDescription: 'A cool game'
-				}
+				},
+				threadList: []
 			};
 
 			sandbox.stub(Game, 'getGame').resolves(new Game(data));
@@ -169,19 +170,25 @@ describe('Game API controller', () => {
 				}
 			};
 
+			let actualResponse = null;
+			let actualCode = null;
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(200, code, 'Should return a 200 ok if anything');
+					actualCode = code;
 					return mockResponse;
-				}, send: (response) => {
-					data.Canonical = '/api/games/1';
-					assert.deepEqual(data, response);
-					assert.isTrue(Thread.getThreadsInBoard.called);
+				},
+				send: (response) => {
+					actualResponse = response;
 					return mockResponse;
 				}
 			};
 
-			return gameController.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse).then(() => {
+				data.Canonical = '/api/games/1';
+				assert.deepEqual(data, actualResponse);
+				assert.isTrue(Thread.getThreadsInBoard.called);
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+			});
 		});
 
 		it('should return threads if they exist', () => {
@@ -199,7 +206,7 @@ describe('Game API controller', () => {
 			};
 
 			sandbox.stub(Game, 'getGame').resolves(new Game(data));
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves([1, 2, 3]);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ID: 1}, {ID: 2}, {ID: 3}]);
 
 			const mockRequest = {
 				params: {
@@ -207,18 +214,24 @@ describe('Game API controller', () => {
 				}
 			};
 
+			let actualResponse = null;
+			let actualCode = null;
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(200, code, 'Should return a 200 ok if anything');
+					actualCode = code;
 					return mockResponse;
-				}, send: (response) => {
-					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.deepEqual(response.body.threadList, [1, 2, 3]);
+				},
+				send: (response) => {
+					actualResponse = response;
 					return mockResponse;
 				}
 			};
 
-			return gameController.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse).then(() => {
+				assert.isTrue(Thread.getThreadsInBoard.called);
+				assert.deepEqual(actualResponse.threadList, [1, 2, 3]);
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+			});
 		});
 
 		it('should return only the first game if one exists', () => {
@@ -232,7 +245,8 @@ describe('Game API controller', () => {
 				Game: {
 					ID: 2,
 					gameDescription: 'A cool game'
-				}
+				},
+				threadList: []
 			}, {
 				ID: '2',
 				Name: 'test game 2',
@@ -255,19 +269,25 @@ describe('Game API controller', () => {
 				}
 			};
 
+			let actualResponse = null;
+			let actualCode = null;
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(200, code, 'Should return a 200 ok if anything');
+					actualCode = code;
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].Canonical = '/api/games/1';
-					assert.deepEqual(data[0], response);
+					actualResponse = response;
 					return mockResponse;
 				}
 			};
 
-			return gameController.getGame(mockRequest, mockResponse);
+			return gameController.getGame(mockRequest, mockResponse).then(() => {
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+				data[0].Canonical = '/api/games/1';
+				assert.deepEqual(data[0], actualResponse);
+
+			});
 		});
 
 		it('should return a 404 if no game exists', () => {
@@ -354,7 +374,8 @@ describe('Game API controller', () => {
 				Adult: false,
 				GameMasters: null,
 				Tags: [],
-				IC: null
+				IC: null,
+				threadList: []
 			};
 
 			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
@@ -366,22 +387,27 @@ describe('Game API controller', () => {
 				}
 			};
 
+			let actualResponse = null;
+			let actualCode = null;
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(200, code, 'Should return a 200 ok if anything');
+					actualCode = code;
 					return mockResponse;
 				},
 				send: (response) => {
-					data.Canonical = '/api/boards/1';
-					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.deepEqual(data, response);
+					actualResponse = response;
 					return mockResponse;
 				}
 			};
 
-			return boardController.getBoard(mockRequest, mockResponse);
+			return boardController.getBoard(mockRequest, mockResponse).then(() => {
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+				data.Canonical = '/api/boards/1';
+				assert.isTrue(Thread.getThreadsInBoard.called);
+				assert.deepEqual(data, actualResponse);
+			});
 		});
-		
+
 		it('should return a board if one exists', () => {
 			const data = {
 				ID: '1',
@@ -393,7 +419,7 @@ describe('Game API controller', () => {
 			};
 
 			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves([1, 2, 3]);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ID: 1}, {ID: 2}, {ID: 3}]);
 
 			const mockRequest = {
 				params: {
@@ -401,19 +427,24 @@ describe('Game API controller', () => {
 				}
 			};
 
+			let actualResponse = null;
+			let actualCode = null;
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(200, code, 'Should return a 200 ok if anything');
+					actualCode = code;
 					return mockResponse;
 				},
 				send: (response) => {
-					assert.isTrue(Thread.getThreadsInBoard.called);
-					assert.deepEqual(response.body.threadList, [1, 2, 3]);
+					actualResponse = response;
 					return mockResponse;
 				}
 			};
 
-			return boardController.getBoard(mockRequest, mockResponse);
+			return gameController.getBoard(mockRequest, mockResponse).then(() => {
+				assert.isTrue(Thread.getThreadsInBoard.called);
+				assert.deepEqual(actualResponse.threadList, [1, 2, 3]);
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+			});
 		});
 
 		it('should return only the first board if one exists', () => {
@@ -422,7 +453,8 @@ describe('Game API controller', () => {
 				Name: 'test board',
 				Adult: false,
 				GameMasters: null,
-				Tags: []
+				Tags: [],
+				threadList: []
 			}, {
 				ID: '2',
 				Name: 'evil board',
@@ -439,19 +471,24 @@ describe('Game API controller', () => {
 				}
 			};
 
+			let actualResponse = null;
+			let actualCode = null;
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(200, code, 'Should return a 200 ok if anything');
+					actualCode = code;
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].Canonical = '/api/boards/1';
-					assert.deepEqual(data[0], response);
+					actualResponse = response;
 					return mockResponse;
 				}
 			};
 
-			return boardController.getBoard(mockRequest, mockResponse);
+			return boardController.getBoard(mockRequest, mockResponse).then(() => {
+				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
+				data[0].Canonical = '/api/boards/1';
+				assert.deepEqual(data[0], actualResponse);
+			});
 		});
 
 		it('should return a 404 if no board exists', () => {
