@@ -3,7 +3,6 @@ const Chai = require('chai');
 Chai.should();
 
 const Sinon = require('sinon');
-require('sinon-as-promised');
 const sinonChai = require('sinon-chai');
 Chai.use(sinonChai);
 
@@ -20,7 +19,7 @@ describe('Post API Controller', () => {
 	});
 
 	beforeEach(() => {
-		sandbox = Sinon.sandbox;
+		sandbox = Sinon.createSandbox();
 		mockResponse = {};
 		mockResponse.status = sandbox.stub().returns(mockResponse);
 		mockResponse.send = sandbox.stub().returns(mockResponse);
