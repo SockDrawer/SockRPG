@@ -75,6 +75,7 @@ function getHomePage(req, res) {
  * Get the login page to hand to the view
  * @param  {Request} req The Express request object
  * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function getLoginView(req, res) {
 	const data = {csrfToken: req.csrfToken()};
@@ -169,14 +170,14 @@ function getSignupView(req, res) {
 const postSignup = [
 	check('username').isLength({min: 1}).withMessage('Username must be specified.'),
 	check('password').isLength({min: 8}).withMessage('Password must be at least 8 characters.'),
-	check('passwordconfirm').custom((value, {req, loc, path}) => {
+	check('passwordconfirm').custom((value, {req, _, __}) => {
 		if (value !== req.body.password) {
 			throw new Error();
 		}
 		return value;
 	}).withMessage('Passwords do not match.'),
 	
-	(req, res, next) => {
+	(req, res) => {
 		const errors = validationResult(req);
 		
 		// Render the page again with validation errors if any

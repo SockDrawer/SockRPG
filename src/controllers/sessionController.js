@@ -24,6 +24,7 @@
 
 const Session = require('../model/Session');
 const passport = require('passport');
+const debug = require('debug')('SockRPG:controller:Session');
 
 /**
  * Get a session representation
@@ -35,7 +36,7 @@ function getSession(req, res) {
 	return Session.getSession(req).then((data) => {
 		res.status(200).send(data).end();
 	}).catch((err) => {
-		console.log(err);
+		debug(`Error Retrieving Session: ${err.toString()}`);
 		res.status(500).send({error: err.toString()}).end();
 	});
 }
@@ -53,6 +54,10 @@ function deleteSession(req, res) {
 /**
  * Express handler list to put together for PUT/POST session request handling
  * where Username and Passport fields are passed in to attempt to cause login.
+ * @param {Request} req Express' request object.
+ * @param {Response} res Express' response object.
+ * @param {Object} next Express' next handler.
+ * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 const addSession = [
 	(req, res, next) => {

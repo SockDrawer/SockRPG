@@ -75,16 +75,16 @@ passport.use(new LocalStrategy({
 	passwordField: 'password',
 	passReqToCallback: true
 },
-	(req, username, password, done) => {
-		User.getAuthenticatedUserByNameAndPassword(username, password).then((user) => {
-			if (!user) {
-				return done(null, false, {message: 'Incorrect username or password.'});
-			}
+(req, username, password, done) => {
+	User.getAuthenticatedUserByNameAndPassword(username, password).then((user) => {
+		if (!user) {
+			return done(null, false, {message: 'Incorrect username or password.'});
+		}
 
-			// Successful authentication.
-			return done(null, user);
-		});
-	}
+		// Successful authentication.
+		return done(null, user);
+	});
+}
 ));
 
 /**

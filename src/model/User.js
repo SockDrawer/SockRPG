@@ -150,7 +150,7 @@ class User {
 	*
 	* @returns {Promise} A Promise that is resolved with true if the user is authenticated, false otherwise
 	*/
-	static authUserByPassword(user, pass) {		
+	static authUserByPassword(user, pass) {
 		const authSecret = user.AuthSecret.split(':');
 		const authMethod = authSecret[0];
 		const authHash = authSecret[1];
@@ -171,7 +171,7 @@ class User {
 	*
 	* @returns {Promise} A Promise that is resolved with the user or null
 	*/
-	static getAuthenticatedUserByNameAndPassword(name, pass) {		
+	static getAuthenticatedUserByNameAndPassword(name, pass) {
 		// TODO: Anti-abuse rate limiting should perhaps eventually go here.
 		
 		return User.getUserByName(name).then((user) => {
