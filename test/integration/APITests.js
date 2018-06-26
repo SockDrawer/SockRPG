@@ -6,7 +6,6 @@ const Sinon = require('sinon');
 const User = require('../../src/model/User');
 const Board = require('../../src/model/Board');
 const Thread = require('../../src/model/Thread');
-require('sinon-as-promised');
 
 const port = process.env.PORT || 9000;
 
@@ -30,7 +29,7 @@ context('API server', function() {
 	describe('User API', () => {
 		let sandbox;
 		beforeEach(() => {
-			sandbox = Sinon.sandbox;
+			sandbox = Sinon.createSandbox();
 		});
 	
 		afterEach(() => {
@@ -143,7 +142,7 @@ context('API server', function() {
 		});
 	
 		beforeEach(() => {
-			sandbox = Sinon.sandbox;
+			sandbox = Sinon.createSandbox();
 		});
 	
 		afterEach(() => {

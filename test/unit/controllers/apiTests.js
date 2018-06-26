@@ -3,7 +3,6 @@ const Path = require('path');
 const Chai = require('chai');
 const assert = Chai.assert;
 const Sinon = require('sinon');
-require('sinon-as-promised');
 
 //controllers
 const userController = require(Path.resolve(__dirname, '../../../src/controllers/userController.js'));
@@ -24,7 +23,7 @@ describe('Game API controller', () => {
 	});
 
 	beforeEach(() => {
-		sandbox = Sinon.sandbox.create();
+		sandbox = Sinon.createSandbox();
 	});
 
 	afterEach( () => {
@@ -69,7 +68,7 @@ describe('Game API controller', () => {
 		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Error: oops i asploded'
+				error: 'oops i asploded'
 			};
 
 			sandbox.stub(Game, 'getAllGames').rejects('oops i asploded');
@@ -125,7 +124,7 @@ describe('Game API controller', () => {
 		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Error: oops i asploded'
+				error: 'oops i asploded'
 			};
 
 			sandbox.stub(Board, 'getAllBoards').rejects('oops i asploded');
@@ -320,7 +319,7 @@ describe('Game API controller', () => {
 		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Error: oops i asploded'
+				error: 'oops i asploded'
 			};
 
 			sandbox.stub(Game, 'getGame').rejects('oops i asploded');
@@ -504,7 +503,7 @@ describe('Game API controller', () => {
 		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Error: oops i asploded'
+				error: 'oops i asploded'
 			};
 
 			sandbox.stub(Board, 'getBoard').rejects('oops i asploded');
@@ -539,7 +538,7 @@ describe('User API Controller', () => {
 	});
 
 	beforeEach(() => {
-		sandbox = Sinon.sandbox;
+		sandbox = Sinon.createSandbox();
 	});
 
 	afterEach( () => {
@@ -576,7 +575,7 @@ describe('User API Controller', () => {
 		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Error: oops i asploded'
+				error: 'oops i asploded'
 			};
 
 			sandbox.stub(User, 'getAllUsers').rejects('oops i asploded');
@@ -737,7 +736,7 @@ describe('User API Controller', () => {
 		it('should respond with an error when the DB errors', () => {
 
 			const expected = {
-				error: 'Error: oops i asploded'
+				error: 'oops i asploded'
 			};
 
 			sandbox.stub(User, 'getUser').rejects('oops i asploded');
