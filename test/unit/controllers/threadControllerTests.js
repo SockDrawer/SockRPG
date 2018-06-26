@@ -56,7 +56,7 @@ describe('Thread API Controller', () => {
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => {
 				Thread.getThreadsInBoard.should.have.been.called;
 				mockResponse.status.should.have.been.calledWith(200);
-				mockResponse.send.should.have.been.calledWith('[]');
+				mockResponse.send.should.have.been.calledWith([]);
 			});
 		});
 
@@ -69,7 +69,7 @@ describe('Thread API Controller', () => {
 				Thread.getThreadsInBoard.should.have.been.called;
 				mockResponse.status.should.have.been.calledWith(200);
 				mockResponse.send.should.have.been.called;
-				mockResponse.send.firstCall.args[0].should.equal(expected);
+				JSON.stringify(mockResponse.send.firstCall.args[0]).should.equal(expected);
 			});
 		});
 	});
@@ -98,7 +98,7 @@ describe('Thread API Controller', () => {
 			return threadController.addThreadToBoard(mockRequest, mockResponse).then(() => {
 				mockResponse.status.should.have.been.calledWith(200);
 				mockResponse.send.should.have.been.called;
-				mockResponse.send.firstCall.args[0].should.equal('{"id":1}');
+				JSON.stringify(mockResponse.send.firstCall.args[0]).should.equal('{"id":1}');
 			});
 		});
 	});
@@ -125,7 +125,7 @@ describe('Thread API Controller', () => {
 			return threadController.getThread(mockRequest, mockResponse).then(() => {
 				mockResponse.status.should.have.been.calledWith(200);
 				mockResponse.send.should.have.been.called;
-				mockResponse.send.firstCall.args[0].should.equal(expected);
+				JSON.stringify(mockResponse.send.firstCall.args[0]).should.equal(expected);
 			});
 		});
 
