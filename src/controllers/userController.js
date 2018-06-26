@@ -105,11 +105,7 @@ function addUser(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateUser(req, res) {
-	if (!req.isAuthenticated()) {
-		res.status(401).end();
-		return null;
-	}
-	
+
 	return User.getUser(req.params.id).then((user) => {
 		user.Username = req.body.Username || user.Username;
 
