@@ -175,9 +175,10 @@ function setup(config) {
  * Stop the server
  */
 function stop() {
-	server.close();
-	// eslint-disable-next-line no-console
-	console.log('Server stopped');
+	server.close(() => {
+		// eslint-disable-next-line no-console
+		DB.teardown().then(() => console.log('Server stopped'));
+	});
 }
 /**
  * Returns a vanilla 405 Method Not Allowed error
