@@ -9,6 +9,7 @@ before_script:
 script: npm test
 after_script:
 - test -e ./coverage/lcov.info && < ./coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js
+- test -e ./coverage/lcov.info && < ./coverage/lcov.info ./node_modules/.bin/codeclimate-test-reporter
 notifications:
   slack: sockdrawer:8SjE7L3eWwPsqDHQ2x1DoyWm
   webhooks:
@@ -17,3 +18,7 @@ notifications:
 env:
   global:
     service_name: travis-ci
+addons:
+    code_climate:
+        repo_token:
+          secure: "XcQcXj6hap8n7ikStL5HiR4z0dIV4pZJeNjoURc3GcLfOSfVc9KcWHAefylDQCGyD2PRPYlHu9RGIhZZUFFiApD6lTEO90+8fpSxNMnW8+5TzYOXM7UaT/2m6X+t+s9JDT0dB5V1Cp3CpyvSGdZgXTcR0c7G8y4whl5XrQ0fhP4IHwVeTrmA1WdJxgjbQjEuMHOlFsCvw3xjLjox+a1NB5EbuPirb5PivtIi2z2vVpkXGZ8avb+e1khVf4i6EAt8Imm/qyKbuF2WjgHa/txpFNqtPbpNvwueHWtOMY8X2MGvEBHVZfeh32nm4y/pJ5O1NpmNcbgRc77uCoh4h6SHK/ltm6P6u3Oc+nKt7WhCGDaJK4lsZ5HygSu8t46Ys4fkT/qZUgMog62DKF3CO8038IaD0xINDNdonPp6ntavbo5Ju7L36j4rTN065syKzooP4gYZIy/xLGhTLnvSbyWp9alh3uGoe2AWpQWeBYBoyqvOalW9fbj4IGeUB/1p/j8tAIuqXm91qG9A7ZSv6OnXdJTNg+wZAxuytwJerh5550gMweaA0M5V4WT/Uko6OLRjwznc8dvYvQCRHiPxMT5NEm9ZpW/tnEO8DahK92equqRwxZuHS4eeYSKPRDdFcy/cBOgrWud932SeTp/r7R99VphqGzulA1ZJFGCUJv8Terc="
