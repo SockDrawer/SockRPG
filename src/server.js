@@ -35,6 +35,8 @@ const hbs = exphbs.create({
 
 let server;
 
+let println = debug;
+
 /**
  * Initialise the DAO
  * @param {Object} config The configuration object to use
@@ -46,8 +48,7 @@ function setupDao(config) {
 	//TODO: make this configurable
 	return DB.initialise(config).then(() => {
 		if (!DB.isInitialised()) {
-			// eslint-disable-next-line no-console
-			console.log('Initialization error');
+			println('Initialization error');
 			process.exit(1);
 		}
 	});
@@ -166,8 +167,7 @@ function setup(config) {
 	return setupDao(config).then(() => setupExpress()).then(() => {
 		const port = process.env.PORT || 9000;
 		server = app.listen(port);
-		// eslint-disable-next-line no-console
-		console.log(`Server now listening on port ${port}`);
+		println(`Server now listening on port ${port}`);
 	});
 }
 
@@ -176,8 +176,7 @@ function setup(config) {
  */
 function stop() {
 	server.close(() => {
-		// eslint-disable-next-line no-console
-		DB.teardown().then(() => console.log('Server stopped'));
+		DB.teardown().then(() => println('Server stopped'));
 	});
 }
 /**
@@ -195,6 +194,9 @@ module.exports = {
 };
 
 if (require.main === module) {
+	// eslint-disable-next-line no-console
+	println = (msg) => console.log(msg);
+
 	//TODO: Make this read from a file
 	setup({
 		database: {
