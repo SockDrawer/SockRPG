@@ -31,6 +31,16 @@ describe('DB model', () => {
 		});
 	});
 
+	it('should allow get/set of knex object', () => {
+		const expected = {};
+		const knex = DB.knex;
+		expected.should.not.equal(knex);
+		DB.knex = expected;
+		const actual = DB.knex;
+		expected.should.equal(actual);
+		DB.knex = knex;
+	});
+
 	it('initialise should work', () => {
 		return Promise.resolve().then(() => DB.initialise({
 			database: {
