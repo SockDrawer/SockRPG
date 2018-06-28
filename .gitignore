@@ -29,3 +29,5 @@ test.sqlite
 
 #Error screenshots
 errorShots
+
+.nyc_output

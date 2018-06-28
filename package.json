@@ -38,8 +38,8 @@
     "cz-conventional-changelog": "^1.1.7",
     "eslint": "^5.0.0",
     "husky": "^0.14.3",
-    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
     "sinon": "^6.0.1",
     "sinon-chai": "^3.2.0",
     "supertest": "^3.1.0",
@@ -51,13 +51,11 @@
   "scripts": {
     "start": "node ./src/server.js",
     "lint": "eslint .",
-    "preunitTests": "npm run lint",
-    "unitTests": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive -R dot ./test/unit/**/*.js",
-    "integrationTests": "mocha --recursive -R dot ./test/integration/**/*.js",
-    "pretest": "npm run unitTests",
-    "test": "npm run integrationTests",
+    "pretest": "npm run lint",
+    "nyc": "nyc mocha ./test/unit/**/*.js ./test/integration/**/*.js -R dot",
+    "test": "npm run nyc",
     "systemTest": "wdio wdio.conf.js",
-    "mocha": "mocha --recursive -R spec ./test/unit/**/*.js",
+    "mocha": "mocha -R spec ./test/unit/**/*.js",
     "commit": "git-cz",
     "postmocha": "npm run integrationTests",
     "prepush": "npm test",
@@ -68,5 +66,45 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "nyc": {
+    "exclude": [
+      "coverage/**",
+      "test/**",
+      "**/node_modules/**",
+      "static/**",
+      "mockups/**",
+      "*.js"
+    ],
+    "per-file": true,
+    "watermarks": {
+      "lines": [
+        80,
+        95
+      ],
+      "functions": [
+        80,
+        95
+      ],
+      "branches": [
+        80,
+        95
+      ],
+      "statements": [
+        80,
+        95
+      ]
+    },
+    "lines": 95,
+    "statements": 95,
+    "functions": 95,
+    "branches": 95,
+    "reporter": [
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "cache": true,
+    "all": true
   }
 }
