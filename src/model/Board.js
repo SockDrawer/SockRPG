@@ -93,6 +93,7 @@ class Board {
 	* @returns {Promise} A Promise that is resolved with a list of vanilla boards
 	*/
 	static getBoards(parentID) {
+		//TODO: How does a child board get added? is it for games? should figure this out (Accalia)
 		if (parentID !== 0) {
 			parentID = parentID || null; //Coerce to null to prevent avoidable errors
 		}
