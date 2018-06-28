@@ -16,16 +16,10 @@ const DB = require('./db');
 class Board {
 	constructor (rowData) {
 		this.data = rowData;
-		if (rowData.BoardID) {
-			this.data.id = rowData.BoardID;
-		}
 
 		//Type coersion
 		this.data.ID = Number(this.data.ID);
 		this.data.Adult = Boolean(this.data.Adult);
-		if (this.data.Adult === undefined) {
-			this.data.Adult = false;
-		}
 
 		//Canonical link
 		this.Canonical = `/api/boards/${this.data.ID}`;
@@ -37,7 +31,7 @@ class Board {
 
 	set ID(id) {
 		this.data.ID = Number(id);
-		this.data.Canonical = `/api/boards/${this.data.ID}`;
+		this.Canonical = `/api/boards/${this.data.ID}`;
 	}
 
 	get Owner() {
@@ -142,23 +136,18 @@ class Board {
 	* @returns {Promise} A Promise that is resolved with the board added
 	*/
 	static addBoard(board) {
-		if (!board instanceof Board) {
+		if (!(board instanceof Board)) {
 			board = new Board(board);
 		}
 
-		return new Promise((resolve, reject) => {
-			if (board.GameID || board.Game) {
-				reject(new Error('Games cannot be added using this method; please use addGame() instead'));
-			} else {
-				resolve();
+		return Promise.resolve().then(() => {
+			if (board.data.GameID || board.data.Game) {
+				throw new Error('Games cannot be added using this method; please use addGame() instead');
 			}
-		}).then(() => {
 			if (!board.Name) {
 				throw new Error('A board has no name.');
 			}
-		})
-		.then(() => {
-			return DB.knex('Boards').insert(board);
+			return DB.knex('Boards').insert(board.data);
 		});
 	}
 
