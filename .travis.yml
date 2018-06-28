@@ -8,8 +8,10 @@ before_script:
 - rm -rf ./coverage
 script: npm test
 after_script:
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+- chmod +x ./cc-test-reporter
 - test -e ./coverage/lcov.info && < ./coverage/lcov.info ./node_modules/coveralls/bin/coveralls.js
-- test -e ./coverage/lcov.info && < ./coverage/lcov.info ./node_modules/.bin/codeclimate-test-reporter
+- test -e ./coverage/lcov.info && < ./coverage/lcov.info ./cc-test-reporter
 notifications:
   slack: sockdrawer:8SjE7L3eWwPsqDHQ2x1DoyWm
   webhooks:
