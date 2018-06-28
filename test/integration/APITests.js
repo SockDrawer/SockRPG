@@ -15,7 +15,7 @@ context('API server', function() {
 	this.timeout(50000);
 	const server = require('../../src/server.js');
 	const request = supertest(`http://localhost:${port}`);
-	
+
 	before(() => {
 		//Start server
 		return server.setup({
@@ -72,7 +72,7 @@ context('API server', function() {
 			/*-------------- UPDATE -----------------*/
 			.then(() => {
 				userInput.userName = 'theRock';
-				
+
 				return request.put('/api/users/1')
 				.set('Accept', 'application/json')
 				.send(userInput)
@@ -371,7 +371,8 @@ context('API server', function() {
 				assert.deepEqual(response.body.posts, [{
 					ID: 1,
 					Body: '<p>This is the body</b>',
-					Canonical: '/api/posts/1'
+					Canonical: '/api/posts/1',
+					Thread: 2
 				}], 'Thread retrieval should return post');
 			});
 		});
