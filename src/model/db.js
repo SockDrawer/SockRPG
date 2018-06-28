@@ -2,18 +2,21 @@
 
 let knex = 'banana';
 
-const makeKnexTable = (knexdb, name, tableSpec) => knexdb.schema.hasTable(name)
-	.then((exists) => {
-		if (exists) {
-			return null;
+const ensureKnexTables = async(knexdb, tables) => {
+	for (let i = 0; i < tables.length; i++) {
+		const [name, creator] = tables[i];
+
+		const exists = await knexdb.schema.hasTable(name);
+		if (!exists) {
+			await knexdb.schema.createTable(name, creator);
 		}
-		return knexdb.schema.createTable(name, tableSpec);
-	});
+	}
+};
 
 const db = {
 	initialized: false,
 
-	initialise: function initialise(config) {
+	initialise: async function initialise(config) {
 		if (db.initialised) {
 			return Promise.resolve();
 		}
@@ -26,15 +29,17 @@ const db = {
 			useNullAsDefault: true
 		});
 
-		return makeKnexTable(knex, 'Games',	(table) => {
-			table.increments('ID').primary();
-			table.string('gameDescription');
-		})
-			.then(() => makeKnexTable(knex, 'Users', (table) => {
+
+		const tables = [
+			['Games', (table) => {
+				table.increments('ID').primary();
+				table.string('gameDescription');
+			}],
+			['Users', (table) => {
 				table.increments('ID').primary();
 				table.string('Username').notNullable().unique();
-			}))
-			.then(() => makeKnexTable(knex, 'Boards', (table) => {
+			}],
+			['Boards', (table) => {
 				table.increments('ID').primary();
 				//This shouldn't be nullable, but we don't have users working yet
 				table.integer('Owner').references('Users.ID'); //.notNullable();
@@ -42,22 +47,25 @@ const db = {
 				table.string('Name').notNullable();
 				table.boolean('Adult').defaultTo(false);
 				table.string('Description').notNullable().defaultTo('');
-			}))
-			.then(() => makeKnexTable(knex, 'ChildBoards', (table) => {
+			}],
+			['ChildBoards', (table) => {
 				table.increments('ID').primary();
 				table.integer('ParentID').references('Boards.ID').notNullable();
 				table.integer('ChildID').references('Boards.ID').notNullable();
-			}))
-			.then(() => makeKnexTable(knex, 'Threads', (table) => {
+			}],
+			['Threads', (table) => {
 				table.increments('ID').primary();
 				table.string('Title').notNullable();
 				table.integer('Board').references('Boards.ID').notNullable();
-			}))
-			.then(() => makeKnexTable(knex, 'Posts', (table) => {
+			}],
+			['Posts', (table) => {
 				table.increments('ID').primary();
 				table.integer('Thread').references('Threads.ID').notNullable();
 				table.string('Body').notNullable();
-			}))
+			}]
+		];
+
+		return ensureKnexTables(knex, tables)
 			.then(() => {
 				db.initialised = true;
 				return Promise.resolve(db.initialised);
