@@ -29,11 +29,6 @@ class Board {
 		return this.data.ID;
 	}
 
-	set ID(id) {
-		this.data.ID = Number(id);
-		this.Canonical = `/api/boards/${this.data.ID}`;
-	}
-
 	get Owner() {
 		return this.data.Owner;
 	}
