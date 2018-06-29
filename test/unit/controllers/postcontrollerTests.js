@@ -30,29 +30,6 @@ describe('Post API Controller', () => {
 		sandbox.restore();
 	});
 
-
-	describe('GET /threads/{ID}/posts', () => {
-
-		mockRequest = {
-			params: {
-				id: 1
-			}
-		};
-
-		it('Should return 404 if no such thread', () => {
-		//	sandbox.stub(Thread, 'getThread').resolves(null);
-		//	return postController.getPosts(mockRequest, mockResponse).then(() => mockResponse.status.should.have.been.calledWith(404));
-		});
-
-		it('Should return an empty list if the thread has no posts', () => {
-
-		});
-
-		it('Should return a list of posts if there are any', () => {
-
-		});
-	});
-
 	describe('POST /thread/{ID}/posts', () => {
 
 		before(() => {
