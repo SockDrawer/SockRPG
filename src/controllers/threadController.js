@@ -34,11 +34,8 @@ const Board = require('../model/Board');
 * @returns {Promise} A Promise that is resolved with a list of threads
 */
 function getThreadsForBoard(req, res) {
-	
+
 	return Board.getBoard(req.params.id).then((data) => {
-		if (Array.isArray(data)) {
-			data = data[0]; //Only the first board
-		}
 		if (!data) {
 			res.status(404).end();
 			return Promise.resolve();
@@ -58,22 +55,22 @@ function getThreadsForBoard(req, res) {
 */
 function getThread(req, res) {
 	let thread;
-	
+
 	return Thread.getThread(req.params.id).then((data) => {
 		if (!data) {
 			res.status(404).end();
 			return Promise.resolve();
 		}
-		
+
 		thread = data.serialize();
-		
+
 		return Post.getPostsInThread(thread.ID).then((posts) => {
 			if (posts) {
 				thread.posts = posts.map((post) => post.serialize());
 			} else {
 				thread.posts = [];
 			}
-			
+
 			res.status(200).send(thread);
 			return Promise.resolve();
 		});
@@ -95,7 +92,7 @@ function addThreadToBoard(req, res) {
 
 		const newThread = req.body || {};
 		newThread.Board = req.params.id;
-		
+
 		return Thread.addThread(newThread).then((ids) => {
 			const ret = {
 				id: ids[0]
