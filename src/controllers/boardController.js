@@ -135,9 +135,6 @@ function updateGame(req, res) {
 function getAllBoards(_, res) {
 	//For this sprint, all users can see all games
 	return Board.getAllBoards().then((data) => {
-		for (let i = 0; i < data.length; i++) {
-			data[i].Canonical = `/api/boards/${data[i].ID}`;
-		}
 		res.send(data);
 	}).catch((err) => {
 		debug(`Error Getting Boards: ${err.toString()}`);
