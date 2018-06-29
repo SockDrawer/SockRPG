@@ -4,7 +4,7 @@
   "description": "SockRPG: A Forum built by role players, for roleplayers",
   "repository": "https://github.com/SockDrawer/SockRPG",
   "license": "MIT",
-  "author": "Accalia Elementia <accalia@sockdrawer.io> (https://github.com/AccaliaDeElementia)",
+  "author": "Accalia Elementia <accalia@elementia.me> (https://github.com/AccaliaDeElementia)",
   "contributors": [
     "RaceProUK <raceprouk@sockdrawer.io> (https://github.com/RaceProUK)",
     "Yamikuronue <yamikuronue> (https://github.com/yamikuronue)",
@@ -62,7 +62,8 @@
     "postmocha": "npm run integrationTests",
     "prepush": "npm test",
     "postmerge": "npm install",
-    "postrewrite": "npm install"
+    "postrewrite": "npm install",
+    "postcheckout": "npm install"
   },
   "config": {
     "commitizen": {
