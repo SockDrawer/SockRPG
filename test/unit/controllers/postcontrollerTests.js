@@ -69,7 +69,8 @@ describe('Post API Controller', () => {
 			sandbox.stub(Thread, 'getThread').resolves(new Thread({id: 3, Title: 'some thread'}));
 			sandbox.stub(Post, 'addPost').resolves([10]);
 
-			return postController.addPost(mockRequest, mockResponse).then(() => mockResponse.status.should.have.been.calledWith(200));
+			return postController.addPost(mockRequest, mockResponse)
+			.then(() => mockResponse.status.should.have.been.calledWith(200));
 		});
 
 		it('Should return 500 if a post rejects', () => {
