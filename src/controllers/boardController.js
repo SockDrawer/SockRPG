@@ -156,9 +156,6 @@ function getBoard(req, res) {
 	}
 
 	return Board.getBoard(req.params.id).then((data) => {
-		if (Array.isArray(data)) {
-			data = data[0]; //Only the first board
-		}
 		if (!data) {
 			res.status(404).end();
 			return undefined;
