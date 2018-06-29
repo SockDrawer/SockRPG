@@ -57,13 +57,8 @@ function getGame(req, res) {
 	}
 
 	return Game.getGame(req.params.id).then((data) => {
-		if (Array.isArray(data)) {
-			data = data[0]; //Only the first game
-		}
-
 		if (!data) {
-			res.status(404).end();
-			return undefined;
+			return res.status(404).end();
 		}
 
 		const output = data.serialize();
@@ -103,6 +98,9 @@ function addGame(req, res) {
  */
 function updateGame(req, res) {
 	return Game.getGame(req.params.id).then((board) => {
+		if (!board) {
+			return res.status(404).end();
+		}
 		board.Name = req.body.Name || board.Name;
 		board.Owner = req.body.Owner || board.Owner;
 		board.description = req.body.Game.gameDescription || board.description;
@@ -116,13 +114,7 @@ function updateGame(req, res) {
 	}).catch((err) => {
 		debug(`Error Updating Game: ${err.toString()}`);
 		//TODO: Add Proper Logging
-
-		//TODO: we shouldn't be switching behavior based on text matches. let's find a better way at some point.
-		if (err.toString().indexOf('No such') > -1) {
-			res.status(404).send({error: err.toString()});
-		} else {
-			res.status(500).send({error: err.toString()});
-		}
+		res.status(500).send({error: err.toString()});
 	});
 }
 
@@ -199,8 +191,10 @@ function addBoard(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateBoard(req, res) {
-
 	return Board.getBoard(req.params.id).then((board) => {
+		if (!board) {
+			return res.status(404).end();
+		}
 		board.Name = req.body.Name || board.Name;
 		board.Owner = req.body.Owner || board.Owner;
 		if ('Adult' in req.body) {
@@ -212,13 +206,7 @@ function updateBoard(req, res) {
 	}).catch((err) => {
 		debug(`Error Updating Board: ${err.toString()}`);
 		//TODO: Add Proper Logging
-
-		//TODO: Let's not switch on text when we don't need to.
-		if (err.toString().indexOf('No such') > -1) {
-			res.status(404).send({error: err.toString()});
-		} else {
-			res.status(500).send({error: err.toString()});
-		}
+		res.status(500).send({error: err.toString()});
 	});
 }
 
