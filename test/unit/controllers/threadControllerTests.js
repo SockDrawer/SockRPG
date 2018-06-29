@@ -102,7 +102,6 @@ describe('Thread API Controller', () => {
 			});
 		});
 		it('Should add a thread with a missing body', () => {
-			//TODO: is this correct behavior? it's what's implemented....
 			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
 			sandbox.stub(Thread, 'addThread').resolves([1]);
 			return threadController.addThreadToBoard({
