@@ -101,6 +101,19 @@ describe('Thread API Controller', () => {
 				JSON.stringify(mockResponse.send.firstCall.args[0]).should.equal('{"id":1}');
 			});
 		});
+		it('Should add a thread with a missing body', () => {
+			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
+			sandbox.stub(Thread, 'addThread').resolves([1]);
+			return threadController.addThreadToBoard({
+				params: {
+					id: 3
+				}
+			}, mockResponse).then(() => {
+				mockResponse.status.should.have.been.calledWith(200);
+				mockResponse.send.should.have.been.called;
+				JSON.stringify(mockResponse.send.firstCall.args[0]).should.equal('{"id":1}');
+			});
+		});
 	});
 
 	describe('GET /thread/{ID}', () => {

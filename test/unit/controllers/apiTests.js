@@ -234,62 +234,6 @@ describe('Game API controller', () => {
 			});
 		});
 
-		it('should return only the first game if one exists', () => {
-			const data = [{
-				ID: '1',
-				Name: 'test game',
-				Adult: false,
-				GameMasters: null,
-				Tags: [],
-				IC: null,
-				Game: {
-					ID: 2,
-					gameDescription: 'A cool game'
-				},
-				threadList: []
-			}, {
-				ID: '2',
-				Name: 'test game 2',
-				Adult: false,
-				GameMasters: null,
-				Tags: [],
-				IC: null,
-				Game: {
-					ID: 2,
-					gameDescription: 'A wicked game'
-				}
-			}];
-
-			sandbox.stub(Game, 'getGame').resolves(data.map((game) => new Game(game)));
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves();
-
-			const mockRequest = {
-				params: {
-					id: 1
-				}
-			};
-
-			let actualResponse = null;
-			let actualCode = null;
-			const mockResponse = {
-				status: (code) => {
-					actualCode = code;
-					return mockResponse;
-				},
-				send: (response) => {
-					actualResponse = response;
-					return mockResponse;
-				}
-			};
-
-			return gameController.getGame(mockRequest, mockResponse).then(() => {
-				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
-				data[0].Canonical = '/api/games/1';
-				assert.deepEqual(data[0], actualResponse);
-
-			});
-		});
-
 		it('should return a 404 if no game exists', () => {
 			sandbox.stub(Game, 'getGame').resolves(undefined);
 
@@ -444,50 +388,6 @@ describe('Game API controller', () => {
 				assert.isTrue(Thread.getThreadsInBoard.called);
 				assert.deepEqual(actualResponse.threadList, [1, 2, 3]);
 				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
-			});
-		});
-
-		it('should return only the first board if one exists', () => {
-			const data = [{
-				ID: '1',
-				Name: 'test board',
-				Adult: false,
-				GameMasters: null,
-				Tags: [],
-				threadList: []
-			}, {
-				ID: '2',
-				Name: 'evil board',
-				Adult: true,
-				GameMasters: null,
-				Tags: []
-			}];
-			sandbox.stub(Board, 'getBoard').resolves(data.map((board) => new Board(board)));
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves();
-
-			const mockRequest = {
-				params: {
-					id: 1
-				}
-			};
-
-			let actualResponse = null;
-			let actualCode = null;
-			const mockResponse = {
-				status: (code) => {
-					actualCode = code;
-					return mockResponse;
-				},
-				send: (response) => {
-					actualResponse = response;
-					return mockResponse;
-				}
-			};
-
-			return boardController.getBoard(mockRequest, mockResponse).then(() => {
-				assert.equal(200, actualCode, 'Should return a 200 ok if anything');
-				data[0].Canonical = '/api/boards/1';
-				assert.deepEqual(data[0], actualResponse);
 			});
 		});
 
