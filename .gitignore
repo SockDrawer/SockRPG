@@ -30,4 +30,8 @@ test.sqlite
 #Error screenshots
 errorShots
 
+# Code coverage instrumentation
 .nyc_output
+
+#Dev Mode Database File.
+database.sqlite
