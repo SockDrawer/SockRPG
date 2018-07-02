@@ -13,7 +13,6 @@ const exphbs = require('express-handlebars');
 const app = express();
 const bodyParser = require('body-parser');
 const debug = require('debug')('server');
-const path = require('path');
 
 
 //Model
