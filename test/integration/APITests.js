@@ -43,7 +43,7 @@ context('API server', function() {
 						.set('X-CSRF-Token', csrfToken)
 				};
 			});
-	}
+	};
 	
 	before(() => {
 		//Start server
@@ -63,7 +63,9 @@ context('API server', function() {
 		let sandbox, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
-			return getAgent().then((val) => {request = val});
+			return getAgent().then((val) => {
+				request = val;
+			});
 		});
 
 		afterEach(() => {
@@ -73,7 +75,9 @@ context('API server', function() {
 		it('Should CRUD users', () => {
 			const userInput = {
 				ID: 1,
-				Username: 'johnCena'
+				Username: 'johnCena',
+				Admin: false,
+				Password: 'dontusethispassword'
 			};
 
 			/*-------------- CREATE -----------------*/
@@ -122,7 +126,9 @@ context('API server', function() {
 
 		it('Should retrieve by name', () => {
 			const userInput = {
-				Username: 'johnCena1234'
+				Username: 'johnCena1234',
+				Admin: false,
+				Password: 'dontusethispassword'
 			};
 			let ID;
 
@@ -156,7 +162,9 @@ context('API server', function() {
 
 		before(() => {
 			return User.addUser({
-				Username: 'testUser'
+				Username: 'testUser',
+				Admin: false,
+				Password: 'dontusethispassword'
 			}).then((id) => {
 				userID = id[0];
 			});
@@ -165,7 +173,9 @@ context('API server', function() {
 		let sandbox, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
-			return getAgent().then((val) => {request = val});
+			return getAgent().then((val) => {
+				request = val;
+			});
 		});
 
 		afterEach(() => {
@@ -299,7 +309,9 @@ context('API server', function() {
 
 		before(() => {
 			return User.addUser({
-				Username: 'testUser2345'
+				Username: 'testUser2345',
+				Admin: false,
+				Password: 'dontusethispassword'
 			})
 			.then((userIDs) => Board.addBoard({
 				Owner: userIDs[0],
@@ -313,7 +325,9 @@ context('API server', function() {
 		let sandbox, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
-			return getAgent().then((val) => {request = val});
+			return getAgent().then((val) => {
+				request = val;
+			});
 		});
 
 		afterEach(() => {
@@ -355,7 +369,9 @@ context('API server', function() {
 
 		before(() => {
 			return User.addUser({
-				Username: 'testUser7890'
+				Username: 'testUser7890',
+				Admin: false,
+				Password: 'dontusethispassword'
 			})
 			.then((userIDs) => Board.addBoard({
 				Owner: userIDs[0],
@@ -376,7 +392,9 @@ context('API server', function() {
 		let sandbox, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
-			return getAgent().then((val) => {request = val});
+			return getAgent().then((val) => {
+				request = val;
+			});
 		});
 
 		afterEach(() => {
