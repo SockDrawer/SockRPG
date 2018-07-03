@@ -10,7 +10,7 @@
 
 const express = require('express');
 const exphbs = require('express-handlebars');
-const app = express();
+
 const bodyParser = require('body-parser');
 const debug = require('debug')('server');
 const promisify = require('util').promisify;
@@ -37,6 +37,8 @@ let abort = () => {
 	throw new Error('Initialization Error');
 };
 
+let app;
+
 /**
  * Initialise the DAO
  * @param {Object} config The configuration object to use
@@ -62,14 +64,14 @@ function setupExpress() {
 	debug('Initializing Express');
 	return new Promise(
 		(resolve) => {
-			module.exports.app.engine('handlebars', hbs.engine);
-			module.exports.app.set('view engine', 'handlebars');
-			module.exports.app.set('views', 'src/views');
+			app.engine('handlebars', hbs.engine);
+			app.set('view engine', 'handlebars');
+			app.set('views', 'src/views');
 
 
 			//This is purely an example to show how the routing will be implemented for each endpoint
 			//Any unsupported methods will be omitted
-			module.exports.app.route('/example')
+			app.route('/example')
 				.get((req, res) => {
 					res.send('GETs will read things!');
 				})
@@ -85,71 +87,71 @@ function setupExpress() {
 
 
 			//Static content and uploads
-			module.exports.app.use('/static', express.static('static'));
-			module.exports.app.use('/uploads', express.static('uploads'));
+			app.use('/static', express.static('static'));
+			app.use('/uploads', express.static('uploads'));
 
 			/*Pages*/
-			module.exports.app.route('/')
+			app.route('/')
 				.get(cPage.getHomePage);
-			module.exports.app.route('/board/:id')
+			app.route('/board/:id')
 				.get(cPage.getBoardView);
-			module.exports.app.route('/thread/:id')
+			app.route('/thread/:id')
 				.get(cPage.getThreadView);
 
 			const jsonParser = bodyParser.json({
 				type: 'application/json'
 			});
 			/*API*/
-			module.exports.app.route('/api/games')
+			app.route('/api/games')
 				.get(cBoard.getAllGames)
 				.post(jsonParser, cBoard.addGame)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
 
-			module.exports.app.route('/api/games/:id')
+			app.route('/api/games/:id')
 				.get(cBoard.getGame)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cBoard.updateGame);
 
-			module.exports.app.route('/api/boards')
+			app.route('/api/boards')
 				.get(cBoard.getAllBoards)
 				.post(jsonParser, cBoard.addBoard)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
 
-			module.exports.app.route('/api/boards/:id')
+			app.route('/api/boards/:id')
 				.get(cBoard.getBoard)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cBoard.updateBoard);
 
-			module.exports.app.route('/api/boards/:id/threads')
+			app.route('/api/boards/:id/threads')
 				.get(cThread.getThreadsForBoard)
 				.post(jsonParser, cThread.addThreadToBoard)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
 
-			module.exports.app.route('/api/users')
+			app.route('/api/users')
 				.get(cUser.getAllUsers)
 				.post(jsonParser, cUser.addUser)
 				.patch(return405)
 				.delete(return405)
 				.put(return405);
 
-			module.exports.app.route('/api/users/:id')
+			app.route('/api/users/:id')
 				.get(cUser.getUser)
 				.post(return405)
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cUser.updateUser);
 
-			module.exports.app.route('/api/threads/:id')
+			app.route('/api/threads/:id')
 				.get(cThread.getThread)
 				.post(return405)
 				.patch(return405)
@@ -163,11 +165,13 @@ function setupExpress() {
 /**
  * Initialise the server
  * @param {Object} config The configuration object to use
+ * @param {Object} _ ignored
  * @returns {Promise} A promise chain that resolves when the server is running
  */
-function setup(config) {
+function setup(config, _) {
+	app = (_ || express)();
 	return setupDao(config).then(() => setupExpress()).then(() => {
-		module.exports.server = module.exports.app.listen(config.http.port);
+		module.exports.server = app.listen(config.http.port);
 		println(`Server now listening on port ${config.http.port}`);
 	});
 }
@@ -194,7 +198,6 @@ function return405(_, res) {
 module.exports = {
 	setup: setup,
 	stop: stop,
-	app: app,
 	server: null
 };
 

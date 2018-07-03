@@ -67,13 +67,13 @@ describe('server', () => {
 	});
 	describe('start()', () => {
 		it('should start listening to server', () => {
-			return Server.setup(config).then(() => {
+			return Server.setup(config, () => mockApp).then(() => {
 				mockApp.listen.called.should.equal(true);
 			});
 		});
 		it('should not start listening to server on db initialise error', () => {
 			DB.isInitialised.returns(false);
-			return Server.setup(config).catch((err) => {
+			return Server.setup(config, () => mockApp).catch((err) => {
 				err.toString().should.equal('Error: Initialization Error');
 				mockApp.listen.called.should.equal(false);
 			});
@@ -81,15 +81,13 @@ describe('server', () => {
 	});
 	describe('routes', () => {
 		let mockResponse;
-		beforeEach(() => {
-			return Server.setup(config)
-				.then(() => {
-					mockResponse = {};
-					mockResponse.send = sandbox.stub().returns(mockResponse);
-					mockResponse.status = sandbox.stub().returns(mockResponse);
-					mockResponse.end = sandbox.stub().returns(mockResponse);
-				});
-		});
+		beforeEach(() => Server.setup(config, () => mockApp)
+			.then(() => {
+				mockResponse = {};
+				mockResponse.send = sandbox.stub().returns(mockResponse);
+				mockResponse.status = sandbox.stub().returns(mockResponse);
+				mockResponse.end = sandbox.stub().returns(mockResponse);
+			}));
 		describe('/example', () => {
 			it('should handle GET verb', () => {
 				const handler = appRoutes['/example'].get.firstCall.args[0];
