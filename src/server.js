@@ -47,7 +47,6 @@ let app;
 function setupDao(config) {
 	debug('Initializing dao');
 	//For now, static config
-	//TODO: make this configurable
 	return DB.initialise(config).then(() => {
 		if (!DB.isInitialised()) {
 			println('Initialization error');
@@ -165,12 +164,11 @@ function setupExpress() {
 /**
  * Initialise the server
  * @param {Object} config The configuration object to use
- * @param {Object} [createApplicationFunc] Function to create an express application,
- * omit to use standard express app.
+ * @param {express} createApplicationFunc Function to create an express application.
  * @returns {Promise} A promise chain that resolves when the server is running
  */
 function setup(config, createApplicationFunc) {
-	app = (createApplicationFunc || express)();
+	app = createApplicationFunc();
 	return setupDao(config).then(() => setupExpress()).then(() => {
 		module.exports.server = app.listen(config.http.port);
 		println(`Server now listening on port ${config.http.port}`);
@@ -219,5 +217,5 @@ if (require.main === module) {
 			// eslint-disable-next-line no-process-env
 			port: process.env.PORT || 9000
 		}
-	});
+	}, express);
 }

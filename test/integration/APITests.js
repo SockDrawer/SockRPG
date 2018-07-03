@@ -2,6 +2,7 @@
 const Chai = require('chai');
 const assert = Chai.assert;
 const supertest = require('supertest');
+const express = require('express');
 const Sinon = require('sinon');
 const User = require('../../src/model/User');
 const Board = require('../../src/model/Board');
@@ -21,7 +22,7 @@ context('API server', function() {
 			http: {
 				port: 9000
 			}
-		});
+		}, express);
 	});
 
 	after(() => {

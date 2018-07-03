@@ -58,6 +58,8 @@ describe('server', () => {
 		DB.isInitialised.restore();
 	});
 	describe('stop()', () => {
+		beforeEach(() => Server.setup(config, () => mockApp));
+
 		it('should close server before closing db', () => {
 			Server.server = mockServer;
 			return Server.stop().then(() => {
