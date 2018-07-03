@@ -62,5 +62,44 @@ describe('server', () => {
 				mockApp.listen.called.should.equal(true);
 			});
 		});
+		it('should not start listening to server on db initialise error', () => {
+			DB.isInitialised.returns(false);
+			return Server.setup().catch((err) => {
+				err.toString().should.equal('Error: Initialization Error');
+				mockApp.listen.called.should.equal(false);
+			});
+		});
+	});
+	describe('routes', () => {
+		let mockResponse;
+		beforeEach(() => Server.setup()
+			.then(() => {
+				mockResponse = {};
+				mockResponse.send = sandbox.stub().returns(mockResponse);
+				mockResponse.status = sandbox.stub().returns(mockResponse);
+				mockResponse.end = sandbox.stub().returns(mockResponse);
+			}));
+		describe('/example', () => {
+			it('should handle GET verb', () => {
+				const handler = appRoutes['/example'].get.firstCall.args[0];
+				handler(null, mockResponse);
+				mockResponse.send.calledWith('GETs will read things!').should.be.true;
+			});
+			it('should handle POST verb', () => {
+				const handler = appRoutes['/example'].post.firstCall.args[0];
+				handler(null, mockResponse);
+				mockResponse.send.calledWith('POSTs will create things!').should.be.true;
+			});
+			it('should handle PUT verb', () => {
+				const handler = appRoutes['/example'].put.firstCall.args[0];
+				handler(null, mockResponse);
+				mockResponse.send.calledWith('PUTs will edit things!').should.be.true;
+			});
+			it('should handle DELETE verb', () => {
+				const handler = appRoutes['/example'].delete.firstCall.args[0];
+				handler(null, mockResponse);
+				mockResponse.send.calledWith('Danger Will Robinson!').should.be.true;
+			});
+		});
 	});
 });
