@@ -14,6 +14,11 @@ const Game = require('../../../src/model/Game');
 const Thread = require('../../../src/model/Thread');
 const Post = require('../../../src/model/Post');
 
+const unauthenticatedFakeReq = (tbl) => {
+	tbl.isAuthenticated = () => false;
+	return tbl;
+};
+
 describe('Page API controller', () => {
 	let sandbox;
 
@@ -42,7 +47,7 @@ describe('Page API controller', () => {
 				}
 			};
 
-			const fakeReq = {};
+			const fakeReq = unauthenticatedFakeReq({});
 			return page.getHomePage(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
 			});
@@ -60,7 +65,7 @@ describe('Page API controller', () => {
 			};
 			fakeRes.status.returns(fakeRes);
 
-			const fakeReq = {};
+			const fakeReq = unauthenticatedFakeReq({});
 			return page.getHomePage(fakeReq, fakeRes)
 				.then(() => fakeRes.status.should.have.been.calledWith(500))
 				.then(() => fakeRes.send.should.have.been.calledWith({
@@ -92,7 +97,7 @@ describe('Page API controller', () => {
 				Canonical: '/api/boards/2'
 			}];
 
-			const fakeReq = {};
+			const fakeReq = unauthenticatedFakeReq({});
 
 			sandbox.stub(Board, 'getAllBoards').resolves(boardList.map((board) => new Board(board)));
 			sandbox.stub(Game, 'getAllGames').resolves();
@@ -137,7 +142,7 @@ describe('Page API controller', () => {
 				}
 			}];
 
-			const fakeReq = {};
+			const fakeReq = unauthenticatedFakeReq({});
 
 			sandbox.stub(Board, 'getAllBoards').resolves();
 			sandbox.stub(Game, 'getAllGames').resolves(gameList.map((game) => new Game(game)));
@@ -183,11 +188,11 @@ describe('Page API controller', () => {
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([]);
 			sandbox.spy(board, 'serialize');
 
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
 				expect(Board.getBoard).to.have.been.calledWith(100);
@@ -202,11 +207,11 @@ describe('Page API controller', () => {
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves(null);
 			sandbox.spy(board, 'serialize');
 
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
 				expect(Board.getBoard).to.have.been.calledWith(100);
@@ -228,11 +233,11 @@ describe('Page API controller', () => {
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([new Thread(threadData)]);
 			sandbox.spy(board, 'serialize');
 
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			const expected = {
 				Name: boardData.Name,
@@ -251,11 +256,11 @@ describe('Page API controller', () => {
 
 		it('should return 404 if no board is found', () => {
 			sandbox.stub(Board, 'getBoard').resolves(undefined);
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.status).to.have.been.calledWith(404);
@@ -264,11 +269,11 @@ describe('Page API controller', () => {
 
 		it('should return 500 if error is thrown', () => {
 			sandbox.stub(Board, 'getBoard').rejects('I AM ERROR');
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.status).to.have.been.calledWith(500);
@@ -309,11 +314,11 @@ describe('Page API controller', () => {
 			sandbox.stub(Post, 'getPostsInThread').resolves([]);
 			sandbox.spy(threadObj, 'serialize');
 
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getThreadView(fakeReq, fakeRes).then(() => {
 				expect(Thread.getThread).to.have.been.calledWith(100);
@@ -330,11 +335,11 @@ describe('Page API controller', () => {
 			sandbox.stub(Post, 'getPostsInThread').resolves(null);
 			sandbox.spy(threadObj, 'serialize');
 
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getThreadView(fakeReq, fakeRes).then(() => {
 				expect(Thread.getThread).to.have.been.calledWith(100);
@@ -360,11 +365,11 @@ describe('Page API controller', () => {
 			sandbox.stub(Thread, 'getThread').resolves(new Thread(fakeThread));
 			sandbox.stub(Post, 'getPostsInThread').resolves([new Post(fakePostData)]);
 
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getThreadView(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.render).to.have.been.calledWith('thread');
@@ -375,11 +380,11 @@ describe('Page API controller', () => {
 
 		it('should return 404 if no thread is found', () => {
 			sandbox.stub(Thread, 'getThread').resolves(undefined);
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getThreadView(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.status).to.have.been.calledWith(404);
@@ -388,11 +393,11 @@ describe('Page API controller', () => {
 
 		it('should return 500 if an error is thrown', () => {
 			sandbox.stub(Thread, 'getThread').rejects('SQL kaboom!');
-			const fakeReq = {
+			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
 				}
-			};
+			});
 
 			return page.getThreadView(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.status).to.have.been.calledWith(500);
