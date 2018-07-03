@@ -13,7 +13,7 @@ const exphbs = require('express-handlebars');
 const app = express();
 const bodyParser = require('body-parser');
 const debug = require('debug')('server');
-
+const promisify = require('util').promisify;
 
 //Model
 const DB = require('./model/db');
@@ -177,15 +177,7 @@ function setup(config) {
  * @returns {Promise} A promise chain that resolves when the server is running
  */
 function stop() {
-	//TODO: theres probably some sort of `promisify` function that does this already
-	const stopHttp = () => new Promise((resolve, reject) => {
-		module.exports.server.close((err) => {
-			if (err) {
-				return reject(err);
-			}
-			return resolve();
-		});
-	});
+	const stopHttp = promisify(module.exports.server.close.bind(module.exports.server));
 	return stopHttp()
 		.then(() => DB.teardown())
 		.then(() => println('Server stopped'));
