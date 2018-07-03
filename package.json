@@ -4,7 +4,7 @@
   "description": "SockRPG: A Forum built by role players, for roleplayers",
   "repository": "https://github.com/SockDrawer/SockRPG",
   "license": "MIT",
-  "author": "Accalia Elementia <accalia@sockdrawer.io> (https://github.com/AccaliaDeElementia)",
+  "author": "Accalia Elementia <accalia@elementia.me> (https://github.com/AccaliaDeElementia)",
   "contributors": [
     "RaceProUK <raceprouk@sockdrawer.io> (https://github.com/RaceProUK)",
     "Yamikuronue <yamikuronue> (https://github.com/yamikuronue)",
@@ -45,35 +45,76 @@
     "cz-conventional-changelog": "^1.1.7",
     "eslint": "^5.0.0",
     "husky": "^0.14.3",
-    "istanbul": "^0.4.0",
     "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
     "sinon": "^6.0.1",
     "sinon-chai": "^3.2.0",
     "supertest": "^3.1.0",
     "wdio-mocha-framework": "^0.6.1",
     "wdio-phantomjs-service": "^0.2.2",
     "wdio-selenium-standalone-service": "0.0.10",
-    "webdriverio": "^4.13.0"
+    "webdriverio": "^4.13.1"
   },
   "scripts": {
     "start": "node ./src/server.js",
     "lint": "eslint .",
     "preunitTests": "npm run lint",
-    "unitTests": "istanbul cover node_modules/mocha/bin/_mocha -- --exit --recursive -R dot ./test/unit/**/*.js",
-    "integrationTests": "mocha --exit --recursive -R dot ./test/integration/*.js",
+    "unitTests": "nyc mocha ./test/unit/**/*.js -R dot",
+    "integrationTests": "mocha --recursive -R dot ./test/integration/**/*.js",
     "pretest": "npm run unitTests",
     "test": "npm run integrationTests",
     "systemTest": "wdio wdio.conf.js",
-    "mocha": "mocha --exit --recursive -R dot ./test/unit/**/*.js",
+    "mocha": "mocha -R spec ./test/unit/**/*.js",
     "commit": "git-cz",
     "postmocha": "npm run integrationTests",
     "prepush": "npm test",
     "postmerge": "npm install",
-    "postrewrite": "npm install"
+    "postrewrite": "npm install",
+    "postcheckout": "npm install"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "nyc": {
+    "exclude": [
+      "coverage/**",
+      "test/**",
+      "**/node_modules/**",
+      "static/**",
+      "mockups/**",
+      "*.js"
+    ],
+    "per-file": true,
+    "watermarks": {
+      "lines": [
+        80,
+        95
+      ],
+      "functions": [
+        80,
+        95
+      ],
+      "branches": [
+        80,
+        95
+      ],
+      "statements": [
+        80,
+        95
+      ]
+    },
+    "lines": 95,
+    "statements": 95,
+    "functions": 95,
+    "branches": 95,
+    "reporter": [
+      "lcov",
+      "text",
+      "text-summary"
+    ],
+    "cache": true,
+    "all": true
   }
 }

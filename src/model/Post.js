@@ -17,41 +17,42 @@ class Post {
 		this.data = {};
 		this.data.ID = rowData.ID;
 		this.data.Body = rowData.Body;
+		this.data.Thread = rowData.Thread;
 		this.Canonical = `/api/posts/${this.ID}`;
 		this.Thread = rowData.Thread;
 	}
-	
+
 	get ID() {
 		return this.data.ID;
 	}
-	
+
 	get Body() {
 		return this.data.Body;
 	}
-	
+
 	set Body(newBody) {
 		this.data.Body = newBody;
 	}
-	
+
 	serialize() {
 		const serial = JSON.parse(JSON.stringify(this.data));
 		serial.Canonical = this.Canonical;
 		return serial;
 	}
-	
+
 	save() {
-		return DB.knex('Post').where('ID', this.ID).update(this.data);
+		return DB.knex('Posts').where('ID', this.ID).update(this.data);
 	}
-	
-	
+
+
 	static addPost(post) {
-		if (!post instanceof Post) {
+		if (!(post instanceof Post)) {
 			post = new Post(post);
 		}
-		
-		return DB.knex('Posts').insert(post);
+
+		return DB.knex('Posts').insert(post.data);
 	}
-	
+
 	static getPostByID(id) {
 		return DB.knex('Posts')
 		.where('Posts.ID', id).select('ID', 'Body')
@@ -59,11 +60,11 @@ class Post {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}
-	
+
 			return new Post(rows[0]);
 		});
 	}
-	
+
 	static getPostsInThread(threadID) {
 		return DB.knex('Posts')
 		.where('Posts.Thread', threadID)

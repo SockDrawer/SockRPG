@@ -49,6 +49,13 @@ describe('Thread model', () => {
 		}).should.eventually.contain(1);
 	});
 
+	it('should add a thread object', () => {
+		return Thread.addThread(new Thread({
+			Title: 'A Thread',
+			Board: parentID
+		})).should.eventually.contain(1);
+	});
+
 	it('should add a second thread', () => {
 		return Thread.addThread({
 			Title: 'Thread 1',
@@ -72,6 +79,45 @@ describe('Thread model', () => {
 
 	it('should not find a non-existant thread by ID', () => {
 		return Thread.getThread(0).should.eventually.equal(null);
+	});
+
+	it('should save and retrieve thread', () => {
+		const thread = new Thread({
+			Title: `A Thread ${Math.random()}`,
+			Board: parentID
+		});
+		let ID = undefined;
+		return Thread.addThread(thread)
+			.then((id) => {
+				ID = id[0];
+				return Thread.getThread(ID);
+			})
+			.then((dbthread) => {
+				thread.Title.should.equal(dbthread.Title);
+				dbthread.ID.should.equal(ID);
+			});
+	});
+
+	it('should update thread', () => {
+		let thread = new Thread({
+			Title: `A Thread ${Math.random()}`,
+			Board: parentID
+		});
+		let ID = undefined;
+		return Thread.addThread(thread)
+			.then((id) => {
+				ID = id[0];
+				return Thread.getThread(ID);
+			})
+			.then((dbthread) => {
+				thread = dbthread;
+				thread.Title = `Awesome new Title ${Math.random()}`;
+				return thread.save();
+			})
+			.then(() => Thread.getThread(ID))
+			.then((dbthread) => {
+				thread.data.should.deep.equal(dbthread.data);
+			});
 	});
 
 	it('should find threads by parent board', () => {
@@ -106,15 +152,36 @@ describe('Thread model', () => {
 		new Thread(fakeThread).serialize().should.deep.equal(expected);
 	});
 
+	it('should set thread title', () => {
+		const expected = `title ${Math.random()}`;
+		const thred = new Thread({
+			Title: expected,
+			Board: parentID
+		});
+		thred.Title.should.equal(expected);
+	});
+
+	it('should update thread title', () => {
+		const expected = `title ${Math.random()}`;
+		const thred = new Thread({
+			Title: 'not correct',
+			Board: parentID
+		});
+		thred.Title = expected;
+		thred.data.Title.should.equal(expected);
+	});
+
 	it('should construct', () => {
 		const fakeThread = {
 			ID: Math.random(),
+			Board: Math.random(),
 			Title: 'some thread'
 		};
 
 		const expected = {
 			Title: fakeThread.Title,
-			ID: fakeThread.ID
+			ID: fakeThread.ID,
+			Board: fakeThread.Board
 		};
 
 		new Thread(fakeThread).data.should.deep.equal(expected);

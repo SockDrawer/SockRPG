@@ -7,6 +7,7 @@
 		"func-names": 0,
 		"no-invalid-this": 0,
 		"no-unused-expressions": 0,
-		"max-len": [0, 200]
+		"max-len": [0, 200],
+		"max-statements": [1, 25]
 	}
 }

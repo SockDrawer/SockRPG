@@ -1,4 +1,7 @@
 {
+	"parserOptions": {
+		"ecmaVersion": 2017
+	},
 	"env": {
 		"es6": true,
 		"node": true
@@ -77,7 +80,7 @@
 		"no-extend-native": 2,
 		"no-extra-bind": 2,
 		"no-extra-boolean-cast": 2,
-		"no-extra-parens": 2,
+		"no-extra-parens": ["error", "all", { "nestedBinaryExpressions": false }],
 		"no-extra-semi": 2,
 		"no-fallthrough": 2,
 		"no-floating-decimal": 2,
