@@ -14,15 +14,45 @@ const port = process.env.PORT || 9000;
 context('API server', function() {
 	this.timeout(50000);
 	const server = require('../../src/server.js');
-	const request = supertest(`http://localhost:${port}`);
-
+	const requestBaseUrl = `http://localhost:${port}`;
+	
+	// Function to construct a CSRF-aware HTTP API agent
+	const getAgent = () => {
+		const agent = supertest.agent(requestBaseUrl);
+		return agent.get('/api/session')
+			.set('Accept', 'application/json')
+			.expect(200)
+			.expect('Content-Type', /application\/json/)
+			.then((response) => {
+				const csrfToken = response.body.CsrfToken;
+				
+				return {
+					get: (path) =>
+						agent.get(path)
+						.set('Accept', 'application/json'),
+					post: (path) =>
+						agent.post(path)
+						.set('X-CSRF-Token', csrfToken)
+						.set('Accept', 'application/json'),
+					put: (path) =>
+						agent.put(path)
+						.set('X-CSRF-Token', csrfToken)
+						.set('Accept', 'application/json'),
+					delete: (path) =>
+						agent.delete(path)
+						.set('X-CSRF-Token', csrfToken)
+				};
+			});
+	}
+	
 	before(() => {
 		//Start server
-		return server.setup({
+		return Promise.resolve()
+		.then(() => server.setup({
 			database: {
 				filename: ':memory:'
 			}
-		});
+		}));
 	});
 
 	after(() => {
@@ -30,9 +60,10 @@ context('API server', function() {
 	});
 
 	describe('User API', () => {
-		let sandbox;
+		let sandbox, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
+			return getAgent().then((val) => {request = val});
 		});
 
 		afterEach(() => {
@@ -48,7 +79,6 @@ context('API server', function() {
 			/*-------------- CREATE -----------------*/
 			return Promise.resolve().then(() => {
 				return request.post('/api/users')
-				.set('Accept', 'application/json')
 				.send(userInput)
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
@@ -59,7 +89,6 @@ context('API server', function() {
 			/*-------------- RETRIEVE -----------------*/
 			.then(() => {
 				return request.get('/api/users/1')
-				.set('Accept', 'application/json')
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
 				.then((response) => {
@@ -74,14 +103,12 @@ context('API server', function() {
 				userInput.userName = 'theRock';
 
 				return request.put('/api/users/1')
-				.set('Accept', 'application/json')
 				.send(userInput)
 				.expect(200);
 			})
 			/*-------------- RETRIEVE AGAIN-----------------*/
 			.then(() => {
 				return request.get('/api/users/1')
-				.set('Accept', 'application/json')
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
 				.then((response) => {
@@ -101,7 +128,6 @@ context('API server', function() {
 
 			return Promise.resolve().then(() => {
 				return request.post('/api/users')
-				.set('Accept', 'application/json')
 				.send(userInput)
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
@@ -112,7 +138,6 @@ context('API server', function() {
 			})
 			.then(() => {
 				return request.get(`/api/users/${userInput.Username}`)
-				.set('Accept', 'application/json')
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
 				.then((response) => {
@@ -127,7 +152,7 @@ context('API server', function() {
 	});
 
 	describe('Board/Game API', () => {
-		let userID, sandbox;
+		let userID;
 
 		before(() => {
 			return User.addUser({
@@ -137,8 +162,10 @@ context('API server', function() {
 			});
 		});
 
+		let sandbox, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
+			return getAgent().then((val) => {request = val});
 		});
 
 		afterEach(() => {
@@ -157,7 +184,6 @@ context('API server', function() {
 			/*-------------- CREATE -----------------*/
 			return Promise.resolve().then(() => {
 				return request.post('/api/boards')
-				.set('Accept', 'application/json')
 				.send(boardInput)
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
@@ -168,7 +194,6 @@ context('API server', function() {
 			/*-------------- RETRIEVE -----------------*/
 			.then(() => {
 				return request.get('/api/boards/1')
-				.set('Accept', 'application/json')
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
 				.then((response) => {
@@ -187,14 +212,12 @@ context('API server', function() {
 				boardInput.Name = 'test board';
 
 				return request.put('/api/boards/1')
-				.set('Accept', 'application/json')
 				.send(boardInput)
 				.expect(200);
 			})
 			/*-------------- RETRIEVE AGAIN-----------------*/
 			.then(() => {
 				return request.get('/api/boards/1')
-				.set('Accept', 'application/json')
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
 				.then((response) => {
@@ -224,7 +247,6 @@ context('API server', function() {
 			/*-------------- CREATE -----------------*/
 			return Promise.resolve().then(() => {
 				return request.post('/api/games')
-				.set('Accept', 'application/json')
 				.send(boardInput)
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
@@ -235,7 +257,6 @@ context('API server', function() {
 			/*-------------- RETRIEVE -----------------*/
 			.then(() => {
 				return request.get('/api/games/2')
-				.set('Accept', 'application/json')
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
 				.then((response) => {
@@ -253,14 +274,12 @@ context('API server', function() {
 				boardInput.Name = 'test game';
 
 				return request.put('/api/games/2')
-				.set('Accept', 'application/json')
 				.send(boardInput)
 				.expect(200);
 			})
 			/*-------------- RETRIEVE AGAIN-----------------*/
 			.then(() => {
 				return request.get('/api/games/2')
-				.set('Accept', 'application/json')
 				.expect(200)
 				.expect('Content-Type', /application\/json/)
 				.then((response) => {
@@ -290,7 +309,17 @@ context('API server', function() {
 				boardID = boardIDs[0];
 			});
 		});
+		
+		let sandbox, request;
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			return getAgent().then((val) => {request = val});
+		});
 
+		afterEach(() => {
+			sandbox.restore();
+		});
+		
 		it('Should allow adding threads', () => {
 			const input = {
 				ID: 1,
@@ -299,7 +328,6 @@ context('API server', function() {
 
 			/*-------------- CREATE -----------------*/
 			return request.post(`/api/boards/${boardID}/threads`)
-			.set('Accept', 'application/json')
 			.send(input)
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
@@ -310,7 +338,6 @@ context('API server', function() {
 
 		it('Should retrieve said threads', () => {
 			return request.get(`/api/boards/${boardID}/threads`)
-			.set('Accept', 'application/json')
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
 			.then((response) => {
@@ -346,6 +373,16 @@ context('API server', function() {
 			});
 		});
 
+		let sandbox, request;
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			return getAgent().then((val) => {request = val});
+		});
+
+		afterEach(() => {
+			sandbox.restore();
+		});
+		
 		it('Should allow adding posts', () => {
 			const input = {
 				Body: '<p>This is the body</b>'
@@ -353,7 +390,6 @@ context('API server', function() {
 
 			/*-------------- CREATE -----------------*/
 			return request.put(`/api/threads/${threadID}`)
-			.set('Accept', 'application/json')
 			.send(input)
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
@@ -364,7 +400,6 @@ context('API server', function() {
 
 		it('Should retrieve posts with threads', () => {
 			return request.get(`/api/threads/${threadID}`)
-			.set('Accept', 'application/json')
 			.expect(200)
 			.expect('Content-Type', /application\/json/)
 			.then((response) => {

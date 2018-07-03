@@ -34,7 +34,7 @@ const debug = require('debug')('SockRPG:controller:Session');
  */
 function getSession(req, res) {
 	return Session.getSession(req).then((data) => {
-		res.status(200).send(data).end();
+		res.status(200).send(data.serialize()).end();
 	}).catch((err) => {
 		debug(`Error Retrieving Session: ${err.toString()}`);
 		res.status(500).send({error: err.toString()}).end();
