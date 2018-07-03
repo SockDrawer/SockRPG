@@ -165,11 +165,12 @@ function setupExpress() {
 /**
  * Initialise the server
  * @param {Object} config The configuration object to use
- * @param {Object} _ ignored
+ * @param {Object} [createApplicationFunc] Function to create an express application,
+ * omit to use standard express app.
  * @returns {Promise} A promise chain that resolves when the server is running
  */
-function setup(config, _) {
-	app = (_ || express)();
+function setup(config, createApplicationFunc) {
+	app = (createApplicationFunc || express)();
 	return setupDao(config).then(() => setupExpress()).then(() => {
 		module.exports.server = app.listen(config.http.port);
 		println(`Server now listening on port ${config.http.port}`);
