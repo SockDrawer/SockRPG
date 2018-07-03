@@ -32,8 +32,6 @@ const hbs = exphbs.create({
 	partialsDir: 'src/views/partials'
 });
 
-let server;
-
 let println = debug;
 let abort = () => {
 	throw new Error('Initialization Error');
@@ -98,7 +96,9 @@ function setupExpress() {
 			module.exports.app.route('/thread/:id')
 				.get(cPage.getThreadView);
 
-			const jsonParser = bodyParser.json({type: 'application/json'});
+			const jsonParser = bodyParser.json({
+				type: 'application/json'
+			});
 			/*API*/
 			module.exports.app.route('/api/games')
 				.get(cBoard.getAllGames)
@@ -167,9 +167,8 @@ function setupExpress() {
  */
 function setup(config) {
 	return setupDao(config).then(() => setupExpress()).then(() => {
-		const port = process.env.PORT || 9000;
-		module.exports.server = module.exports.app.listen(port);
-		println(`Server now listening on port ${port}`);
+		module.exports.server = module.exports.app.listen(config.http.port);
+		println(`Server now listening on port ${config.http.port}`);
 	});
 }
 
@@ -178,14 +177,18 @@ function setup(config) {
  * @returns {Promise} A promise chain that resolves when the server is running
  */
 function stop() {
-	return new Promise((resolve, reject) => {
-		module.exports.server.close(() => {
-			DB.teardown().then(() => {
-				println('Server stopped');
-				resolve();
-			}, reject);
+	//TODO: theres probably some sort of `promisify` function that does this already
+	const stopHttp = () => new Promise((resolve, reject) => {
+		module.exports.server.close((err) => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve();
 		});
 	});
+	return stopHttp()
+		.then(() => DB.teardown())
+		.then(() => println('Server stopped'));
 }
 /**
  * Returns a vanilla 405 Method Not Allowed error
@@ -215,6 +218,10 @@ if (require.main === module) {
 		database: {
 			engine: 'sqlite3',
 			filename: 'database.sqlite'
+		},
+		http: {
+			// eslint-disable-next-line no-process-env
+			port: process.env.PORT || 9000
 		}
 	});
 }

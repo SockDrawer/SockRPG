@@ -7,20 +7,19 @@ const User = require('../../src/model/User');
 const Board = require('../../src/model/Board');
 const Thread = require('../../src/model/Thread');
 
-// TODO: we really shouldnt rely on environment in tests.... yeah? :-)
-// eslint-disable-next-line no-process-env
-const port = process.env.PORT || 9000;
-
 context('API server', function() {
 	this.timeout(50000);
 	const server = require('../../src/server.js');
-	const request = supertest(`http://localhost:${port}`);
+	const request = supertest('http://localhost:9000');
 
 	before(() => {
 		//Start server
 		return server.setup({
 			database: {
 				filename: ':memory:'
+			},
+			http: {
+				port: 9000
 			}
 		});
 	});
