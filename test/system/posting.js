@@ -7,8 +7,8 @@ const server = require('../../src/server.js');
 
 describe('SockRPG', function() {
 	this.timeout(50000);
-	const url = process.env.CI ? 'http://localhost' :
-		`http://localhost:${process.env.PORT}`; //run from c9
+	const url = process.env.CI ? 'http://localhost:9000' :
+		`http://localhost:${process.env.PORT || 9000}`; //run from c9
 
 	before(() => {
 		return server.setup({
