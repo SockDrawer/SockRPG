@@ -55,7 +55,7 @@
     "unitTests": "nyc mocha ./test/unit/**/*.js -R dot",
     "integrationTests": "mocha --recursive -R dot ./test/integration/**/*.js",
     "preintegrationTests": "npm run unitTests",
-    "pretest":"npm run integrationTests",
+    "pretest": "npm run integrationTests",
     "test": "npm run systemTest",
     "systemTest": "wdio wdio.conf.js",
     "mocha": "mocha -R spec ./test/unit/**/*.js",
