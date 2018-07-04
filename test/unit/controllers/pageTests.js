@@ -13,9 +13,20 @@ const Board = require('../../../src/model/Board');
 const Game = require('../../../src/model/Game');
 const Thread = require('../../../src/model/Thread');
 const Post = require('../../../src/model/Post');
+const User = require('../../../src/model/User');
 
 const unauthenticatedFakeReq = (tbl) => {
 	tbl.isAuthenticated = () => false;
+	return tbl;
+};
+
+const authenticatedFakeReq = (tbl) => {
+	tbl.isAuthenticated = () => true;
+	tbl.user = {
+		ID: 1,
+		Username: 'FakeUser',
+		Admin: false
+	};
 	return tbl;
 };
 
@@ -152,6 +163,23 @@ describe('Page API controller', () => {
 				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
 				const data = fakeRes.render.args[0][1];
 				expect(data.games).to.deep.equal(gameList);
+			});
+		});
+		
+		it('should render the home template when logged in', () => {
+			sandbox.stub(Board, 'getAllBoards').resolves();
+			sandbox.stub(Game, 'getAllGames').resolves();
+
+			const fakeRes = {
+				render: sandbox.stub(),
+				status: (num) => {
+					expect(num).to.equal(200);
+				}
+			};
+
+			const fakeReq = authenticatedFakeReq({});
+			return page.getHomePage(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render.calledWith('home')).to.be.equal(true);
 			});
 		});
 	});
@@ -404,4 +432,199 @@ describe('Page API controller', () => {
 			});
 		});
 	});
+	
+	describe('Login view', () => {
+		let fakeRes;
+
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			fakeRes = {
+				render: sandbox.stub().returns(fakeRes),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub().returns(fakeRes),
+				end: sandbox.stub().returns(fakeRes)
+			};
+		});
+
+		afterEach( () => {
+			sandbox.restore();
+		});
+
+		it('should exist', () => {
+			expect(page.getLoginView).to.be.a('function');
+		});
+
+		it('should render the login page', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return page.getLoginView(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('login');
+			});
+		});
+
+		it('should return 500 if an error is thrown', () => {
+			fakeRes.render.throws('Render kaboom!');
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return page.getLoginView(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(500);
+			});
+		});
+	});
+	
+	describe('Signup view', () => {
+		let fakeRes;
+
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			fakeRes = {
+				render: sandbox.stub().returns(fakeRes),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub().returns(fakeRes),
+				end: sandbox.stub().returns(fakeRes)
+			};
+		});
+
+		afterEach( () => {
+			sandbox.restore();
+		});
+
+		it('should exist', () => {
+			expect(page.getSignupView).to.be.a('function');
+		});
+
+		it('should render the signup page', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return page.getSignupView(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('signup');
+			});
+		});
+
+		it('should return 500 if an error is thrown', () => {
+			fakeRes.render.throws('Render kaboom!');
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return page.getSignupView(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(500);
+			});
+		});
+	});
+	
+	
+	describe('Signup post', () => {
+		let fakeRes;
+
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			fakeRes = {
+				render: sandbox.stub().returns(fakeRes),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub().returns(fakeRes),
+				end: sandbox.stub().returns(fakeRes),
+				redirect: sandbox.stub().returns(fakeRes)
+			};
+			sandbox.stub(User, 'addUser').resolves(null);
+		});
+
+		afterEach( () => {
+			sandbox.restore();
+		});
+
+		it('should exist', () => {
+			expect(page.postSignup).to.be.a('array');
+			for (const handler of page.postSignup) {
+				expect(handler).to.be.a('function');
+			}
+		});
+		
+		const runHandlerList = async (handlerList, req, res) => {
+			for (const handler of page.postSignup) {
+				let nextCalled = false;
+				const next = () => {
+					nextCalled = true;
+				};
+				await handler(req, res, next);
+				
+				if (!nextCalled) {
+					break;
+				}
+			}
+		};
+		
+		it('should render the signup page if called without valid args', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('signup');
+				expect(fakeRes.redirect).to.have.not.been.called;
+				expect(User.addUser).to.have.not.been.called;
+			});
+		});
+		
+		it('should create a user and redirect if successful', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					username: 'TestUser',
+					password: 'FakePassword',
+					passwordconfirm: 'FakePassword'
+				}
+			});
+
+			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.redirect).to.have.been.calledOnce;
+				expect(fakeRes.render).to.have.not.been.called;
+				expect(User.addUser).to.have.been.calledOnce;
+			});
+		});
+		
+		it('should give a 500 error if User.addUser fails', () => {
+			User.addUser.rejects();
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					username: 'TestUser',
+					password: 'FakePassword',
+					passwordconfirm: 'FakePassword'
+				}
+			});
+
+			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
+				fakeRes.status.should.have.been.calledWith(500);
+				expect(fakeRes.render).to.have.not.been.called;
+				expect(fakeRes.redirect).to.have.not.been.called;
+			});
+		});
+		
+		it('should render the signup page if input validation fails', () => {
+			User.addUser.rejects();
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					username: 'TestUser',
+					password: 'FakePassword',
+					passwordconfirm: 'WrongFakePassword'
+				}
+			});
+
+			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('signup');
+				expect(fakeRes.redirect).to.have.not.been.called;
+				expect(User.addUser).to.have.not.been.called;
+			});
+		});
+		
+	});
+	
 });

@@ -154,11 +154,19 @@ function getThreadView(req, res) {
  * Get the signup page to hand to the view
  * @param  {Request} req The Express request object
  * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
   */
 function getSignupView(req, res) {
 	const data = {csrfToken: req.csrfToken()};
 
-	res.render('signup', data);
+	return Promise.resolve().then(() => {
+		res.render('signup', data);
+	})
+	.catch((err) => {
+		//TODO: logging errors
+		debug(`Error Getting Signup View: ${err.toString()}`);
+		res.status(500).send({error: err.toString()});
+	});
 }
 
 /**
