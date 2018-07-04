@@ -43,11 +43,6 @@ const debug = require('debug')('SockRPG:controller:Page');
 function getHomePage(req, res) {
 	const data = {};
 	
-	if (db.firstRun) {
-		// TODO: implement something here? Does this even belong here? Not sure getHomePage is the best place
-		//       for firstRun handling.
-	}
-
 	return Board.getAllBoards().then((boards) => {
 		data.boards = boards ? boards.map((board) => board.serialize()) : boards;
 		return Game.getAllGames();
