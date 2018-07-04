@@ -1,5 +1,5 @@
 exports.config = {
-    
+
     //
     // ==================
     // Specify Test Files
@@ -46,8 +46,8 @@ exports.config = {
         //
         browserName: 'phantomjs'
     }],
-    
-    services: ['selenium-standalone', 'phantomjs'],
+
+    services: ['phantomjs'],
     //
     // ===================
     // Test Configurations
@@ -121,7 +121,8 @@ exports.config = {
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
     mochaOpts: {
-        ui: 'bdd'
+        ui: 'bdd',
+        reporter: 'spec'
     },
     //
     // =====
