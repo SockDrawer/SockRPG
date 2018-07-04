@@ -59,7 +59,6 @@ describe('server', () => {
 	});
 	describe('stop()', () => {
 		beforeEach(() => Server.setup(config, () => mockApp));
-
 		it('should close server before closing db', () => {
 			Server.server = mockServer;
 			return Server.stop().then(() => {
@@ -81,6 +80,16 @@ describe('server', () => {
 			});
 		});
 	});
+	describe('send405()', () => {
+		it('should send only status 405', () => {
+			const mockResponse = {};
+			mockResponse.status = sandbox.stub().returns(mockResponse);
+			mockResponse.end = sandbox.stub().returns(mockResponse);
+			Server.send405(null, mockResponse);
+			mockResponse.status.calledWith(405).should.be.true;
+			mockResponse.end.called.should.be.true;
+		});
+	});
 	describe('routes', () => {
 		let mockResponse;
 		beforeEach(() => Server.setup(config, () => mockApp)
@@ -90,6 +99,12 @@ describe('server', () => {
 				mockResponse.status = sandbox.stub().returns(mockResponse);
 				mockResponse.end = sandbox.stub().returns(mockResponse);
 			}));
+		it('should register `/` route', () => {
+			appRoutes.should.have.any.key('/');
+		});
+		it('should have more than one route', () => {
+			Object.keys(appRoutes).length.should.be.greaterThan(1);
+		});
 		describe('/example', () => {
 			it('should handle GET verb', () => {
 				const handler = appRoutes['/example'].get.firstCall.args[0];

@@ -37,7 +37,7 @@ let abort = () => {
 	throw new Error('Initialization Error');
 };
 
-let app;
+let app, server;
 
 /**
  * Initialise the DAO
@@ -170,7 +170,7 @@ function setupExpress() {
 function setup(config, createApplicationFunc) {
 	app = createApplicationFunc();
 	return setupDao(config).then(() => setupExpress()).then(() => {
-		module.exports.server = app.listen(config.http.port);
+		server = app.listen(config.http.port);
 		println(`Server now listening on port ${config.http.port}`);
 	});
 }
@@ -180,7 +180,7 @@ function setup(config, createApplicationFunc) {
  * @returns {Promise} A promise chain that resolves when the server is running
  */
 function stop() {
-	const stopHttp = promisify(module.exports.server.close.bind(module.exports.server));
+	const stopHttp = promisify(server.close.bind(server));
 	return stopHttp()
 		.then(() => DB.teardown())
 		.then(() => println('Server stopped'));
@@ -197,7 +197,7 @@ function return405(_, res) {
 module.exports = {
 	setup: setup,
 	stop: stop,
-	server: null
+	send405: return405
 };
 
 /* istanbul ignore if */
