@@ -4,18 +4,21 @@ const Chai = require('chai');
 //const expect = Chai.expect; // Unused constant... delete?
 const assert = Chai.assert;
 const server = require('../../src/server.js');
+const express = require('express');
 
 describe('SockRPG', function() {
 	this.timeout(50000);
-	const url = process.env.CI ? 'http://localhost:9000' :
-		`http://localhost:${process.env.PORT || 9000}`; //run from c9
+	const url = 'http://localhost:9000'; //run from c9
 
 	before(() => {
 		return server.setup({
 			database: {
 				filename: ':memory:'
+			},
+			http: {
+				port: 9000
 			}
-		});
+		}, express);
 	});
 
 	after(() => {
