@@ -44,6 +44,16 @@ describe('Board model', () => {
 		}).should.eventually.contain(1);
 	});
 
+	it('should set ID on add', () => {
+		const board = new Board({
+			Owner: userID,
+			Name: 'Board1'
+		});
+		return Board.addBoard(board).then(() => {
+			board.ID.should.equal(1);
+		});
+	});
+
 	it('should add a board object', () => {
 		return Board.addBoard(new Board({
 			Owner: userID,

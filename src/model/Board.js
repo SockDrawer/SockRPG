@@ -143,7 +143,11 @@ class Board {
 			if (!board.Name) {
 				throw new Error('A board has no name.');
 			}
-			return DB.knex('Boards').insert(board.data);
+			return DB.knex('Boards').insert(board.data)
+				.then((ids) => {
+					board.data.ID = ids[0];
+					return ids;
+				});
 		});
 	}
 
