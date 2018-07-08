@@ -2,6 +2,7 @@
 
 const Threads = require('./Thread');
 const DB = require('./db');
+const utils = require('./utils');
 
 /**
  * The Board table.
@@ -61,9 +62,28 @@ class Board {
 		this.data.Adult = Boolean(adult);
 	}
 
+	getParent () {
+		if (!this.data.ParentID){
+			return Promise.resolve(null);
+		}
+		return utils.getBoardOrGame(this.data.ParentID);
+	}
+
+	setParent (parent) {
+		if (parent !== null && !(parent instanceof Board)){
+			return Promise.reject(new Error('Parent must be a Board'));
+		}
+		this.data.ParentID = parent && parent.ID;
+		return this.save();
+	}
+
 	getThreads() {
 		return Threads.getThreadsInBoard(this.ID)
 			.then((threads) => threads && threads.length ? threads.map((thread) => thread.ID) : []);
+	}
+	
+	getChildren () {
+		return utils.getBoardsAndGames(this.ID);
 	}
 
 	serialize() {
@@ -115,7 +135,7 @@ class Board {
 	static getBoard(id) {
 		return DB.knex('Boards')
 				.where('ID', id)
-				.select('Boards.ID', 'Owner', 'Name', 'Description', 'GameID', 'Adult')
+				.select('Boards.ID', 'ParentID', 'Owner', 'Name', 'Description', 'GameID', 'Adult')
 				.then((rows) => {
 					if (!rows || rows.length <= 0) {
 						return null;
