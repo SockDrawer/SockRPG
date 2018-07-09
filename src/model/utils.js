@@ -11,6 +11,14 @@ const init = Promise.resolve()
 		Board = require('./Board');
 	});
 
+const deserializeBoardOrGame = (data) => {
+	if (data.GameID) {
+		return new Game(data);
+	}
+	delete data.gameDescription;
+	return new Board(data);
+};
+
 module.exports = {
 	getBoardOrGame: (id) => init.then(() => {
 		return DB.knex('Boards')
@@ -21,11 +29,7 @@ module.exports = {
 				if (!rows.length) {
 					return null;
 				}
-				const row = rows[0];
-				if (row.GameID) {
-					return new Game(row);
-				}
-				return new Board(row);
+				return deserializeBoardOrGame(rows[0]);
 			});
 	}),
 	getBoardsAndGames: (parentId) => init.then(() => {
@@ -36,11 +40,6 @@ module.exports = {
 			.leftJoin('Games', 'Boards.GameID', 'Games.ID')
 			.where('Boards.ParentID', parentId)
 			.select('Boards.ID', 'ParentID', 'Owner', 'Name', 'Adult', 'GameID', 'gameDescription', 'Description')
-			.then((rows) => rows.map((row) => {
-				if (row.GameID) {
-					return new Game(row);
-				}
-				return new Board(row);
-			}));
+			.then((rows) => rows.map(deserializeBoardOrGame));
 	})
 };

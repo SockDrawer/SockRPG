@@ -113,16 +113,7 @@ class Board {
 	* @returns {Promise} A Promise that is resolved with a list of vanilla boards
 	*/
 	static getBoards(parentID) {
-		//TODO: How does a child board get added? is it for games? should figure this out (Accalia)
-		if (parentID !== 0) {
-			parentID = parentID || null; //Coerce to null to prevent avoidable errors
-		}
-
-		return DB.knex('Boards')
-			.leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID')
-			.where('parentID', parentID)
-			.select('Boards.ID', 'Owner', 'Name', 'Description', 'GameID')
-			.map((row) => new Board(row));
+		return utils.getBoardsAndGames(parentID);
 	}
 
 	/**
@@ -133,15 +124,7 @@ class Board {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getBoard(id) {
-		return DB.knex('Boards')
-				.where('ID', id)
-				.select('Boards.ID', 'ParentID', 'Owner', 'Name', 'Description', 'GameID', 'Adult')
-				.then((rows) => {
-					if (!rows || rows.length <= 0) {
-						return null;
-					}
-					return new Board(rows[0]);
-				});
+		return utils.getBoardOrGame(id);
 	}
 
 	/**
