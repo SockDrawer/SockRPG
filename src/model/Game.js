@@ -117,7 +117,8 @@ class Game extends Board {
 			.then(() => {
 				if (!(game instanceof Game)) {
 					if (game instanceof Board || !game.GameID && !game.Game) {
-						throw new Error('Vanilla boards cannot be added using this method; please use addBoard() instead');
+						throw new Error('Vanilla boards cannot be added using this method; ' +
+							'please use addBoard() instead');
 					}
 					game = new Game(game);
 				}
