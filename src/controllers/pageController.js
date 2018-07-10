@@ -65,7 +65,7 @@ function getHomePage(req, res) {
  */
 function getBoardView(req, res) {
 	let board;
-	return Board.getBoard(req.params.id).then((data) => {
+	return Board.get(req.params.id).then((data) => {
 		if (!data) {
 			res.status(404);
 			res.end();

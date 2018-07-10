@@ -81,7 +81,7 @@ describe('Board model', () => {
 		it('should get boards and games', () => {
 			const expected = [1, 2, 3];
 			sandbox.stub(utils, 'getBoardsAndGames').resolves(expected);
-			return Board.getBoards(1701).then((results) => {
+			return Board.getChildrenOf(1701).then((results) => {
 				results.should.equal(expected);
 				utils.getBoardsAndGames.calledWith(1701).should.be.true;
 			});
@@ -94,7 +94,7 @@ describe('Board model', () => {
 			Name: 'Board1'
 		};
 		return Board.addBoard(boardObj)
-			.then(() => Board.getBoard(1))
+			.then(() => Board.get(1))
 			.should.eventually.contain.all({
 				ID: 1
 			});
@@ -120,7 +120,7 @@ describe('Board model', () => {
 	});
 
 	it('should not find a non-existant board by ID', () => {
-		return Board.getBoard(0).should.eventually.equal(null);
+		return Board.get(0).should.eventually.equal(null);
 	});
 
 	it('should get parent with parent ID set', () => {
@@ -223,11 +223,11 @@ describe('Board model', () => {
 				Owner: userID,
 				Name: 'Board1'
 			}))
-			.then(() => Board.getBoard(1))
+			.then(() => Board.get(1))
 			.then((board) => {
 				mutator(board);
 				return board.save()
-					.then(() => Board.getBoard(1))
+					.then(() => Board.get(1))
 					.then((afterboard) => [board, afterboard]);
 			});
 
@@ -345,7 +345,7 @@ describe('Board model', () => {
 				Name: 'Board1'
 			};
 			return Board.addBoard(boardObj)
-				.then((ids) => Board.getBoard(ids[0]))
+				.then((ids) => Board.get(ids[0]))
 				.then((oot) => {
 					board = oot;
 				});

@@ -106,14 +106,18 @@ class Board {
 	}
 
 	/**
-	* Get all vanilla boards that belong to a parent board, or all root-level vanilla boards if no parent specified.
+    * Get all boards and games that belong to a parent board, or all root-level
+    * boards and games if no parent specified.
 	*
-	* @param {Number} [parentID] The ID of the parent board, or `null` for root-level boards
+	* @param {Number} [parent] The parent board, or `null` for root-level boards
 	*
 	* @returns {Promise} A Promise that is resolved with a list of vanilla boards
 	*/
-	static getBoards(parentID) {
-		return utils.getBoardsAndGames(parentID);
+	static getChildrenOf(parent) {
+		if (parent instanceof Board) {
+			parent = parent.ID;
+		}
+		return utils.getBoardsAndGames(parent);
 	}
 
 	/**
@@ -123,7 +127,7 @@ class Board {
 	*
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
-	static getBoard(id) {
+	static get(id) {
 		return utils.getBoardOrGame(id);
 	}
 

@@ -96,13 +96,13 @@ describe('Game model', () => {
 			}
 		};
 		return Game.addGame(data)
-			.then(() => Game.getGame(1)).should.eventually.contain.all({
+			.then(() => Game.get(1)).should.eventually.contain.all({
 				ID: 1
 			});
 	});
 
 	it('should not find a non-existant board by ID', () => {
-		return Game.getGame(0).should.eventually.equal(null);
+		return Game.get(0).should.eventually.equal(null);
 	});
 
 	it('should get all games', () => {
@@ -167,7 +167,7 @@ describe('Game model', () => {
 				}
 			};
 			return Game.addGame(data)
-				.then((ids) => Game.getGame(ids[0]))
+				.then((ids) => Game.get(ids[0]))
 				.then((oot) => {
 					game = oot;
 				});
@@ -199,11 +199,11 @@ describe('Game model', () => {
 					gameDescription: 'A wicked game'
 				}
 			}))
-			.then(() => Game.getGame(1))
+			.then(() => Game.get(1))
 			.then((game) => {
 				mutator(game);
 				return game.save()
-					.then(() => Game.getGame(1))
+					.then(() => Game.get(1))
 					.then((afterGame) => [game, afterGame]);
 			});
 

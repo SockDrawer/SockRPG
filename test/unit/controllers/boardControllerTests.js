@@ -77,7 +77,7 @@ describe('Board API controller', () => {
 						id: 3
 					}
 				};
-				sandbox.stub(Board, 'getBoard').resolves(null);
+				sandbox.stub(Board, 'get').resolves(null);
 				return boardControl.getBoard(mockRequest, mockResponse)
 					.then(() => {
 						mockResponse.status.should.be.calledWith(404);
@@ -96,7 +96,7 @@ describe('Board API controller', () => {
 					ID: 5,
 					Name: 'Launching Dildos Into Space'
 				});
-				sandbox.stub(Board, 'getBoard').resolves(board);
+				sandbox.stub(Board, 'get').resolves(board);
 				sandbox.stub(board, 'getThreads').resolves([1, 2, 3]);
 				const mockRequest = {
 					params: {
@@ -112,7 +112,7 @@ describe('Board API controller', () => {
 
 			it('should handle errors', () => {
 				const error = new Error('Jastra\'s Milkshake brings all the boys to her back yard');
-				sandbox.stub(Board, 'getBoard').rejects(error);
+				sandbox.stub(Board, 'get').rejects(error);
 				const mockRequest = {
 					params: {
 						id: 4
@@ -171,7 +171,7 @@ describe('Board API controller', () => {
 				});
 				const expected = 'this is a brave new world';
 				sandbox.stub(board, 'save').resolves();
-				sandbox.stub(Board, 'getBoard').resolves(board);
+				sandbox.stub(Board, 'get').resolves(board);
 				return boardControl.updateBoard({
 					body: {
 						Name: expected
@@ -190,7 +190,7 @@ describe('Board API controller', () => {
 				});
 				const expected = 'this is a brave new world';
 				sandbox.stub(board, 'save').resolves();
-				sandbox.stub(Board, 'getBoard').resolves(board);
+				sandbox.stub(Board, 'get').resolves(board);
 				return boardControl.updateBoard({
 					body: {
 						Owner: expected
@@ -210,7 +210,7 @@ describe('Board API controller', () => {
 				});
 				const expected = true;
 				sandbox.stub(board, 'save').resolves();
-				sandbox.stub(Board, 'getBoard').resolves(board);
+				sandbox.stub(Board, 'get').resolves(board);
 				return boardControl.updateBoard({
 					body: {
 						Adult: expected
@@ -228,7 +228,7 @@ describe('Board API controller', () => {
 					Name: 'bar'
 				});
 				sandbox.stub(board, 'save').resolves();
-				sandbox.stub(Board, 'getBoard').resolves(board);
+				sandbox.stub(Board, 'get').resolves(board);
 				return boardControl.updateBoard({
 					body: {
 						Name: 'foo'
@@ -242,7 +242,7 @@ describe('Board API controller', () => {
 			});
 
 			it('should resolve with status 404 on not found', () => {
-				sandbox.stub(Board, 'getBoard').resolves(null);
+				sandbox.stub(Board, 'get').resolves(null);
 				return boardControl.updateBoard({
 					body: {},
 					params: {
@@ -254,7 +254,7 @@ describe('Board API controller', () => {
 			});
 			it('should resolve with status 404 on not found', () => {
 				const err = new Error('Hi there boys and girls!');
-				sandbox.stub(Board, 'getBoard').rejects(err);
+				sandbox.stub(Board, 'get').rejects(err);
 				return boardControl.updateBoard({
 					body: {},
 					params: {}
@@ -312,7 +312,7 @@ describe('Board API controller', () => {
 						id: 3
 					}
 				};
-				sandbox.stub(Game, 'getGame').resolves(null);
+				sandbox.stub(Game, 'get').resolves(null);
 				return boardControl.getGame(mockRequest, mockResponse)
 					.then(() => {
 						mockResponse.status.should.be.calledWith(404);
@@ -332,7 +332,7 @@ describe('Board API controller', () => {
 					ID: 5,
 					Name: 'Launching Dildos Into Space'
 				});
-				sandbox.stub(Game, 'getGame').resolves(game);
+				sandbox.stub(Game, 'get').resolves(game);
 				sandbox.stub(game, 'getThreads').resolves([1, 2, 3]);
 				const mockRequest = {
 					params: {
@@ -348,7 +348,7 @@ describe('Board API controller', () => {
 
 			it('should handle errors', () => {
 				const error = new Error('Jastra\'s Milkshake brings all the boys to her back yard');
-				sandbox.stub(Game, 'getGame').rejects(error);
+				sandbox.stub(Game, 'get').rejects(error);
 				const mockRequest = {
 					params: {
 						id: 4
@@ -407,7 +407,7 @@ describe('Board API controller', () => {
 				});
 				const expected = 'this is a brave new world';
 				sandbox.stub(game, 'save').resolves();
-				sandbox.stub(Game, 'getGame').resolves(game);
+				sandbox.stub(Game, 'get').resolves(game);
 				return boardControl.updateGame({
 					body: {
 						Name: expected,
@@ -427,7 +427,7 @@ describe('Board API controller', () => {
 				});
 				const expected = 'this is a brave new world';
 				sandbox.stub(game, 'save').resolves();
-				sandbox.stub(Game, 'getGame').resolves(game);
+				sandbox.stub(Game, 'get').resolves(game);
 				return boardControl.updateGame({
 					body: {
 						Owner: expected,
@@ -448,7 +448,7 @@ describe('Board API controller', () => {
 				});
 				const expected = true;
 				sandbox.stub(game, 'save').resolves();
-				sandbox.stub(Game, 'getGame').resolves(game);
+				sandbox.stub(Game, 'get').resolves(game);
 				return boardControl.updateGame({
 					body: {
 						Adult: expected,
@@ -469,7 +469,7 @@ describe('Board API controller', () => {
 				});
 				const expected = 'Somebody once told me the world was gonna roll me';
 				sandbox.stub(game, 'save').resolves();
-				sandbox.stub(Game, 'getGame').resolves(game);
+				sandbox.stub(Game, 'get').resolves(game);
 				return boardControl.updateGame({
 					body: {
 						Game:{
@@ -489,7 +489,7 @@ describe('Board API controller', () => {
 					Name: 'bar'
 				});
 				sandbox.stub(game, 'save').resolves();
-				sandbox.stub(Game, 'getGame').resolves(game);
+				sandbox.stub(Game, 'get').resolves(game);
 				return boardControl.updateGame({
 					body: {
 						Name: 'foo',
@@ -504,7 +504,7 @@ describe('Board API controller', () => {
 			});
 
 			it('should resolve with status 404 on not found', () => {
-				sandbox.stub(Game, 'getGame').resolves(null);
+				sandbox.stub(Game, 'get').resolves(null);
 				return boardControl.updateGame({
 					body: {},
 					params: {
@@ -516,7 +516,7 @@ describe('Board API controller', () => {
 			});
 			it('should resolve with status 404 on not found', () => {
 				const err = new Error('Hi there boys and girls!');
-				sandbox.stub(Game, 'getGame').rejects(err);
+				sandbox.stub(Game, 'get').rejects(err);
 				return boardControl.updateGame({
 					body: {},
 					params: {}

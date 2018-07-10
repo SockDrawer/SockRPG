@@ -46,12 +46,12 @@ describe('Thread API Controller', () => {
 		};
 
 		it('Should return 404 if no such board', () => {
-			sandbox.stub(Board, 'getBoard').resolves(null);
+			sandbox.stub(Board, 'get').resolves(null);
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => mockResponse.status.should.have.been.calledWith(404));
 		});
 
 		it('Should return an empty list of the board has no threads', () => {
-			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
+			sandbox.stub(Board, 'get').resolves(mockBoard);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([]);
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => {
 				Thread.getThreadsInBoard.should.have.been.called;
@@ -63,7 +63,7 @@ describe('Thread API Controller', () => {
 		it('Should return a list of threads if there are any', () => {
 			const threadList = [new Thread({ID: 1, Title: 'banana'})];
 			const expected = '[{"ID":1,"Title":"banana","Canonical":"/api/threads/1"}]';
-			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
+			sandbox.stub(Board, 'get').resolves(mockBoard);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves(threadList);
 			return threadController.getThreadsForBoard(mockRequest, mockResponse).then(() => {
 				Thread.getThreadsInBoard.should.have.been.called;
@@ -88,12 +88,12 @@ describe('Thread API Controller', () => {
 		});
 
 		it('Should return 404 if no such board', () => {
-			sandbox.stub(Board, 'getBoard').resolves(null);
+			sandbox.stub(Board, 'get').resolves(null);
 			return threadController.addThreadToBoard(mockRequest, mockResponse).then(() => mockResponse.status.should.have.been.calledWith(404));
 		});
 
 		it('Should add a thread', () => {
-			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
+			sandbox.stub(Board, 'get').resolves(mockBoard);
 			sandbox.stub(Thread, 'addThread').resolves([1]);
 			return threadController.addThreadToBoard(mockRequest, mockResponse).then(() => {
 				mockResponse.status.should.have.been.calledWith(200);
@@ -102,7 +102,7 @@ describe('Thread API Controller', () => {
 			});
 		});
 		it('Should add a thread with a missing body', () => {
-			sandbox.stub(Board, 'getBoard').resolves(mockBoard);
+			sandbox.stub(Board, 'get').resolves(mockBoard);
 			sandbox.stub(Thread, 'addThread').resolves([1]);
 			return threadController.addThreadToBoard({
 				params: {

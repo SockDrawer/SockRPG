@@ -161,7 +161,7 @@ describe('Game API controller', () => {
 				threadList: []
 			};
 
-			sandbox.stub(Game, 'getGame').resolves(new Game(data));
+			sandbox.stub(Board, 'get').resolves(new Game(data));
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves();
 
 			const mockRequest = {
@@ -205,7 +205,7 @@ describe('Game API controller', () => {
 				}
 			};
 
-			sandbox.stub(Game, 'getGame').resolves(new Game(data));
+			sandbox.stub(Game, 'get').resolves(new Game(data));
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ID: 1}, {ID: 2}, {ID: 3}]);
 
 			const mockRequest = {
@@ -235,7 +235,7 @@ describe('Game API controller', () => {
 		});
 
 		it('should return a 404 if no game exists', () => {
-			sandbox.stub(Game, 'getGame').resolves(undefined);
+			sandbox.stub(Game, 'get').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -259,7 +259,7 @@ describe('Game API controller', () => {
 		});
 
 		it('should return a 501 if no ID passed in', () => {
-			sandbox.stub(Game, 'getGame').resolves(undefined);
+			sandbox.stub(Game, 'get').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -286,7 +286,7 @@ describe('Game API controller', () => {
 				error: 'oops i asploded'
 			};
 
-			sandbox.stub(Game, 'getGame').rejects('oops i asploded');
+			sandbox.stub(Game, 'get').rejects('oops i asploded');
 
 			const mockRequest = {
 				params: {
@@ -322,7 +322,7 @@ describe('Game API controller', () => {
 				threadList: []
 			};
 
-			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
+			sandbox.stub(Board, 'get').resolves(new Board(data));
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves();
 
 			const mockRequest = {
@@ -362,7 +362,7 @@ describe('Game API controller', () => {
 				IC: null
 			};
 
-			sandbox.stub(Board, 'getBoard').resolves(new Board(data));
+			sandbox.stub(Board, 'get').resolves(new Board(data));
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([{ID: 1}, {ID: 2}, {ID: 3}]);
 
 			const mockRequest = {
@@ -392,7 +392,7 @@ describe('Game API controller', () => {
 		});
 
 		it('should return a 404 if no board exists', () => {
-			sandbox.stub(Board, 'getBoard').resolves(undefined);
+			sandbox.stub(Board, 'get').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -416,7 +416,7 @@ describe('Game API controller', () => {
 		});
 
 		it('should return a 501 if no ID passed in', () => {
-			sandbox.stub(Board, 'getBoard').resolves(undefined);
+			sandbox.stub(Board, 'get').resolves(undefined);
 
 			const mockRequest = {
 				params: {
@@ -443,7 +443,7 @@ describe('Game API controller', () => {
 				error: 'oops i asploded'
 			};
 
-			sandbox.stub(Board, 'getBoard').rejects('oops i asploded');
+			sandbox.stub(Board, 'get').rejects('oops i asploded');
 
 			const mockRequest = {
 				params: {
