@@ -77,6 +77,17 @@ describe('Board model', () => {
 		return Board.addBoard({}).should.be.rejectedWith(Error);
 	});
 
+	describe('static getBoards()', () => {
+		it('should get boards and games', () => {
+			const expected = [1, 2, 3];
+			sandbox.stub(utils, 'getBoardsAndGames').resolves(expected);
+			return Board.getBoards(1701).then((results) => {
+				results.should.equal(expected);
+				utils.getBoardsAndGames.calledWith(1701).should.be.true;
+			});
+		});
+	});
+
 	it('should find an existing board by ID', () => {
 		const boardObj = {
 			Owner: userID,
