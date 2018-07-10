@@ -126,6 +126,10 @@ describe('Board model', () => {
 					ID: 1
 				});
 		});
+
+		it('should not find a non-existant board by ID', () => {
+			return Board.get(0).should.eventually.equal(null);
+		});
 	});
 
 	describe('static getAllBoards()', () => {
@@ -147,10 +151,6 @@ describe('Board model', () => {
 					boards.filter((board) => board.Name === 'Board2').should.have.length(1);
 				});
 		});
-	});
-
-	it('should not find a non-existant board by ID', () => {
-		return Board.get(0).should.eventually.equal(null);
 	});
 
 	describe('Constructor', () => {
