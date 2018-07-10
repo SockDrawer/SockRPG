@@ -106,8 +106,8 @@ class Board {
 	}
 
 	/**
-    * Get all boards and games that belong to a parent board, or all root-level
-    * boards and games if no parent specified.
+	* Get all boards and games that belong to a parent board, or all root-level
+	* boards and games if no parent specified.
 	*
 	* @param {Number} [parent] The parent board, or `null` for root-level boards
 	*

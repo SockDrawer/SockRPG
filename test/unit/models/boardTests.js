@@ -101,6 +101,17 @@ describe('Board model', () => {
 				utils.getBoardsAndGames.calledWith(1701).should.be.true;
 			});
 		});
+		it('should get boards and games (Using Board)', () => {
+			const board = new Board({
+				ID: 1701
+			});
+			const expected = [1, 2, 3];
+			sandbox.stub(utils, 'getBoardsAndGames').resolves(expected);
+			return Board.getChildrenOf(board).then((results) => {
+				results.should.equal(expected);
+				utils.getBoardsAndGames.calledWith(1701).should.be.true;
+			});
+		});
 	});
 
 	describe('static get()', () => {
