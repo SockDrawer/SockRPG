@@ -52,7 +52,7 @@ function getAllGames(_, res) {
  */
 function getGame(req, res) {
 	if (!req.params.id) {
-		res.status(501).send({error: 'Missing ID'});
+		res.status(400).send({error: 'Missing ID'});
 		return Promise.resolve();
 	}
 
@@ -143,7 +143,7 @@ function getAllBoards(_, res) {
  */
 function getBoard(req, res) {
 	if (!req.params.id) {
-		res.status(501).send({error: 'Missing ID'});
+		res.status(400).send({error: 'Missing ID'});
 		return Promise.resolve();
 	}
 

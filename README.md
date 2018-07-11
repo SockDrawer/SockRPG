@@ -5,7 +5,6 @@
 
 [![Stories in Ready](https://badge.waffle.io/SockDrawer/SockRPG.png?label=ready&title=Ready)](https://waffle.io/SockDrawer/SockRPG)
 
-
 SockRPG: A Forum built by role players, for roleplayers.
 
 Nowhere near complete!

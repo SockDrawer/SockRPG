@@ -258,7 +258,7 @@ describe('Game API controller', () => {
 			return gameController.getGame(mockRequest, mockResponse);
 		});
 
-		it('should return a 501 if no ID passed in', () => {
+		it('should return a 400 if no ID passed in', () => {
 			sandbox.stub(Game, 'get').resolves(undefined);
 
 			const mockRequest = {
@@ -268,7 +268,7 @@ describe('Game API controller', () => {
 
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(501, code, 'Should return a 501');
+					assert.equal(400, code, 'Should return a 400');
 					return mockResponse;
 				},
 				send: (response) => {
@@ -415,7 +415,7 @@ describe('Game API controller', () => {
 			return boardController.getBoard(mockRequest, mockResponse);
 		});
 
-		it('should return a 501 if no ID passed in', () => {
+		it('should return a 400 if no ID passed in', () => {
 			sandbox.stub(Board, 'get').resolves(undefined);
 
 			const mockRequest = {
@@ -425,7 +425,7 @@ describe('Game API controller', () => {
 
 			const mockResponse = {
 				status: (code) => {
-					assert.equal(501, code, 'Should return a 501');
+					assert.equal(400, code, 'Should return a 400');
 					return mockResponse;
 				},
 				send: (response) => {

@@ -63,8 +63,7 @@ describe('Board API controller', () => {
 				};
 				return boardControl.getBoard(mockRequest, mockResponse)
 					.then(() => {
-						//TODO: shouldn't this a 400 series error?
-						mockResponse.status.should.be.calledWith(501);
+						mockResponse.status.should.be.calledWith(400);
 						mockResponse.send.firstCall.args[0].should.deep.equal({
 							error: 'Missing ID'
 						});
@@ -298,8 +297,7 @@ describe('Board API controller', () => {
 				};
 				return boardControl.getGame(mockRequest, mockResponse)
 					.then(() => {
-						//TODO: shouldn't this a 400 series error?
-						mockResponse.status.should.be.calledWith(501);
+						mockResponse.status.should.be.calledWith(400);
 						mockResponse.send.firstCall.args[0].should.deep.equal({
 							error: 'Missing ID'
 						});
