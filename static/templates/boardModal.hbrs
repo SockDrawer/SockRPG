@@ -1,8 +1,0 @@
-<form>
-<div class="alert alert-danger" role="alert" hidden="true"></div>
-<div class="alert alert-success" role="alert" hidden="true"></div>
-<input type="text" name="name" value="{{name}}"><br/>
-<textarea name="description">{{description}}</textarea><br/>
-Adult only: <input type="checkbox" name="adult" {{#if adult}}checked{{/if}}>
-<input type="submit" id="submitModal">
-</form>
