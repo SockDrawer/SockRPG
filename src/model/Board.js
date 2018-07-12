@@ -2,7 +2,7 @@
 
 const Threads = require('./Thread');
 const DB = require('./db');
-const utils = require('./utils');
+let Game = null; // Late load of `require('./Game')
 
 /**
  * The Board table.
@@ -13,7 +13,7 @@ const utils = require('./utils');
  * @license MIT
  * @author yamikuronue
  */
-
+ 
 class Board {
 	constructor (rowData) {
 		this.data = rowData;
@@ -66,7 +66,7 @@ class Board {
 		if (!this.data.ParentID){
 			return Promise.resolve(null);
 		}
-		return utils.getBoardOrGame(this.data.ParentID);
+		return Board.get(this.data.ParentID);
 	}
 
 	setParent (parent) {
@@ -83,7 +83,7 @@ class Board {
 	}
 	
 	getChildren () {
-		return utils.getBoardsAndGames(this.ID);
+		return Board.getChildrenOf(this.ID);
 	}
 
 	serialize() {
@@ -94,6 +94,14 @@ class Board {
 
 	save() {
 		return DB.knex('Boards').where('ID', this.ID).update(this.data);
+	}
+
+	static deserialize(data) {
+		if (data.GameID) {
+			return new Game(data);
+		}
+		delete data.gameDescription;
+		return new Board(data);
 	}
 
 	/**
@@ -117,7 +125,14 @@ class Board {
 		if (parent instanceof Board) {
 			parent = parent.ID;
 		}
-		return utils.getBoardsAndGames(parent);
+		if (!parent) {
+			parent = null;
+		}
+		return DB.knex('Boards')
+			.leftJoin('Games', 'Boards.GameID', 'Games.ID')
+			.where('Boards.ParentID', parent)
+			.select('Boards.ID', 'ParentID', 'Owner', 'Name', 'Adult', 'GameID', 'gameDescription', 'Description')
+			.then((rows) => rows.map(Board.deserialize));
 	}
 
 	/**
@@ -128,7 +143,16 @@ class Board {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static get(id) {
-		return utils.getBoardOrGame(id);
+		return DB.knex('Boards')
+			.leftJoin('Games', 'Boards.GameID', 'Games.ID')
+			.where('Boards.ID', id)
+			.select('Boards.ID', 'ParentID', 'Owner', 'Name', 'Adult', 'GameID', 'gameDescription', 'Description')
+			.then((rows) => {
+				if (!rows.length) {
+					return null;
+				}
+				return Board.deserialize(rows[0]);
+			});
 	}
 
 	/**
@@ -161,3 +185,5 @@ class Board {
 }
 
 module.exports = Board;
+
+Game = require('./Game');

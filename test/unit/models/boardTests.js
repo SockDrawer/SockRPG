@@ -12,7 +12,6 @@ const Sinon = require('sinon');
 //Module to test
 const Board = require('../../../src/model/Board.js');
 const Game = require('../../../src/model/Game.js');
-const utils = require('../../../src/model/utils.js');
 const DB = require('../../../src/model/db');
 
 describe('Board model', () => {
@@ -93,42 +92,125 @@ describe('Board model', () => {
 	});
 
 	describe('static getChildrenOf()', () => {
-		it('should get boards and games', () => {
-			const expected = [1, 2, 3];
-			sandbox.stub(utils, 'getBoardsAndGames').resolves(expected);
-			return Board.getChildrenOf(1701).then((results) => {
-				results.should.equal(expected);
-				utils.getBoardsAndGames.calledWith(1701).should.be.true;
+		beforeEach(() => Promise.all([
+			Board.addBoard({
+				Owner: -1,
+				Name: 'Board1',
+				ParentID: null
+			}),
+			Board.addBoard({
+				Owner: -1,
+				Name: 'Board2',
+				ParentID: null
+			}),
+			Board.addBoard({
+				Owner: -1,
+				Name: 'SubBoard1',
+				ParentID: 1
+			}),
+			Game.addGame({
+				Owner: -1,
+				Name: 'Game1',
+				Game: {
+					gameDescription: 'a cool game'
+				},
+				ParentID: null
+			}),
+			Game.addGame({
+				Owner: -1,
+				Name: 'Game2',
+				Game: {
+					gameDescription: 'a cool game'
+				},
+				ParentID: null
+			}),
+			Game.addGame({
+				Owner: -1,
+				Name: 'SubGame1',
+				Game: {
+					gameDescription: 'a cool game'
+				},
+				ParentID: 2
+			}),
+			Game.addGame({
+				Owner: -1,
+				Name: 'SubGame1',
+				Game: {
+					gameDescription: 'a cool game'
+				},
+				ParentID: 3
+			}),
+			Board.addBoard({
+				Owner: -1,
+				Name: 'SubBoard1',
+				ParentID: 3
+			})
+		]));
+		it('should get child Game', () => {
+			return Board.getChildrenOf(2).then((results) => {
+				results.should.have.length(1);
+				results[0].should.be.instanceof(Game);
 			});
 		});
-		it('should get boards and games (Using Board)', () => {
-			const board = new Board({
-				ID: 1701
+		it('should get child Board', () => {
+			return Board.getChildrenOf(2).then((results) => {
+				results.should.have.length(1);
+				results[0].should.be.instanceof(Board);
 			});
-			const expected = [1, 2, 3];
-			sandbox.stub(utils, 'getBoardsAndGames').resolves(expected);
-			return Board.getChildrenOf(board).then((results) => {
-				results.should.equal(expected);
-				utils.getBoardsAndGames.calledWith(1701).should.be.true;
+		});
+		it('should get child Board and Game', () => {
+			return Board.getChildrenOf(3).then((results) => {
+				results.should.have.length(2);
+				results[1].should.be.instanceof(Game);
+				results[0].should.be.instanceof(Board);
+			});
+		});
+		it('should get root Board and Game', () => {
+			return Board.getChildrenOf(null).then((results) => {
+				results.should.have.length(4);
+				results.filter((row) => !(row instanceof Game)).should.have.length(2);
+				results.filter((row) => row instanceof Game).should.have.length(2);
+			});
+		});
+		it('should get root Board and Game (falsey parent)', () => {
+			return Board.getChildrenOf(0).then((results) => {
+				results.should.have.length(4);
+				results.filter((row) => !(row instanceof Game)).should.have.length(2);
+				results.filter((row) => row instanceof Game).should.have.length(2);
 			});
 		});
 	});
 
 	describe('static get()', () => {
-		it('should find an existing board by ID', () => {
-			const boardObj = {
-				Owner: userID,
+		it('should get null on not found', () => {
+			return Board.get(42).should.eventually.equal(null);
+		});
+		it('should get a Board', () => {
+			const board = new Board({
+				Owner: -1,
 				Name: 'Board1'
-			};
-			return Board.addBoard(boardObj)
+			});
+			return Board.addBoard(board)
 				.then(() => Board.get(1))
-				.should.eventually.contain.all({
-					ID: 1
+				.then((result) => {
+					result.should.be.instanceof(Board);
+					result.should.not.be.instanceof(Game);
 				});
 		});
-
-		it('should not find a non-existant board by ID', () => {
-			return Board.get(0).should.eventually.equal(null);
+		it('should get a Game', () => {
+			const game = new Game({
+				Owner: -1,
+				Name: 'Board1',
+				Game: {
+					gameDescription: 'a cool game'
+				}
+			});
+			return Game.addGame(game)
+				.then(() => Board.get(1))
+				.then((result) => {
+					result.should.be.instanceof(Board);
+					result.should.be.instanceof(Game);
+				});
 		});
 	});
 
@@ -290,10 +372,10 @@ describe('Board model', () => {
 			const parent = {
 				ID: 666
 			};
-			sandbox.stub(utils, 'getBoardOrGame').resolves(parent);
+			sandbox.stub(Board, 'get').resolves(parent);
 			return board.getParent().then((result) => {
 				result.should.equal(parent);
-				utils.getBoardOrGame.calledWith(42).should.be.true;
+				Board.get.calledWith(42).should.be.true;
 			});
 		});
 	
@@ -302,7 +384,7 @@ describe('Board model', () => {
 				Owner: userID,
 				Name: 'Board1'
 			});
-			sandbox.stub(utils, 'getBoardOrGame').rejects(new Error());
+			sandbox.stub(Board, 'get').rejects(new Error());
 			return board.getParent().should.eventually.become(null);
 		});
 	});
@@ -408,7 +490,7 @@ describe('Board model', () => {
 	describe('getChildren()', () => {
 		it('should get children boards and games', () => {
 			const expected = [1, 2, 3];
-			sandbox.stub(utils, 'getBoardsAndGames').resolves(expected);
+			sandbox.stub(Board, 'getChildrenOf').resolves(expected);
 			const board = new Board({
 				Owner: userID,
 				Name: 'Board1',
@@ -416,7 +498,7 @@ describe('Board model', () => {
 			});
 			return board.getChildren().then((results) => {
 				results.should.equal(expected);
-				utils.getBoardsAndGames.calledWith(1701).should.be.true;
+				Board.getChildrenOf.calledWith(1701).should.be.true;
 			});
 		});
 	});
