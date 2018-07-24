@@ -35,7 +35,7 @@ const Board = require('../model/Board');
 */
 function getThreadsForBoard(req, res) {
 
-	return Board.getBoard(req.params.id).then((data) => {
+	return Board.get(req.params.id).then((data) => {
 		if (!data) {
 			res.status(404).end();
 			return Promise.resolve();
@@ -84,7 +84,7 @@ function getThread(req, res) {
 * @returns {Promise} A Promise that is resolved when the thread is added
 */
 function addThreadToBoard(req, res) {
-	return Board.getBoard(req.params.id).then((data) => {
+	return Board.get(req.params.id).then((data) => {
 		if (!data) {
 			res.status(404).end();
 			return Promise.resolve();
