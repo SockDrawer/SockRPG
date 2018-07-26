@@ -67,45 +67,6 @@ class Game extends Board {
 	}
 
 	/**
-	 * Get all vanilla boards that belong to a parent board, or all root-level vanilla boards if no parent specified.
-	 *
-	 * @param {Number} [parentID] The ID of the parent board, or `null` for root-level boards
-	 *
-	 * @returns {Promise} A Promise that is resolved with a list of vanilla boards
-	 */
-	static getGames(parentID) {
-		if (parentID !== 0) {
-			parentID = parentID || null; //Coerce to null to prevent avoidable errors
-		}
-
-		return DB.knex('Boards')
-			.leftJoin('ChildBoards', 'Boards.ID', 'ChildBoards.ChildID')
-			.where('parentID', parentID)
-			.select('Boards.ID', 'Owner', 'Name', 'GameID')
-			.map((row) => new Game(row));
-	}
-
-	/**
-	 * Get a vanilla board by ID.
-	 *
-	 * @param {Number} id The ID of the board requested
-	 *
-	 * @returns {Promise} A Promise that is resolved with the board requested
-	 */
-	static getGame(id) {
-		return DB.knex('Boards')
-			.innerJoin('Games', 'Boards.GameID', 'Games.ID')
-			.where('Boards.ID', id)
-			.select('Boards.ID', 'Owner', 'Name', 'Adult', 'GameID', 'gameDescription', 'Description').then((rows) => {
-				if (!rows || rows.length <= 0) {
-					return null;
-				}
-
-				return new Game(rows[0]);
-			});
-	}
-
-	/**
 	 * Add a game.
 	 *
 	 * @param {Object} game The game data to add
@@ -117,7 +78,8 @@ class Game extends Board {
 			.then(() => {
 				if (!(game instanceof Game)) {
 					if (game instanceof Board || !game.GameID && !game.Game) {
-						throw new Error('Vanilla boards cannot be added using this method; please use addBoard() instead');
+						throw new Error('Vanilla boards cannot be added using this method; ' +
+							'please use addBoard() instead');
 					}
 					game = new Game(game);
 				}

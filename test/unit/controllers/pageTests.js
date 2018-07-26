@@ -212,7 +212,7 @@ describe('Page API controller', () => {
 
 		it('should fetch board and threads from the api', () => {
 			const board = new Board(boardData);
-			sandbox.stub(Board, 'getBoard').resolves(board);
+			sandbox.stub(Board, 'get').resolves(board);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([]);
 			sandbox.spy(board, 'serialize');
 
@@ -223,7 +223,7 @@ describe('Page API controller', () => {
 			});
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
-				expect(Board.getBoard).to.have.been.calledWith(100);
+				expect(Board.get).to.have.been.calledWith(100);
 				expect(Thread.getThreadsInBoard).to.have.been.calledWith(100);
 				expect(board.serialize).to.have.been.called;
 			});
@@ -231,7 +231,7 @@ describe('Page API controller', () => {
 
 		it('should fetch board and threads from the api (null threads)', () => {
 			const board = new Board(boardData);
-			sandbox.stub(Board, 'getBoard').resolves(board);
+			sandbox.stub(Board, 'get').resolves(board);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves(null);
 			sandbox.spy(board, 'serialize');
 
@@ -242,7 +242,7 @@ describe('Page API controller', () => {
 			});
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
-				expect(Board.getBoard).to.have.been.calledWith(100);
+				expect(Board.get).to.have.been.calledWith(100);
 				expect(Thread.getThreadsInBoard).to.have.been.calledWith(100);
 				expect(board.serialize).to.have.been.called;
 			});
@@ -257,7 +257,7 @@ describe('Page API controller', () => {
 				Canonical: '/api/threads/2942'
 			};
 
-			sandbox.stub(Board, 'getBoard').resolves(board);
+			sandbox.stub(Board, 'get').resolves(board);
 			sandbox.stub(Thread, 'getThreadsInBoard').resolves([new Thread(threadData)]);
 			sandbox.spy(board, 'serialize');
 
@@ -283,7 +283,7 @@ describe('Page API controller', () => {
 		});
 
 		it('should return 404 if no board is found', () => {
-			sandbox.stub(Board, 'getBoard').resolves(undefined);
+			sandbox.stub(Board, 'get').resolves(undefined);
 			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100
@@ -296,7 +296,7 @@ describe('Page API controller', () => {
 		});
 
 		it('should return 500 if error is thrown', () => {
-			sandbox.stub(Board, 'getBoard').rejects('I AM ERROR');
+			sandbox.stub(Board, 'get').rejects('I AM ERROR');
 			const fakeReq = unauthenticatedFakeReq({
 				params: {
 					id: 100

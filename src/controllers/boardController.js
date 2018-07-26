@@ -52,12 +52,12 @@ function getAllGames(_, res) {
  */
 function getGame(req, res) {
 	if (!req.params.id) {
-		res.status(501).send({error: 'Missing ID'});
+		res.status(400).send({error: 'Missing ID'});
 		return Promise.resolve();
 	}
 
-	return Game.getGame(req.params.id).then((data) => {
-		if (!data) {
+	return Game.get(req.params.id).then((data) => {
+		if (!data || !(data instanceof Game)) {
 			return res.status(404).end();
 		}
 
@@ -97,8 +97,8 @@ function addGame(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateGame(req, res) {
-	return Game.getGame(req.params.id).then((board) => {
-		if (!board) {
+	return Game.get(req.params.id).then((board) => {
+		if (!board || !(board instanceof Game)) {
 			return res.status(404).end();
 		}
 		board.Name = req.body.Name || board.Name;
@@ -143,12 +143,12 @@ function getAllBoards(_, res) {
  */
 function getBoard(req, res) {
 	if (!req.params.id) {
-		res.status(501).send({error: 'Missing ID'});
+		res.status(400).send({error: 'Missing ID'});
 		return Promise.resolve();
 	}
 
-	return Board.getBoard(req.params.id).then((data) => {
-		if (!data) {
+	return Board.get(req.params.id).then((data) => {
+		if (!data || data instanceof Game) {
 			res.status(404).end();
 			return undefined;
 		}
@@ -191,8 +191,8 @@ function addBoard(req, res) {
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function updateBoard(req, res) {
-	return Board.getBoard(req.params.id).then((board) => {
-		if (!board) {
+	return Board.get(req.params.id).then((board) => {
+		if (!board || board instanceof Game) {
 			return res.status(404).end();
 		}
 		board.Name = req.body.Name || board.Name;

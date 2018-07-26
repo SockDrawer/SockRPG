@@ -45,15 +45,11 @@ const db = {
 				table.increments('ID').primary();
 				//This shouldn't be nullable, but we don't have users working yet
 				table.integer('Owner').references('Users.ID'); //.notNullable();
+				table.integer('ParentID').references('Boards.ID').nullable();
 				table.integer('GameID').references('Games.ID').nullable();
 				table.string('Name').notNullable();
 				table.boolean('Adult').defaultTo(false);
 				table.string('Description').notNullable().defaultTo('');
-			}],
-			['ChildBoards', (table) => {
-				table.increments('ID').primary();
-				table.integer('ParentID').references('Boards.ID').notNullable();
-				table.integer('ChildID').references('Boards.ID').notNullable();
 			}],
 			['Threads', (table) => {
 				table.increments('ID').primary();

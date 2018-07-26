@@ -35,3 +35,6 @@ errorShots
 
 #Dev Mode Database File.
 database.sqlite
+
+#vscode workspace files
+.vscode

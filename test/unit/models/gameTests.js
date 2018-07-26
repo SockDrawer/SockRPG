@@ -38,123 +38,132 @@ describe('Game model', () => {
 
 	const userID = 1;
 
-	it('should add a game', () => {
-		return Game.addGame({
-			Owner: userID,
-			Name: 'Board1',
-			Game: {
-				gameDescription: 'A cool game'
-			}
-		}).should.eventually.contain(1);
-	});
-	it('should add a game object', () => {
-		return Game.addGame(new Game({
-			Owner: userID,
-			Name: 'Board1',
-			Game: {
-				gameDescription: 'A cool game'
-			}
-		})).should.eventually.contain(1);
+	describe('static addGame()', () => {
+		it('should add a game', () => {
+			return Game.addGame({
+				Owner: userID,
+				Name: 'Board1',
+				Game: {
+					gameDescription: 'A cool game'
+				}
+			}).should.eventually.contain(1);
+		});
+		it('should add a game object', () => {
+			return Game.addGame(new Game({
+				Owner: userID,
+				Name: 'Board1',
+				Game: {
+					gameDescription: 'A cool game'
+				}
+			})).should.eventually.contain(1);
+		});
+
+		it('should add a second game', () => {
+			return Game.addGame({
+				Owner: userID,
+				Name: 'Boad1',
+				Game: {
+					gameDescription: 'A cool game'
+				}
+			}).then(() => Game.addGame({
+				Owner: userID,
+				Name: 'Board2',
+				Game: {
+					gameDescription: 'A wicked game'
+				}
+			})).should.eventually.contain(2);
+		});
+
+		it('should reject missing required fields', () => {
+			return Game.addGame({}).should.be.rejectedWith(Error);
+		});
+
+		it('should reject plain Board', () => {
+			return Game.addGame(new Board({})).should.be.rejectedWith(Error);
+		});
+
+		it('should reject missing required Name', () => {
+			return Game.addGame({
+				Game: {}
+			}).should.be.rejectedWith(Error);
+		});
 	});
 
-	it('should add a second game', () => {
-		return Game.addGame({
-			Owner: userID,
-			Name: 'Boad1',
-			Game: {
-				gameDescription: 'A cool game'
-			}
-		}).then(() => Game.addGame({
-			Owner: userID,
-			Name: 'Board2',
-			Game: {
-				gameDescription: 'A wicked game'
-			}
-		})).should.eventually.contain(2);
-	});
-
-	it('should reject missing required fields', () => {
-		return Game.addGame({}).should.be.rejectedWith(Error);
-	});
-
-	it('should reject plain Board', () => {
-		return Game.addGame(new Board({})).should.be.rejectedWith(Error);
-	});
-
-	it('should reject missing required Name', () => {
-		return Game.addGame({
-			Game: {}
-		}).should.be.rejectedWith(Error);
-	});
-
-	it('should find an existing board by ID', () => {
-		const data = {
-			Owner: userID,
-			Name: 'Board1',
-			Game: {
-				gameDescription: 'a cool game'
-			}
-		};
-		return Game.addGame(data)
-			.then(() => Game.getGame(1)).should.eventually.contain.all({
-				ID: 1
-			});
-	});
-
-	it('should not find a non-existant board by ID', () => {
-		return Game.getGame(0).should.eventually.equal(null);
-	});
-
-	it('should get all games', () => {
-		const makers = [
-			Game.addGame({
+	describe('static get()', () => {
+		it('should find an existing board by ID', () => {
+			const data = {
 				Owner: userID,
 				Name: 'Board1',
 				Game: {
 					gameDescription: 'a cool game'
 				}
-			}), Game.addGame({
-				Owner: userID,
-				Name: 'Board2',
-				Game: {
-					gameDescription: 'a cool game'
-				}
-			})
-		];
-		return Promise.all(makers)
-			.then(() => Game.getAllGames())
-			.then((games) => {
-				games.should.have.length(2);
-				games.filter((game) => game.Name === 'Board1').should.have.length(1);
-				games.filter((game) => game.Name === 'Board2').should.have.length(1);
-			});
-	});
-	it('should get all as boards', () => {
-		const makers = [
-			Game.addGame({
-				Owner: userID,
-				Name: 'Board1',
-				Game: {
-					gameDescription: 'a cool game'
-				}
-			}), Game.addGame({
-				Owner: userID,
-				Name: 'Board2',
-				Game: {
-					gameDescription: 'a cool game'
-				}
-			})
-		];
-		return Promise.all(makers)
-			.then(() => Board.getAllBoards())
-			.then((games) => {
-				games.should.have.length(2);
-				games.filter((game) => game.Name === 'Board1').should.have.length(1);
-				games.filter((game) => game.Name === 'Board2').should.have.length(1);
-			});
+			};
+			return Game.addGame(data)
+				.then(() => Game.get(1)).should.eventually.contain.all({
+					ID: 1
+				});
+		});
+
+		it('should not find a non-existant board by ID', () => {
+			return Game.get(0).should.eventually.equal(null);
+		});
 	});
 
-	describe('with threads', () => {
+	describe('static getAllGames()', () => {
+		it('should get all games', () => {
+			const makers = [
+				Game.addGame({
+					Owner: userID,
+					Name: 'Board1',
+					Game: {
+						gameDescription: 'a cool game'
+					}
+				}), Game.addGame({
+					Owner: userID,
+					Name: 'Board2',
+					Game: {
+						gameDescription: 'a cool game'
+					}
+				})
+			];
+			return Promise.all(makers)
+				.then(() => Game.getAllGames())
+				.then((games) => {
+					games.should.have.length(2);
+					games.filter((game) => game.Name === 'Board1').should.have.length(1);
+					games.filter((game) => game.Name === 'Board2').should.have.length(1);
+				});
+		});
+	});
+
+	describe('static getAllBoards()', () => {
+		it('should get all as boards', () => {
+			const makers = [
+				Game.addGame({
+					Owner: userID,
+					Name: 'Board1',
+					Game: {
+						gameDescription: 'a cool game'
+					}
+				}), Game.addGame({
+					Owner: userID,
+					Name: 'Board2',
+					Game: {
+						gameDescription: 'a cool game'
+					}
+				})
+			];
+			return Promise.all(makers)
+				.then(() => Board.getAllBoards())
+				.then((games) => {
+					games.should.have.length(2);
+					games.filter((game) => game.Name === 'Board1').should.have.length(1);
+					games.filter((game) => game.Name === 'Board2').should.have.length(1);
+				});
+		});
+	});
+
+	describe('getThreads()', () => {
 		let game;
 		const Thread = require('../../../src/model/Thread.js');
 
@@ -167,7 +176,7 @@ describe('Game model', () => {
 				}
 			};
 			return Game.addGame(data)
-				.then((ids) => Game.getGame(ids[0]))
+				.then((ids) => Game.get(ids[0]))
 				.then((oot) => {
 					game = oot;
 				});
@@ -199,11 +208,11 @@ describe('Game model', () => {
 					gameDescription: 'A wicked game'
 				}
 			}))
-			.then(() => Game.getGame(1))
+			.then(() => Game.get(1))
 			.then((game) => {
 				mutator(game);
 				return game.save()
-					.then(() => Game.getGame(1))
+					.then(() => Game.get(1))
 					.then((afterGame) => [game, afterGame]);
 			});
 

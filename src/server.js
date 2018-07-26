@@ -10,9 +10,10 @@
 
 const express = require('express');
 const exphbs = require('express-handlebars');
-const app = express();
+
 const bodyParser = require('body-parser');
 const debug = require('debug')('server');
+const promisify = require('util').promisify;
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const csurf = require('csurf');
@@ -37,9 +38,12 @@ const hbs = exphbs.create({
 	partialsDir: 'src/views/partials'
 });
 
-let server;
-
 let println = debug;
+let abort = () => {
+	throw new Error('Initialization Error');
+};
+
+let app, server;
 
 /**
  * Initialise the DAO
@@ -49,11 +53,10 @@ let println = debug;
 function setupDao(config) {
 	debug('Initializing dao');
 	//For now, static config
-	//TODO: make this configurable
 	return DB.initialise(config).then(() => {
 		if (!DB.isInitialised()) {
 			println('Initialization error');
-			process.exit(1);
+			abort();
 		}
 	});
 }
@@ -140,7 +143,9 @@ function setupExpress() {
 					res.redirect('/');
 				});
 
-			const jsonParser = bodyParser.json({type: 'application/json'});
+			const jsonParser = bodyParser.json({
+				type: 'application/json'
+			});
 			/*API*/
 			app.route('/api/games')
 				.get(cBoard.getAllGames)
@@ -212,23 +217,26 @@ function setupExpress() {
 /**
  * Initialise the server
  * @param {Object} config The configuration object to use
+ * @param {express} createApplicationFunc Function to create an express application.
  * @returns {Promise} A promise chain that resolves when the server is running
  */
-function setup(config) {
+function setup(config, createApplicationFunc) {
+	app = createApplicationFunc();
 	return setupDao(config).then(() => setupExpress()).then(() => {
-		const port = process.env.PORT || 9000;
-		server = app.listen(port);
-		println(`Server now listening on port ${port}`);
+		server = app.listen(config.http.port);
+		println(`Server now listening on port ${config.http.port}`);
 	});
 }
 
 /**
  * Stop the server
+ * @returns {Promise} A promise chain that resolves when the server is running
  */
 function stop() {
-	server.close(() => {
-		DB.teardown().then(() => println('Server stopped'));
-	});
+	const stopHttp = promisify(server.close.bind(server));
+	return stopHttp()
+		.then(() => DB.teardown())
+		.then(() => println('Server stopped'));
 }
 /**
  * Returns a vanilla 405 Method Not Allowed error
@@ -241,18 +249,26 @@ function return405(_, res) {
 
 module.exports = {
 	setup: setup,
-	stop: stop
+	stop: stop,
+	send405: return405
 };
 
+/* istanbul ignore if */
 if (require.main === module) {
 	// eslint-disable-next-line no-console
 	println = (msg) => console.log(msg);
+
+	abort = () => process.exit(1);
 
 	//TODO: Make this read from a file
 	setup({
 		database: {
 			engine: 'sqlite3',
 			filename: 'database.sqlite'
+		},
+		http: {
+			// eslint-disable-next-line no-process-env
+			port: process.env.PORT || 9000
 		}
-	});
+	}, express);
 }
