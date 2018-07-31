@@ -36,6 +36,11 @@
 
 
 /* WIZARD NAVIGATION */
+
+.wizard-close {
+	display: none;	
+}
+
 .wizard-steps {
 	width: 28%;
 	background-color: #f5f5f5;
