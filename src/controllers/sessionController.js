@@ -66,9 +66,7 @@ const addSession = [
 			return getSession(req, res);
 		}
 		
-		if (req.body) {
-			req.body = {username: req.body.Username, password: req.body.Password};
-		}
+		req.body = {username: req.body.Username, password: req.body.Password};
 		return next();
 	},
 	passport.authenticate('local'),
