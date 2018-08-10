@@ -211,7 +211,7 @@ if (require.main === module) {
 	setup({
 		database: {
 			engine: 'sqlite3',
-			filename: 'database.sqlite'
+			filename: './db/database.sqlite'
 		},
 		http: {
 			// eslint-disable-next-line no-process-env
