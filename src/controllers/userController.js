@@ -34,7 +34,7 @@ const debug = require('debug')('SockRPG:controller:User');
  */
 function getAllUsers(_, res) {
 	return User.getAllUsers().then((data) => {
-		res.send(data.map((user) => user.serialize()));
+		res.send(data);
 	}).catch((err) => {
 		debug(`Error Retrieving Users: ${err.toString()}`);
 		//TODO: Add Proper Logging
@@ -59,7 +59,7 @@ function getUser(req, res) {
 			return;
 		}
 
-		res.send(user.serialize());
+		res.status(200).send(user.serialize());
 	};
 
 	const handleError = (err) => {
@@ -107,6 +107,10 @@ function addUser(req, res) {
 function updateUser(req, res) {
 
 	return User.getUser(req.params.id).then((user) => {
+		if (user === null) {
+			return res.status(404).end();
+		}
+		
 		user.Username = req.body.Username || user.Username;
 
 		return user.save();
@@ -116,12 +120,7 @@ function updateUser(req, res) {
 		debug(`Error Updating User: ${err.toString()}`);
 		//TODO: Add Proper Logging
 
-		// TODO: Remove switching on string in favor of better method
-		if (err.toString().indexOf('No such') > -1) {
-			res.status(404).send({error: err.toString()});
-		} else {
-			res.status(500).send({error: err.toString()});
-		}
+		res.status(500).send({error: err.toString()});
 	});
 }
 

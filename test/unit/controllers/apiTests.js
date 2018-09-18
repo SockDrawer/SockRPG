@@ -494,15 +494,13 @@ describe('User API Controller', () => {
 				Username: 'user2'
 			}];
 
-			sandbox.stub(User, 'getAllUsers').resolves(data.map((user) => new User(user)));
+			sandbox.stub(User, 'getAllUsers').resolves(data);
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(200, code, 'Should return a 200 ok if anything');
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].Canonical = '/api/users/1';
-					data[1].Canonical = '/api/users/2';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
