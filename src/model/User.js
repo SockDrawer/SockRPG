@@ -18,7 +18,7 @@ class User {
 		this.data = {};
 		this.data.ID = row.ID;
 		this.data.Username = row.Username;
-		this.data.Admin = row.Admin;
+		this.data.Admin = Boolean(row.Admin);
 		this.data.AuthSecret = row.AuthSecret;
 		
 		//Canonical link
@@ -27,11 +27,6 @@ class User {
 	
 	get ID() {
 		return this.data.ID;
-	}
-	
-	set ID(id) {
-		this.data.ID = Number(id);
-		this.data.Canonical = `/api/boards/${this.data.ID}`;
 	}
 	
 	get Username() {
@@ -43,7 +38,7 @@ class User {
 	}
 	
 	get Admin() {
-		return this.data.Admin;
+		return Boolean(this.data.Admin);
 	}
 	
 	set Admin(a) {
