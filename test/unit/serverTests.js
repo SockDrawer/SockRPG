@@ -105,27 +105,5 @@ describe('server', () => {
 		it('should have more than one route', () => {
 			Object.keys(appRoutes).length.should.be.greaterThan(1);
 		});
-		describe('/example', () => {
-			it('should handle GET verb', () => {
-				const handler = appRoutes['/example'].get.firstCall.args[0];
-				handler(null, mockResponse);
-				mockResponse.send.calledWith('GETs will read things!').should.be.true;
-			});
-			it('should handle POST verb', () => {
-				const handler = appRoutes['/example'].post.firstCall.args[0];
-				handler(null, mockResponse);
-				mockResponse.send.calledWith('POSTs will create things!').should.be.true;
-			});
-			it('should handle PUT verb', () => {
-				const handler = appRoutes['/example'].put.firstCall.args[0];
-				handler(null, mockResponse);
-				mockResponse.send.calledWith('PUTs will edit things!').should.be.true;
-			});
-			it('should handle DELETE verb', () => {
-				const handler = appRoutes['/example'].delete.firstCall.args[0];
-				handler(null, mockResponse);
-				mockResponse.send.calledWith('Danger Will Robinson!').should.be.true;
-			});
-		});
 	});
 });
