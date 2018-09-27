@@ -1,6 +1,7 @@
 'use strict';
 
 const DB = require('./db');
+const bcrypt = require('bcrypt');
 
 /**
  * The User table.
@@ -17,6 +18,8 @@ class User {
 		this.data = {};
 		this.data.ID = row.ID;
 		this.data.Username = row.Username;
+		this.data.Admin = Boolean(row.Admin);
+		this.data.AuthSecret = row.AuthSecret;
 		
 		//Canonical link
 		this.Canonical = `/api/users/${this.data.ID}`;
@@ -24,11 +27,6 @@ class User {
 	
 	get ID() {
 		return this.data.ID;
-	}
-	
-	set ID(id) {
-		this.data.ID = Number(id);
-		this.data.Canonical = `/api/boards/${this.data.ID}`;
 	}
 	
 	get Username() {
@@ -39,9 +37,26 @@ class User {
 		this.data.Username = us;
 	}
 	
+	get Admin() {
+		return Boolean(this.data.Admin);
+	}
+	
+	set Admin(a) {
+		this.data.Admin = a;
+	}
+	
+	get AuthSecret() {
+		return this.data.AuthSecret;
+	}
+	
+	set AuthSecret(a) {
+		this.data.AuthSecret = a;
+	}
+	
 	serialize() {
 		const serial = JSON.parse(JSON.stringify(this.data));
 		serial.Canonical = this.Canonical;
+		delete serial.AuthSecret; // Users of serailization don't need this... it really really shouldn't leave the server
 		return serial;
 	}
 	
@@ -57,7 +72,25 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the user added
 	*/
 	static addUser(user) {
-		return DB.knex('Users').insert(user);
+		// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
+		const hashRounds = 10;
+		
+		// TODO: Various anti-abuse checks eventually should probably go here.
+		
+		if (user.Admin) {
+			// TODO: Validate whether this is a situation where the created user can be an admin.
+		}
+		
+		return bcrypt.hash(user.Password, hashRounds)
+		.then((hash) => {
+			// Create copy of the user object with an AuthSecret instead of Password.
+			const newUser = {
+				Username: user.Username,
+				Admin: user.Admin,
+				AuthSecret: `bcrypt:${hash}`
+			};
+			return Promise.resolve(DB.knex('Users').insert(newUser));
+		});
 	}
 	
 	/**
@@ -78,7 +111,7 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUser(id) {
-		return DB.knex('Users').where('ID', id).select('ID', 'Username').then((rows) => {
+		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'Admin', 'AuthSecret').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}
@@ -95,12 +128,62 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUserByName(name) {
-		return DB.knex('Users').where('Username', name).select('ID', 'Username').then((rows) => {
+		return DB.knex('Users').where('Username', name).select('ID', 'Username', 'Admin', 'AuthSecret').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}
 			
 			return new User(rows[0]);
+		});
+	}
+	
+	/**
+	* Authenticate a user by passwordpassword is correct
+	*
+	* @param {String} user The user being checked for authentication
+	* @param {String} pass The password for the user
+	*
+	* @returns {Promise} A Promise that is resolved with true if the user is authenticated, false otherwise
+	*/
+	static authUserByPassword(user, pass) {
+		const authSecret = user.AuthSecret.split(':');
+		const authMethod = authSecret[0];
+		const authHash = authSecret[1];
+			
+		if (authMethod === 'bcrypt') {
+			return bcrypt.compare(pass, authHash);
+		}
+		
+		// No valid auth method, return null.
+		return Promise.resolve(false);
+	}
+	
+	/**
+	* Get a user by name, but only if the supplied password is correct
+	*
+	* @param {String} name The username of the user requested
+	* @param {String} pass The password for the user
+	*
+	* @returns {Promise} A Promise that is resolved with the user or null
+	*/
+	static getAuthenticatedUserByNameAndPassword(name, pass) {
+		// TODO: Anti-abuse rate limiting should perhaps eventually go here.
+		
+		return User.getUserByName(name).then((user) => {
+			// If no user is found, return null.
+			if (!user) {
+				return null;
+			}
+			
+			return Promise.resolve(User.authUserByPassword(user, pass).then((ret) => {
+				if (ret) {
+					// Success, return logged in user.
+					return user;
+				}
+				
+				// Wrong password, return null.
+				return null;
+			}));
 		});
 	}
 }

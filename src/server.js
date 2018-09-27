@@ -14,9 +14,14 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const debug = require('debug')('server');
 const promisify = require('util').promisify;
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const csurf = require('csurf');
+const validator = require('express-validator');
 
 //Model
 const DB = require('./model/db');
+const User = require('./model/User');
 
 //Controllers
 const cBoard = require('./controllers/boardController.js');
@@ -24,6 +29,7 @@ const cThread = require('./controllers/threadController.js');
 const cPost = require('./controllers/postController.js');
 const cPage = require('./controllers/pageController.js');
 const cUser = require('./controllers/userController.js');
+const cSession = require('./controllers/sessionController.js');
 
 //Views
 const hbs = exphbs.create({
@@ -55,6 +61,35 @@ function setupDao(config) {
 	});
 }
 
+/* Passport*/
+
+const passport = require('passport'), LocalStrategy = require('passport-local').Strategy;
+  
+passport.serializeUser((user, done) => {
+	done(null, user.ID);
+});
+
+passport.deserializeUser((user, done) => {
+	User.getUser(user).then((u) => done(null, u));
+});
+
+passport.use(new LocalStrategy({
+	usernameField: 'username',
+	passwordField: 'password',
+	passReqToCallback: true
+},
+(req, username, password, done) => {
+	User.getAuthenticatedUserByNameAndPassword(username, password).then((user) => {
+		if (!user) {
+			return done(null, false, {message: 'Incorrect username or password.'});
+		}
+
+		// Successful authentication.
+		return done(null, user);
+	});
+}
+));
+
 /**
  * Initialise the Express server
  * @returns {Promise} A promise chain that resolves when the server is ready to use
@@ -67,23 +102,19 @@ function setupExpress() {
 			app.set('view engine', 'handlebars');
 			app.set('views', 'src/views');
 
-
-			//This is purely an example to show how the routing will be implemented for each endpoint
-			//Any unsupported methods will be omitted
-			app.route('/example')
-				.get((req, res) => {
-					res.send('GETs will read things!');
-				})
-				.post((req, res) => {
-					res.send('POSTs will create things!');
-				})
-				.put((req, res) => {
-					res.send('PUTs will edit things!');
-				})
-				.delete((req, res) => {
-					res.send('Danger Will Robinson!');
-				});
-
+			//<Middleware
+			app.use(bodyParser.urlencoded({extended: false}));
+			app.use(validator());
+			app.use(cookieParser());
+			app.use(session({
+				secret: 'keyboard cat',
+				resave: false,
+				saveUninitialized: false
+			}));
+			app.use(csurf({cookie: false}));
+			app.use(passport.initialize());
+			app.use(passport.session());
+			
 
 			//Static content and uploads
 			app.use('/static', express.static('static'));
@@ -96,6 +127,21 @@ function setupExpress() {
 				.get(cPage.getBoardView);
 			app.route('/thread/:id')
 				.get(cPage.getThreadView);
+
+			app.route('/login')
+				.get(cPage.getLoginView)
+				.post(passport.authenticate('local', {successRedirect: '/', failureRedirect: '/login'})
+				);
+
+			app.route('/signup')
+				.get(cPage.getSignupView)
+				.post(cPage.postSignup);
+
+			app.route('/logout')
+				.get((req, res) => {
+					req.logout();
+					res.redirect('/');
+				});
 
 			const jsonParser = bodyParser.json({
 				type: 'application/json'
@@ -156,6 +202,13 @@ function setupExpress() {
 				.patch(return405)
 				.delete(return405)
 				.put(jsonParser, cPost.addPost);
+
+			app.route('/api/session')
+				.get(cSession.getSession)
+				.post(jsonParser, cSession.addSession)
+				.patch(return405)
+				.delete(cSession.deleteSession)
+				.put(jsonParser, cSession.addSession);
 
 			resolve();
 		});

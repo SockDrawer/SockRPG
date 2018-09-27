@@ -28,6 +28,9 @@ const Board = require('../model/Board');
 const Game = require('../model/Game');
 const Thread = require('../model/Thread');
 const Post = require('../model/Post');
+const User = require('../model/User');
+const db = require('../model/db');
+const {check, validationResult} = require('express-validator/check');
 
 const debug = require('debug')('SockRPG:controller:Page');
 
@@ -39,7 +42,7 @@ const debug = require('debug')('SockRPG:controller:Page');
  */
 function getHomePage(req, res) {
 	const data = {};
-
+	
 	return Board.getAllBoards().then((boards) => {
 		data.boards = boards ? boards.map((board) => board.serialize()) : boards;
 		return Game.getAllGames();
@@ -48,11 +51,36 @@ function getHomePage(req, res) {
 		data.games = games ? games.map((game) => game.serialize()) : games;
 	})
 	.then(() => {
+		if (req.isAuthenticated()) {
+			data.user = req.user;
+			data.loggedIn = true;
+		} else {
+			data.loggedIn = false;
+		}
 		res.render('home', data);
 	})
 	.catch((err) => {
 		debug(`Error Getting Page: ${err.toString()}`);
 		//TODO: Add Proper Logging
+		res.status(500).send({error: err.toString()});
+	});
+}
+
+/**
+ * Get the login page to hand to the view
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+function getLoginView(req, res) {
+	const data = {csrfToken: req.csrfToken()};
+
+	return Promise.resolve().then(() => {
+		res.render('login', data);
+	})
+	.catch((err) => {
+		//TODO: logging errors
+		debug(`Error Getting Login View: ${err.toString()}`);
 		res.status(500).send({error: err.toString()});
 	});
 }
@@ -117,10 +145,72 @@ function getThreadView(req, res) {
 	});
 }
 
+/**
+ * Get the signup page to hand to the view
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+  */
+function getSignupView(req, res) {
+	const data = {csrfToken: req.csrfToken()};
+
+	return Promise.resolve().then(() => {
+		res.render('signup', data);
+	})
+	.catch((err) => {
+		//TODO: logging errors
+		debug(`Error Getting Signup View: ${err.toString()}`);
+		res.status(500).send({error: err.toString()});
+	});
+}
+
+/**
+ * Handle signup page post
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+const postSignup = [
+	check('username').isLength({min: 1}).withMessage('Username must be specified.'),
+	check('password').isLength({min: 8}).withMessage('Password must be at least 8 characters.'),
+	check('passwordconfirm').custom((value, {req, _, __}) => {
+		if (value !== req.body.password) {
+			throw new Error();
+		}
+		return value;
+	}).withMessage('Passwords do not match.'),
+	
+	(req, res) => {
+		const errors = validationResult(req);
+		
+		// Render the page again with validation errors if any
+		if (!errors.isEmpty()) {
+			res.render('signup', {csrfToken: req.csrfToken(), data: req.body, errors: errors.array()});
+			return null;
+		}
+		
+		const user = {Username: req.body.username, Admin: false, Password: req.body.password};
+		
+		return User.addUser(user)
+		.then(() => {
+			// TODO: Tell the user about success, or just log them in?
+			res.redirect('/');
+		})
+		.catch((err) => {
+			// TODO: Obviously need to handle failures here with proper user friendly errors
+			res.status(500);
+			res.send({error: err.toString()});
+		});
+	}
+];
+
 const controller = {
 	getHomePage: getHomePage,
 	getThreadView: getThreadView,
-	getBoardView: getBoardView
+	getBoardView: getBoardView,
+	getLoginView: getLoginView,
+	getSignupView: getSignupView,
+	postSignup: postSignup
 };
 
 module.exports = controller;

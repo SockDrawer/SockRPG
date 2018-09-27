@@ -486,21 +486,21 @@ describe('User API Controller', () => {
 		it('should return a list of users', () => {
 			const data = [{
 				ID: '1',
+				Admin: false,
 				Username: 'user1'
 			}, {
 				ID: '2',
+				Admin: false,
 				Username: 'user2'
 			}];
 
-			sandbox.stub(User, 'getAllUsers').resolves(data.map((user) => new User(user)));
+			sandbox.stub(User, 'getAllUsers').resolves(data);
 			const mockResponse = {
 				status: (code) => {
 					assert.equal(200, code, 'Should return a 200 ok if anything');
 					return mockResponse;
 				},
 				send: (response) => {
-					data[0].Canonical = '/api/users/1';
-					data[1].Canonical = '/api/users/2';
 					assert.deepEqual(data, response);
 					return mockResponse;
 				}
@@ -536,6 +536,7 @@ describe('User API Controller', () => {
 		it('should return a user if one exists by ID', () => {
 			const data = {
 				ID: '1',
+				Admin: false,
 				Username: 'user1'
 			};
 
@@ -566,6 +567,7 @@ describe('User API Controller', () => {
 		it('should return a user if one exists by name', () => {
 			const data = {
 				ID: '1',
+				Admin: false,
 				Username: 'user1'
 			};
 
@@ -596,9 +598,11 @@ describe('User API Controller', () => {
 		it('should return only the first user if more than one exists', () => {
 			const data = [{
 				ID: '1',
+				Admin: false,
 				Username: 'user1'
 			}, {
 				ID: '2',
+				Admin: false,
 				Username: 'user2'
 			}];
 
@@ -607,7 +611,8 @@ describe('User API Controller', () => {
 			const mockRequest = {
 				params: {
 					id: 1
-				}
+				},
+				isAuthenticated: () => true
 			};
 
 			const mockResponse = {
