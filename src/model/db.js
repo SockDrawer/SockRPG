@@ -60,6 +60,7 @@ const db = {
 				table.increments('ID').primary();
 				table.integer('Thread').references('Threads.ID').notNullable();
 				table.string('Body').notNullable();
+				table.timestamps(false, true);
 			}]
 		];
 

@@ -389,9 +389,10 @@ context('API server', function() {
 			});
 		});
 
-		let sandbox, request;
+		let sandbox, clock, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
+			clock = Sinon.useFakeTimers();
 			return getAgent().then((val) => {
 				request = val;
 			});
@@ -399,6 +400,7 @@ context('API server', function() {
 
 		afterEach(() => {
 			sandbox.restore();
+			clock.restore();
 		});
 		
 		it('Should allow adding posts', () => {
@@ -425,7 +427,8 @@ context('API server', function() {
 					ID: 1,
 					Body: '<p>This is the body</b>',
 					Canonical: '/api/posts/1',
-					Thread: 2
+					Thread: 2,
+					created_at: '1970-01-01T00:00:00.000Z'
 				}], 'Thread retrieval should return post');
 			});
 		});
