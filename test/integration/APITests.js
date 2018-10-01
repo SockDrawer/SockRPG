@@ -405,7 +405,8 @@ context('API server', function() {
 		
 		it('Should allow adding posts', () => {
 			const input = {
-				Body: '<p>This is the body</b>'
+				Body: '<p>This is the body</b>',
+				Poster: 1
 			};
 
 			/*-------------- CREATE -----------------*/
@@ -428,6 +429,7 @@ context('API server', function() {
 					Body: '<p>This is the body</b>',
 					Canonical: '/api/posts/1',
 					Thread: 2,
+					Poster: 1,
 					created_at: '1970-01-01T00:00:00.000Z'
 				}], 'Thread retrieval should return post');
 			});
