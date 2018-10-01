@@ -8,6 +8,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 const Sinon = require('sinon');
+const moment = require('moment');
 
 //Module to test
 const Post = require('../../../src/model/Post.js');
@@ -15,11 +16,12 @@ const DB = require('../../../src/model/db');
 
 
 describe('Post model', () => {
-	let sandbox;
+	let sandbox, clock;
 
 	beforeEach(() => {
 		return Promise.resolve().then(() => {
 			sandbox = Sinon.createSandbox();
+			clock = Sinon.useFakeTimers();
 		})
 		.then(() => DB.initialise({
 			database: {
@@ -51,6 +53,7 @@ describe('Post model', () => {
 		return Promise.resolve().then(() => DB.teardown())
 		.then(() => {
 			sandbox.restore();
+			clock.restore();
 		});
 	});
 
@@ -85,7 +88,8 @@ describe('Post model', () => {
 		const post = {
 			ID: 1,
 			Thread: 1,
-			Body: 'Manah manah (do-doo do-do doo)'
+			Body: 'Manah manah (do-doo do-do doo)',
+			Created: '2018-10-01 18:05:36'
 		};
 
 		return Post.addPost(post)
@@ -106,7 +110,9 @@ describe('Post model', () => {
 			})
 			.then((dbpost) => {
 				post.Body.should.equal(dbpost.Body);
+				dbpost.Thread.should.equal(1);
 				dbpost.ID.should.equal(ID);
+				moment().isSame(dbpost.Created).should.be.true;
 			});
 	});
 

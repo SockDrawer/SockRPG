@@ -1,5 +1,6 @@
 'use strict';
 const DB = require('./db');
+const moment = require('moment');
 
 /**
  * The Game table.
@@ -18,20 +19,43 @@ class Post {
 		this.data.ID = rowData.ID;
 		this.data.Body = rowData.Body;
 		this.data.Thread = rowData.Thread;
+		this.data.created_at = rowData.created_at;
+		if (!this.data.created_at) {
+			this.data.created_at = new Date();
+		}
+		
 		this.Canonical = `/api/posts/${this.ID}`;
-		this.Thread = rowData.Thread;
 	}
 
 	get ID() {
 		return this.data.ID;
 	}
+	
+	get Thread() {
+		return this.data.Thread;
+	}
 
 	get Body() {
 		return this.data.Body;
 	}
+	
+	get Created() {
+		return moment(this.data.created_at);
+	}
+	
+	set Created(value) {
+		if (!(value instanceof moment)) {
+			value = moment(value);
+		}
+		this.data.created_at = moment(value).utc().toDate();
+	}
 
 	set Body(newBody) {
 		this.data.Body = newBody;
+	}
+	
+	set Thread(newThread) {
+		this.data.Thread = newThread;
 	}
 
 	serialize() {
@@ -55,7 +79,7 @@ class Post {
 
 	static getPostByID(id) {
 		return DB.knex('Posts')
-		.where('Posts.ID', id).select('ID', 'Body')
+		.where('Posts.ID', id).select('ID', 'Body', 'Posts.Thread', 'Posts.created_at')
 		.then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
@@ -68,7 +92,7 @@ class Post {
 	static getPostsInThread(threadID) {
 		return DB.knex('Posts')
 		.where('Posts.Thread', threadID)
-		.select('Posts.ID', 'Body', 'Posts.Thread')
+		.select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));
 		});

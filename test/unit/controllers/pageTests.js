@@ -3,6 +3,7 @@ const Path = require('path');
 const Chai = require('chai');
 const expect = Chai.expect;
 const Sinon = require('sinon');
+const moment = require('moment');
 
 const sinonChai = require('sinon-chai');
 Chai.use(sinonChai);
@@ -31,14 +32,16 @@ const authenticatedFakeReq = (tbl) => {
 };
 
 describe('Page API controller', () => {
-	let sandbox;
+	let sandbox, clock;
 
 	beforeEach(() => {
 		sandbox = Sinon.createSandbox();
+		clock = Sinon.useFakeTimers();
 	});
 
 	afterEach( () => {
 		sandbox.restore();
+		clock.restore();
 	});
 
 	describe('Home page', () => {
@@ -377,21 +380,22 @@ describe('Page API controller', () => {
 		});
 
 		it('should render the template', () => {
-			const fakePostData = {
+			const fakePost = new Post({
 				Body: 'The only post in the thread',
 				ID: 23,
-				Canonical: '/api/posts/23'
-			};
+				Canonical: '/api/posts/23',
+				created_at: moment().utc().toDate()
+			});
 
 			const expected = {
 				Title: fakeThread.Title,
 				Canonical: `/api/threads/${fakeThread.ID}`,
 				ID: fakeThread.ID,
-				posts: [fakePostData]
+				posts: [fakePost.serialize()]
 			};
 
 			sandbox.stub(Thread, 'getThread').resolves(new Thread(fakeThread));
-			sandbox.stub(Post, 'getPostsInThread').resolves([new Post(fakePostData)]);
+			sandbox.stub(Post, 'getPostsInThread').resolves([fakePost]);
 
 			const fakeReq = unauthenticatedFakeReq({
 				params: {
