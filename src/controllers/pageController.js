@@ -57,6 +57,8 @@ function getHomePage(req, res) {
 		} else {
 			data.loggedIn = false;
 		}
+		
+		data.csrfToken = req.csrfToken();
 		res.render('home', data);
 	})
 	.catch((err) => {
@@ -103,6 +105,7 @@ function getBoardView(req, res) {
 		board = data.serialize();
 		return Thread.getThreadsInBoard(req.params.id).then((threads) => {
 			board.threads = threads ? threads.map((thread) => thread.serialize()) : [];
+			board.csrfToken = req.csrfToken();
 
 			res.render('board', board);
 		});

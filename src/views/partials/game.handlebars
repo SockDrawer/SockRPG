@@ -1,0 +1,51 @@
+<div class="row">
+    <div class="col-md-6 col-md-offset-1 media">
+        <div class="media-left">
+            <img src="http://placehold.it/100x100">
+        </div>
+        
+        <div class="media-body board">
+            <div class="info" style="border: none">
+                <span class="num">{{stats.threadCount}}</span> 
+                threads<br>
+                
+                
+            </div>
+            
+            
+            <h2 class="media-heading"><a href="threadlist.html">{{name}}</a></h2>
+            <!--<P>Last post: {{stats.lastpost}}</P> -->
+            {{each tags}}
+                <span class="tag" style="background: green; color: white">{{this}}</span>
+            {{/each}}
+            
+
+        </div>
+        
+        <details> 
+        <summary>Game Details</summary> 
+        <p>{{description}}</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="media">
+                    <div class="media-left"><img src="http://placehold.it/50x50"></div>
+                    <div class="media-body"> <b>GameMaster</b> <br/>
+                    Username</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="media">
+                    <div class="media-left"><span class="num">6</span></div>
+                    <div class="media-body"> <br>Players<br/></div>
+                </div>
+            </div>
+        </div>
+        
+        </details>
+    
+    </div>
+    <div class="col-md-6 col-md-offset-1">
+        <hr style="style2">
+    </div>
+</div>

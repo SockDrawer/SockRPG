@@ -74,6 +74,7 @@
 	<form>
 	<div class="alert alert-danger" role="alert" hidden="true"></div>
 	<div class="alert alert-success" role="alert" hidden="true"></div>
+	<input type="hidden" name="_csrf" value="{{csrfToken}}">
 	<div class="form-group">
 		<label for="name">{{#if game}}Game{{else}}Board{{/if}} name:</label><input type="text" class="form-control" name="name" value="{{name}}"><br/>
 		<label for="description">Description:</label><textarea class="form-control" name="description">{{description}}</textarea><br/>

@@ -43,6 +43,7 @@
 	<form>
 	<div class="alert alert-danger" role="alert" hidden="true"></div>
 	<div class="alert alert-success" role="alert" hidden="true"></div>
+	<input type="hidden" name="_csrf" value="{{csrfToken}}">
 	<div class="form-group">
 		<label for="Title">Title:</label><input type="text" class="form-control" name="Title" value="{{Title}}"><br/>
 		<input type="submit" class="form-control" id="submitModal">
