@@ -60,14 +60,16 @@ describe('Post model', () => {
 	it('should add a post to a thread', () => {
 		return Post.addPost({
 			Thread: 1,
-			Body: 'This is a post'
+			Body: 'This is a post',
+			Poster: 1
 		}).should.eventually.contain(1);
 	});
 
 	it('should add a post object to a thread', () => {
 		return Post.addPost(new Post({
 			Thread: 1,
-			Body: 'This is a post'
+			Body: 'This is a post',
+			Poster: 1
 		})).should.eventually.contain(1);
 	});
 
@@ -75,7 +77,8 @@ describe('Post model', () => {
 	it('should find a post by ID', () => {
 		return Post.addPost({
 			Thread: 1,
-			Body: 'This is a post'
+			Body: 'This is a post',
+			Poster: 1
 		}).then(() => Post.getPostByID(1)).should.eventually.contain.all({ID: 1});
 	});
 
@@ -88,6 +91,7 @@ describe('Post model', () => {
 		const post = {
 			ID: 1,
 			Thread: 1,
+			Poster: 1,
 			Body: 'Manah manah (do-doo do-do doo)',
 			Created: '2018-10-01 18:05:36'
 		};
@@ -100,7 +104,8 @@ describe('Post model', () => {
 	it('should save and retrieve post', () => {
 		const post = new Post({
 			Body: `A Post ${Math.random()}`,
-			Thread: 1
+			Thread: 1,
+			Poster: 1
 		});
 		let ID = undefined;
 		return Post.addPost(post)
@@ -112,14 +117,16 @@ describe('Post model', () => {
 				post.Body.should.equal(dbpost.Body);
 				dbpost.Thread.should.equal(1);
 				dbpost.ID.should.equal(ID);
-				moment().isSame(dbpost.Created).should.be.true;
+				moment().isSame(dbpost.Created).should.equal(true);
+				dbpost.Poster.should.equal(1);
 			});
 	});
 
 	it('should update post', () => {
 		let post = new Post({
 			Body: `A Post ${Math.random()}`,
-			Thread: 1
+			Thread: 1,
+			Poster: 1
 		});
 		let ID = undefined;
 		return Post.addPost(post)
@@ -142,12 +149,14 @@ describe('Post model', () => {
 		const post1 = {
 			ID: 1,
 			Thread: 1,
+			Poster: 1,
 			Body: 'Manah manah (do-doo do-do doo)'
 		};
 
 		const post2 = {
 			ID: 2,
 			Thread: 2,
+			Poster: 1,
 			Body: 'blah'
 		};
 
