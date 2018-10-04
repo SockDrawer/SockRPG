@@ -1,4 +1,3 @@
-/*
 $(() => {
 	$('#replydiv').hide();
 	CKEDITOR.replace( 'editor1' );
@@ -32,4 +31,3 @@ $(() => {
 		});
 	});
 });
-*/
