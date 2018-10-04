@@ -83,7 +83,7 @@ class Thread {
 		return DB.knex('Threads')
 		.leftJoin('Boards', 'Threads.Board', 'Boards.ID')
 		.where('Boards.ID', boardID)
-		.select('Boards.Name', 'Title', 'Threads.ID', DB.knex('Posts').count('ID').where('Posts.Thread', 'Threads.ID').as('PostCount'))
+		.select('Boards.Name', 'Title', 'Threads.ID', DB.knex('Posts').count('ID').whereRaw('Posts.Thread = Threads.ID').as('PostCount'))
 		.then((rows) => {
 			return rows.map((row) => new Thread(row));
 		});
