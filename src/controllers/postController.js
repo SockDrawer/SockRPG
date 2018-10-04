@@ -42,6 +42,7 @@ function addPost(req, res) {
 
 		const newPost = req.body || {};
 		newPost.Thread = req.params.id;
+		newPost.Poster = req.user ? req.user.ID : 0;
 		
 		
 		return Post.addPost(newPost).then((ids) => {

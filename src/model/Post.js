@@ -17,10 +17,15 @@ const User = require('./User.js');
 class Post {
 	constructor (rowData) {
 		this.data = {};
+
+		//Things that come from the table go into this.data
+		//Things that don't, calculated values, don't go there
+		//that way they don't get synced back to the table
 		this.data.ID = rowData.ID;
 		this.data.Body = rowData.Body;
 		this.data.Thread = rowData.Thread;
 		this.data.Poster = rowData.Poster;
+		this.Username = rowData.Username;
 		this.data.created_at = rowData.created_at;
 		if (!this.data.created_at) {
 			this.data.created_at = new Date();
@@ -44,9 +49,13 @@ class Post {
 	get Created() {
 		return moment(this.data.created_at);
 	}
-	
+
 	get Poster() {
 		return this.data.Poster;
+	}
+	
+	get PosterName() {
+		return this.Username;
 	}
 	
 	set Created(value) {
@@ -75,6 +84,8 @@ class Post {
 	serialize() {
 		const serial = JSON.parse(JSON.stringify(this.data));
 		serial.Canonical = this.Canonical;
+		serial.Created = moment(this.data.created_at).format();
+		serial.Poster = this.Username;
 		return serial;
 	}
 
@@ -93,7 +104,8 @@ class Post {
 
 	static getPostByID(id) {
 		return DB.knex('Posts')
-		.where('Posts.ID', id).select('ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster')
+		.leftJoin('Users', 'Posts.Poster', 'Users.ID')
+		.where('Posts.ID', id).select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster', 'Users.Username')
 		.then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
@@ -105,8 +117,9 @@ class Post {
 
 	static getPostsInThread(threadID) {
 		return DB.knex('Posts')
+		.leftJoin('Users', 'Posts.Poster', 'Users.ID')
 		.where('Posts.Thread', threadID)
-		.select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster')
+		.select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster', 'Users.Username')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));
 		});

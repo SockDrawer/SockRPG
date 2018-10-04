@@ -93,12 +93,21 @@ describe('Post model', () => {
 			Thread: 1,
 			Poster: 1,
 			Body: 'Manah manah (do-doo do-do doo)',
-			Created: '2018-10-01 18:05:36'
+			created_at: '2018-10-01 18:05:36',
+			Username: 'kermit'
 		};
 
 		return Post.addPost(post)
 			.then(() => Post.getPostsInThread(1))
-			.should.eventually.deep.contain(new Post(post));
+			.then((posts) => {
+				posts.length.should.equal(1);
+				const dbpost = posts[0];
+				post.Body.should.equal(dbpost.Body);
+				dbpost.Thread.should.equal(1);
+				dbpost.ID.should.equal(post.ID);
+				moment(post.created_at).isSame(dbpost.Created).should.equal(true);
+				dbpost.Poster.should.equal(1);
+			});
 	});
 
 	it('should save and retrieve post', () => {

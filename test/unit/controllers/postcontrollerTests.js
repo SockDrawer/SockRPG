@@ -32,7 +32,7 @@ describe('Post API Controller', () => {
 
 	describe('POST /thread/{ID}/posts', () => {
 
-		before(() => {
+		beforeEach(() => {
 			mockRequest = {
 				params: {
 					id: 3
@@ -52,8 +52,27 @@ describe('Post API Controller', () => {
 			sandbox.stub(Thread, 'getThread').resolves(new Thread({id: 3, Title: 'some thread'}));
 			sandbox.stub(Post, 'addPost').resolves([10]);
 
-			return postController.addPost(mockRequest, mockResponse).then(() => Post.addPost.should.have.been.calledWith(mockRequest.body));
+			return postController.addPost(mockRequest, mockResponse).then(() => Post.addPost.should.have.been.calledWith({
+				Thread: 3,
+				Poster: 0,
+				Body: mockRequest.body.Body
+			}));
 		});
+
+		it('Should add the user ID', () => {
+			sandbox.stub(Thread, 'getThread').resolves(new Thread({id: 3, Title: 'some thread'}));
+			sandbox.stub(Post, 'addPost').resolves([10]);
+			mockRequest.user = {
+				ID: 12
+			};
+
+			return postController.addPost(mockRequest, mockResponse).then(() => Post.addPost.should.have.been.calledWith({
+				Thread: 3,
+				Poster: 12,
+				Body: mockRequest.body.Body
+			}));
+		});
+
 		it('Should add a post with no body', () => {
 			mockRequest.body = undefined;
 			sandbox.stub(Thread, 'getThread').resolves(new Thread({id: 3, Title: 'some thread'}));
@@ -61,7 +80,8 @@ describe('Post API Controller', () => {
 
 			return postController.addPost(mockRequest, mockResponse)
 				.then(() => Post.addPost.should.have.been.calledWith({
-					Thread: 3
+					Thread: 3,
+					Poster: 0
 				}));
 		});
 
