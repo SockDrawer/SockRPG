@@ -16,11 +16,13 @@ const Post = require('../../../src/model/Post');
 const User = require('../../../src/model/User');
 
 const unauthenticatedFakeReq = (tbl) => {
+	tbl.csrfToken = () => 12345;
 	tbl.isAuthenticated = () => false;
 	return tbl;
 };
 
 const authenticatedFakeReq = (tbl) => {
+	tbl.csrfToken = () => 12345;
 	tbl.isAuthenticated = () => true;
 	tbl.user = {
 		ID: 1,
@@ -272,6 +274,7 @@ describe('Page API controller', () => {
 				Adult: false,
 				Canonical: `/api/boards/${boardData.ID}`,
 				ID: boardData.ID,
+				csrfToken: 12345,
 				threads: [threadData]
 			};
 
@@ -386,6 +389,7 @@ describe('Page API controller', () => {
 			const expected = {
 				Title: fakeThread.Title,
 				Canonical: `/api/threads/${fakeThread.ID}`,
+				csrfToken: 12345,
 				ID: fakeThread.ID,
 				posts: [fakePostData]
 			};
