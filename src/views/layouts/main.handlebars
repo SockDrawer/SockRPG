@@ -12,6 +12,11 @@
 
 		<!--Let browser know website is optimized for mobile-->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+		{{#if csrfToken}}
+		<!-- embed csrf token -->
+		<meta name="csrf-token" content="{{csrfToken}}">
+		{{/if}}
 	</head>
 
 	<body>
@@ -22,6 +27,8 @@
 		<!-- Backbone -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 		<script src="https://backbonejs.org/backbone-min.js"></script>
+		
+		<script src="/static/js/csrf-fix.js"></script>
 
 		<!-- Hanlebars -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>

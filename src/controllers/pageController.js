@@ -41,7 +41,7 @@ const debug = require('debug')('SockRPG:controller:Page');
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
 function getHomePage(req, res) {
-	const data = {};
+	const data = {csrfToken: req.csrfToken()};
 	
 	return Board.getAllBoards().then((boards) => {
 		data.boards = boards ? boards.map((board) => board.serialize()) : boards;
