@@ -146,6 +146,7 @@ describe('Thread model', () => {
 		const expected = {
 			Title: fakeThread.Title,
 			Canonical: `/api/threads/${fakeThread.ID}`,
+			PostCount: 0,
 			ID: fakeThread.ID
 		};
 

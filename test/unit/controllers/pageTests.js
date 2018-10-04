@@ -259,6 +259,7 @@ describe('Page API controller', () => {
 			const threadData = {
 				Title: 'some thread',
 				ID: 2942,
+				PostCount: 12,
 				Canonical: '/api/threads/2942'
 			};
 
@@ -330,6 +331,7 @@ describe('Page API controller', () => {
 
 			fakeThread = {
 				ID: Math.random(),
+				PostCount: 1,
 				Title: 'some thread'
 			};
 		});
@@ -395,6 +397,7 @@ describe('Page API controller', () => {
 				Canonical: `/api/threads/${fakeThread.ID}`,
 				csrfToken: 12345,
 				ID: fakeThread.ID,
+				PostCount: 1,
 				posts: [fakePost.serialize()]
 			};
 

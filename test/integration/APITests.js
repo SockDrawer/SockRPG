@@ -359,6 +359,7 @@ context('API server', function() {
 				assert.deepEqual(response.body, [{
 					ID: 1,
 					Title: 'The best thread',
+					PostCount: 0,
 					Canonical: '/api/threads/1'
 				}], 'Thread retrieval should return thread');
 			});
@@ -434,6 +435,9 @@ context('API server', function() {
 					Created: moment('1970-01-01T00:00:00.000Z').format(), //local time zone
 					created_at: '1970-01-01T00:00:00.000Z' //UTC
 				}], 'Thread retrieval should return post');
+
+				assert.equal(response.body.posts.length, 1);				
+				assert.equal(response.body.PostCount, 1);
 			});
 		});
 	});
