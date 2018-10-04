@@ -1,4 +1,8 @@
 $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+	if (options.crossDomain) { 
+		return;
+	}
+
 	var token;
 	options.xhrFields = {
 		withCredentials: true
