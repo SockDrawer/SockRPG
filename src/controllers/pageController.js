@@ -101,9 +101,11 @@ function getBoardView(req, res) {
 		}
 
 		board = data.serialize();
+		
 		return Thread.getThreadsInBoard(req.params.id).then((threads) => {
 			board.threads = threads ? threads.map((thread) => thread.serialize()) : [];
 
+			board.csrfToken = req.csrfToken();
 			res.render('board', board);
 		});
 	})
@@ -133,6 +135,7 @@ function getThreadView(req, res) {
 		retval = data.serialize();
 		return Post.getPostsInThread(req.params.id).then((posts) => {
 			retval.posts = posts ? posts.map((post) => post.serialize()) : [];
+			retval.csrfToken = req.csrfToken();
 
 			res.render('thread', retval);
 		});

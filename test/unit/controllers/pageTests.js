@@ -274,6 +274,7 @@ describe('Page API controller', () => {
 				Adult: false,
 				Canonical: `/api/boards/${boardData.ID}`,
 				ID: boardData.ID,
+				csrfToken: 12345,
 				threads: [threadData]
 			};
 
@@ -388,6 +389,7 @@ describe('Page API controller', () => {
 			const expected = {
 				Title: fakeThread.Title,
 				Canonical: `/api/threads/${fakeThread.ID}`,
+				csrfToken: 12345,
 				ID: fakeThread.ID,
 				posts: [fakePostData]
 			};
