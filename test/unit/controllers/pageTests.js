@@ -16,11 +16,13 @@ const Post = require('../../../src/model/Post');
 const User = require('../../../src/model/User');
 
 const unauthenticatedFakeReq = (tbl) => {
+	tbl.csrfToken = () => 12345;
 	tbl.isAuthenticated = () => false;
 	return tbl;
 };
 
 const authenticatedFakeReq = (tbl) => {
+	tbl.csrfToken = () => 12345;
 	tbl.isAuthenticated = () => true;
 	tbl.user = {
 		ID: 1,
