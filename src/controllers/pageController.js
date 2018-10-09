@@ -91,30 +91,36 @@ function getLoginView(req, res) {
  * @param  {Response} res The Express response object
  * @returns {Promise} A promise that will resolve when the response has been sent.
  */
-function getBoardView(req, res) {
+async function getBoardView(req, res) {
 	let board;
-	return Board.get(req.params.id).then((data) => {
-		if (!data) {
+
+	try {
+		const boardData = await Board.get(req.params.id);
+		if (!boardData) {
 			res.status(404);
 			res.end();
-			return Promise.resolve();
+			return;
 		}
 
-		board = data.serialize();
-		
-		return Thread.getThreadsInBoard(req.params.id).then((threads) => {
-			board.threads = threads ? threads.map((thread) => thread.serialize()) : [];
+		board = boardData.serialize();
 
-			board.csrfToken = req.csrfToken();
-			res.render('board', board);
-		});
-	})
-	.catch((err) => {
+		const threads = await Thread.getThreadsInBoard(req.params.id);
+		board.threads = [];
+		
+		const numThreads = threads.length;
+		for (let i = 0; i < numThreads; i++) {
+			const stats = await threads[i].getThreadStatistics();
+			board.threads[i] = threads[i].serialize();
+			board.threads[i].Stats = stats;
+		}
+		board.csrfToken = req.csrfToken();
+		res.render('board', board);
+	} catch (err) {
 		debug(`Error Getting Board View: ${err.toString()}`);
 		//TODO: Add Proper Logging
 		res.status(500);
 		res.send({error: err.toString()});
-	});
+	}
 }
 
 /**

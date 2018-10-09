@@ -73,7 +73,7 @@ class Thread {
 			Posts: posts.length,
 			LastPostTime: lastPost.Created.toDate(),
 			LastPosterId: lastPost.Poster,
-			LastPoster: user.Username
+			LastPoster: user ? user.Username : 'Anonymous'
 		};
 	}
 

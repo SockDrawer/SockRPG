@@ -255,6 +255,7 @@ describe('Page API controller', () => {
 
 		it('should render the template', () => {
 			const board = new Board(boardData);
+			const expDate = new Date();
 
 			const threadData = {
 				Title: 'some thread',
@@ -263,8 +264,17 @@ describe('Page API controller', () => {
 				Canonical: '/api/threads/2942'
 			};
 
+			const thread = new Thread(threadData);
+			const threadStats = {
+				Posts: 1,
+				LastPostTime: expDate,
+				LastPosterId: 1,
+				LastPoster: 'Fiona'
+			};
+
 			sandbox.stub(Board, 'get').resolves(board);
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves([new Thread(threadData)]);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([thread]);
+			sandbox.stub(thread, 'getThreadStatistics').resolves(threadStats);
 			sandbox.spy(board, 'serialize');
 
 			const fakeReq = unauthenticatedFakeReq({
@@ -279,7 +289,13 @@ describe('Page API controller', () => {
 				Canonical: `/api/boards/${boardData.ID}`,
 				ID: boardData.ID,
 				csrfToken: 12345,
-				threads: [threadData]
+				threads: [{
+					Title: 'some thread',
+					ID: 2942,
+					PostCount: 12,
+					Canonical: '/api/threads/2942',
+					Stats: threadStats
+				}]
 			};
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
