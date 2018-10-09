@@ -56,8 +56,17 @@ class Thread {
 			}
 			return a.Created.isBefore(b.Created) ? 1 : -1;
 		});
-		const lastPost = posts[0];
 
+		if (posts.length <= 0) {
+			return {
+				Posts: 0,
+				LastPostTime: 'never',
+				LastPosterId: 0,
+				LastPoster: 'nobody'
+			};
+		}
+
+		const lastPost = posts[0];
 		const user = await User.getUser(lastPost.Poster);
 
 		return {

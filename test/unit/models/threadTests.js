@@ -255,5 +255,18 @@ describe('Thread model', () => {
 				});
 			});
 		});
+		
+		it('should not error if no posts', () => {
+			sandbox.stub(Post, 'getPostsInThread').resolves([]);
+
+			return Thread.getThread(1).then((thread) => {
+				return thread.getThreadStatistics().should.eventually.deep.equal({
+					Posts: 0,
+					LastPostTime: 'never',
+					LastPosterId: 0,
+					LastPoster: 'nobody'
+				});
+			});
+		});
 	});
 });
