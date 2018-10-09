@@ -12,7 +12,10 @@ const Sinon = require('sinon');
 //Module to test
 const Board = require('../../../src/model/Board.js');
 const Thread = require('../../../src/model/Thread.js');
+const Post = require('../../../src/model/Post');
+const User = require('../../../src/model/User');
 const DB = require('../../../src/model/db');
+const moment = require('moment');
 
 describe('Thread model', () => {
 	let sandbox, parentID;
@@ -197,5 +200,60 @@ describe('Thread model', () => {
 		});
 	});
 
-	
+	describe('with Posts', () => {
+		beforeEach(() => {
+			sandbox.stub(User, 'getUser').resolves({
+				Username: 'Shrek'
+			});
+
+			return Thread.addThread({
+				Title: 'A Thread',
+				Board: parentID
+			});
+		});
+
+		it('should return last post statistics', () => {
+			const now = moment();
+			sandbox.stub(Post, 'getPostsInThread').resolves([{
+				Thread: 1,
+				Body: 'This is a post',
+				Poster: 1,
+				Created: now
+			}]);
+
+			return Thread.getThread(1).then((thread) => {
+				return thread.getThreadStatistics().should.eventually.deep.equal({
+					Posts: 1,
+					LastPostTime: now.toDate(),
+					LastPosterId: 1,
+					LastPoster: 'Shrek'
+				});
+			});
+		});
+
+		it('should calculate latest post', () => {
+			sandbox.stub(Post, 'getPostsInThread').resolves([{
+				Thread: 1,
+				ID: 1,
+				Body: 'This is a post',
+				Poster: 1,
+				Created: moment('1988-04-30T04:00:00.000Z')
+			}, {
+				Thread: 1,
+				ID: 2,
+				Body: 'This is a post',
+				Poster: 1,
+				Created: moment('1998-10-30T04:00:00.000Z')
+			}]);
+
+			return Thread.getThread(1).then((thread) => {
+				return thread.getThreadStatistics().should.eventually.deep.equal({
+					Posts: 2,
+					LastPostTime: moment('1998-10-30T04:00:00.000Z').toDate(),
+					LastPosterId: 1,
+					LastPoster: 'Shrek'
+				});
+			});
+		});
+	});
 });

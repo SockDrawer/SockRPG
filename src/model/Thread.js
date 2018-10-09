@@ -1,5 +1,7 @@
 'use strict';
 const DB = require('./db');
+const Post = require('./Post');
+const User = require('./User');
 
 /**
  * The Game table.
@@ -44,6 +46,26 @@ class Thread {
 
 	save() {
 		return DB.knex('Threads').where('ID', this.ID).update(this.data);
+	}
+
+	async getThreadStatistics() {
+		const posts = await Post.getPostsInThread(this.data.ID);
+		posts.sort((a, b) => {
+			if (a.Created.isSame(b.Created)) {
+				return 0;
+			}
+			return a.Created.isBefore(b.Created) ? 1 : -1;
+		});
+		const lastPost = posts[0];
+
+		const user = await User.getUser(lastPost.Poster);
+
+		return {
+			Posts: posts.length,
+			LastPostTime: lastPost.Created.toDate(),
+			LastPosterId: lastPost.Poster,
+			LastPoster: user.Username
+		};
 	}
 
 
