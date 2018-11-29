@@ -133,8 +133,19 @@ function getThreadView(req, res) {
 		retval = data.serialize();
 		return Post.getPostsInThread(req.params.id).then((posts) => {
 			retval.posts = posts ? posts.map((post) => post.serialize()) : [];
-
-			res.render('thread', retval);
+			
+			if (posts) {
+				return Promise.all(posts.map((post) => User.getUser(post.Poster)));
+			}
+			return Promise.resolve([]);
+			
+		}).then((users) => {
+			
+			retval.posts.map((serialPost) => {
+				serialPost.Poster = users.filter((user) => user.ID === serialPost.Poster)[0].serialize();
+			});
+			
+			return res.render('thread', retval);
 		});
 	})
 	.catch((err) => {

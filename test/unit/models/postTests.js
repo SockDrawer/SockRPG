@@ -165,4 +165,17 @@ describe('Post model', () => {
 			.then(() => Post.getPostsInThread(1))
 			.should.eventually.not.deep.contain(new Post(post2));
 	});
+	
+	it('should set and retrieve created date', () => {
+		const post = new Post({
+			Body: `A Post ${Math.random()}`,
+			Thread: 1,
+			Poster: 1
+		});
+		
+		const time = moment();
+		
+		post.Created = time;
+		return moment(post.Created).isSame(time).should.be.true;
+	});
 });

@@ -383,8 +383,13 @@ describe('Page API controller', () => {
 			const fakePost = new Post({
 				Body: 'The only post in the thread',
 				ID: 23,
+				Poster: 1,
 				Canonical: '/api/posts/23',
 				created_at: moment().utc().toDate()
+			});
+			
+			const fakeUser = new User({
+				ID: 1
 			});
 
 			const expected = {
@@ -393,9 +398,12 @@ describe('Page API controller', () => {
 				ID: fakeThread.ID,
 				posts: [fakePost.serialize()]
 			};
+			
+			expected.posts[0].Poster = fakeUser.serialize();
 
 			sandbox.stub(Thread, 'getThread').resolves(new Thread(fakeThread));
 			sandbox.stub(Post, 'getPostsInThread').resolves([fakePost]);
+			sandbox.stub(User, 'getUser').resolves(fakeUser);
 
 			const fakeReq = unauthenticatedFakeReq({
 				params: {
