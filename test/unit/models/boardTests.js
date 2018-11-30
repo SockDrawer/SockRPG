@@ -14,8 +14,9 @@ const Board = require('../../../src/model/Board.js');
 const Game = require('../../../src/model/Game.js');
 const DB = require('../../../src/model/db');
 
-describe('Board model', () => {
+describe('Board model', function() {
 	let sandbox;
+	this.timeout(5000);
 
 	beforeEach(() => {
 		return Promise.resolve()

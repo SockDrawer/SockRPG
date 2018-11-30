@@ -1,5 +1,7 @@
 'use strict';
 const DB = require('./db');
+const Post = require('./Post');
+const User = require('./User');
 
 /**
  * The Game table.
@@ -20,6 +22,7 @@ class Thread {
 		this.data.Board = rowData.Board;
 		this.Canonical = `/api/threads/${rowData.ID}`;
 		this.boardName = rowData.Name;
+		this.PostCount = rowData.PostCount || 0;
 	}
 
 	get ID() {
@@ -37,11 +40,35 @@ class Thread {
 	serialize() {
 		const serial = JSON.parse(JSON.stringify(this.data));
 		serial.Canonical = this.Canonical;
+		serial.PostCount = this.PostCount;
 		return serial;
 	}
 
 	save() {
 		return DB.knex('Threads').where('ID', this.ID).update(this.data);
+	}
+
+	async getThreadStatistics() {
+		const posts = await Post.getPostsInThread(this.data.ID);
+
+		if (posts.length <= 0) {
+			return {
+				Posts: 0,
+				LastPostTime: 'never',
+				LastPosterId: 0,
+				LastPoster: 'nobody'
+			};
+		}
+
+		const lastPost = posts[posts.length - 1];
+		const user = await User.getUser(lastPost.Poster);
+
+		return {
+			Posts: posts.length,
+			LastPostTime: lastPost.Created.toDate(),
+			LastPosterId: lastPost.Poster,
+			LastPoster: user ? user.Username : 'Anonymous'
+		};
 	}
 
 
@@ -63,9 +90,11 @@ class Thread {
 	}
 
 	static getThread(id) {
+
 		return DB.knex('Threads')
 		.leftJoin('Boards', 'Threads.Board', 'Boards.ID')
-		.where('Threads.ID', id).select('Boards.Name', 'Title', 'Threads.ID')
+		.where('Threads.ID', id)
+		.select('Boards.Name', 'Title', 'Threads.ID', DB.knex('Posts').count('ID').where('Posts.Thread', id).as('PostCount'))
 		.then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
@@ -78,7 +107,8 @@ class Thread {
 	static getThreadsInBoard(boardID) {
 		return DB.knex('Threads')
 		.leftJoin('Boards', 'Threads.Board', 'Boards.ID')
-		.where('Boards.ID', boardID).select('Boards.Name', 'Title', 'Threads.ID')
+		.where('Boards.ID', boardID)
+		.select('Boards.Name', 'Title', 'Threads.ID', DB.knex('Posts').count('ID').whereRaw('Posts.Thread = Threads.ID').as('PostCount'))
 		.then((rows) => {
 			return rows.map((row) => new Thread(row));
 		});
