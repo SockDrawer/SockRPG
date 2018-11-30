@@ -7,6 +7,7 @@ const Sinon = require('sinon');
 const User = require('../../src/model/User');
 const Board = require('../../src/model/Board');
 const Thread = require('../../src/model/Thread');
+const moment = require('moment');
 
 context('API server', function() {
 	this.timeout(50000);
@@ -358,6 +359,7 @@ context('API server', function() {
 				assert.deepEqual(response.body, [{
 					ID: 1,
 					Title: 'The best thread',
+					PostCount: 0,
 					Canonical: '/api/threads/1'
 				}], 'Thread retrieval should return thread');
 			});
@@ -389,9 +391,10 @@ context('API server', function() {
 			});
 		});
 
-		let sandbox, request;
+		let sandbox, clock, request;
 		beforeEach(() => {
 			sandbox = Sinon.createSandbox();
+			clock = Sinon.useFakeTimers();
 			return getAgent().then((val) => {
 				request = val;
 			});
@@ -399,11 +402,13 @@ context('API server', function() {
 
 		afterEach(() => {
 			sandbox.restore();
+			clock.restore();
 		});
 		
 		it('Should allow adding posts', () => {
 			const input = {
-				Body: '<p>This is the body</b>'
+				Body: '<p>This is the body</b>',
+				Poster: 1
 			};
 
 			/*-------------- CREATE -----------------*/
@@ -425,8 +430,14 @@ context('API server', function() {
 					ID: 1,
 					Body: '<p>This is the body</b>',
 					Canonical: '/api/posts/1',
-					Thread: 2
+					Thread: 2,
+					Poster: null, //there's no session information when we added the post
+					Created: moment('1970-01-01T00:00:00.000Z').format(), //local time zone
+					created_at: '1970-01-01T00:00:00.000Z' //UTC
 				}], 'Thread retrieval should return post');
+
+				assert.equal(response.body.posts.length, 1);				
+				assert.equal(response.body.PostCount, 1);
 			});
 		});
 	});

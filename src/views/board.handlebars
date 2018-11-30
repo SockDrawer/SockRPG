@@ -18,14 +18,14 @@
         
         <div class="media-body board">
             <h2 class="media-heading"><a href="/thread/{{ID}}">{{Title}}</a></h2>
-            <P>Last post: Placeholder o-clock</P>
+            <P>Last post: {{Stats.LastPostTime}} by {{Stats.LastPoster}}</P>
 
         </div>
     </div>
     <div class="col-md-3">
         <div class=" pull-right" style="border: none">
-            <span class="num">1</span> 
-            post<br>
+            <span class="num">{{Stats.PostCount}}</span> 
+            posts<br>
         </div>
     </div>
     <div class="col-md-6 col-md-offset-1">

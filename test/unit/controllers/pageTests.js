@@ -3,6 +3,7 @@ const Path = require('path');
 const Chai = require('chai');
 const expect = Chai.expect;
 const Sinon = require('sinon');
+const moment = require('moment');
 
 const sinonChai = require('sinon-chai');
 Chai.use(sinonChai);
@@ -33,14 +34,16 @@ const authenticatedFakeReq = (tbl) => {
 };
 
 describe('Page API controller', () => {
-	let sandbox;
+	let sandbox, clock;
 
 	beforeEach(() => {
 		sandbox = Sinon.createSandbox();
+		clock = Sinon.useFakeTimers();
 	});
 
 	afterEach( () => {
 		sandbox.restore();
+		clock.restore();
 	});
 
 	describe('Home page', () => {
@@ -252,15 +255,26 @@ describe('Page API controller', () => {
 
 		it('should render the template', () => {
 			const board = new Board(boardData);
+			const expDate = new Date();
 
 			const threadData = {
 				Title: 'some thread',
 				ID: 2942,
+				PostCount: 12,
 				Canonical: '/api/threads/2942'
 			};
 
+			const thread = new Thread(threadData);
+			const threadStats = {
+				Posts: 1,
+				LastPostTime: expDate,
+				LastPosterId: 1,
+				LastPoster: 'Fiona'
+			};
+
 			sandbox.stub(Board, 'get').resolves(board);
-			sandbox.stub(Thread, 'getThreadsInBoard').resolves([new Thread(threadData)]);
+			sandbox.stub(Thread, 'getThreadsInBoard').resolves([thread]);
+			sandbox.stub(thread, 'getThreadStatistics').resolves(threadStats);
 			sandbox.spy(board, 'serialize');
 
 			const fakeReq = unauthenticatedFakeReq({
@@ -275,7 +289,13 @@ describe('Page API controller', () => {
 				Canonical: `/api/boards/${boardData.ID}`,
 				ID: boardData.ID,
 				csrfToken: 12345,
-				threads: [threadData]
+				threads: [{
+					Title: 'some thread',
+					ID: 2942,
+					PostCount: 12,
+					Canonical: '/api/threads/2942',
+					Stats: threadStats
+				}]
 			};
 
 			return page.getBoardView(fakeReq, fakeRes).then(() => {
@@ -327,6 +347,7 @@ describe('Page API controller', () => {
 
 			fakeThread = {
 				ID: Math.random(),
+				PostCount: 1,
 				Title: 'some thread'
 			};
 		});
@@ -380,22 +401,24 @@ describe('Page API controller', () => {
 		});
 
 		it('should render the template', () => {
-			const fakePostData = {
+			const fakePost = new Post({
 				Body: 'The only post in the thread',
 				ID: 23,
-				Canonical: '/api/posts/23'
-			};
+				Canonical: '/api/posts/23',
+				created_at: moment().utc().toDate()
+			});
 
 			const expected = {
 				Title: fakeThread.Title,
 				Canonical: `/api/threads/${fakeThread.ID}`,
 				csrfToken: 12345,
 				ID: fakeThread.ID,
-				posts: [fakePostData]
+				PostCount: 1,
+				posts: [fakePost.serialize()]
 			};
 
 			sandbox.stub(Thread, 'getThread').resolves(new Thread(fakeThread));
-			sandbox.stub(Post, 'getPostsInThread').resolves([new Post(fakePostData)]);
+			sandbox.stub(Post, 'getPostsInThread').resolves([fakePost]);
 
 			const fakeReq = unauthenticatedFakeReq({
 				params: {
