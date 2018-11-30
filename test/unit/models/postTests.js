@@ -12,6 +12,7 @@ const moment = require('moment');
 
 //Module to test
 const Post = require('../../../src/model/Post.js');
+const User = require('../../../src/model/User.js');
 const DB = require('../../../src/model/db');
 
 
@@ -202,5 +203,35 @@ describe('Post model', () => {
 		post.Created = time.toJSON(); //pass it in as a JSON-compatible string      
 		
 		return moment(post.Created).isSame(time).should.be.true;
+	});
+	
+	it('should accept poster from controller', () => {
+		const user = new User({
+			Username: 'testPerson',
+			Admin: false,
+			ID: 666
+		});
+		
+		const post = new Post({
+			Body: `A Post ${Math.random()}`,
+			Thread: 1,
+			Poster: 1
+		});
+		
+		post.Poster = user;
+		
+		return post.Poster.should.deep.equal(666);
+	});
+	
+	it('should accept poster from api', () => {
+		const post = new Post({
+			Body: `A Post ${Math.random()}`,
+			Thread: 1,
+			Poster: 1
+		});
+		
+		post.Poster = 123;
+		
+		return post.Poster.should.deep.equal(123);
 	});
 });
