@@ -128,6 +128,7 @@ describe('Post model', () => {
 				dbpost.ID.should.equal(ID);
 				moment().isSame(dbpost.Created).should.equal(true);
 				dbpost.Poster.should.equal(1);
+				dbpost.PosterName.should.equal('test user');
 			});
 	});
 
@@ -173,5 +174,33 @@ describe('Post model', () => {
 			.then(() => Post.addPost(post2))
 			.then(() => Post.getPostsInThread(1))
 			.should.eventually.not.deep.contain(new Post(post2));
+	});
+	
+	it('should accept post date from controller', () => {
+		const post = new Post({
+			Body: `A Post ${Math.random()}`,
+			Thread: 1,
+			Poster: 1
+		});
+		
+		const time = moment();
+		
+		post.Created = time;
+		
+		return moment(post.Created).isSame(time).should.be.true;
+	});
+	
+	it('should accept post date from api', () => {
+		const post = new Post({
+			Body: `A Post ${Math.random()}`,
+			Thread: 1,
+			Poster: 1
+		});
+		
+		const time = moment();
+		
+		post.Created = time.toJSON(); //pass it in as a JSON-compatible string      
+		
+		return moment(post.Created).isSame(time).should.be.true;
 	});
 });
