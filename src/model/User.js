@@ -20,6 +20,8 @@ class User {
 		this.data.Username = row.Username;
 		this.data.Admin = Boolean(row.Admin);
 		this.data.AuthSecret = row.AuthSecret;
+		this.data.DisplayName = row.DisplayName ? row.DisplayName : row.Username;
+		this.data.Avatar = row.Avatar;
 		
 		//Canonical link
 		this.Canonical = `/api/users/${this.data.ID}`;
@@ -31,6 +33,10 @@ class User {
 	
 	get Username() {
 		return this.data.Username;
+	}
+	
+	get DisplayName() {
+		return this.data.DisplayName;
 	}
 	
 	set Username(us) {
@@ -87,6 +93,8 @@ class User {
 			const newUser = {
 				Username: user.Username,
 				Admin: user.Admin,
+				DisplayName: user.DisplayName,
+				Avatar: user.Avatar,
 				AuthSecret: `bcrypt:${hash}`
 			};
 			return Promise.resolve(DB.knex('Users').insert(newUser));
@@ -111,7 +119,7 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUser(id) {
-		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'Admin', 'AuthSecret').then((rows) => {
+		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'DisplayName', 'Avatar', 'Admin', 'AuthSecret').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}
