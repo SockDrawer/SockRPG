@@ -69,7 +69,7 @@ class User {
 	*
 	* @param {Object} user The user to add
 	*
-	* @returns {Promise} A Promise that is resolved with the user added
+	* @returns {Promise} A Promise that is resolved with the user ID of the user added
 	*/
 	static addUser(user) {
 		// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?

@@ -29,7 +29,9 @@ const Game = require('../model/Game');
 const Thread = require('../model/Thread');
 const Post = require('../model/Post');
 const User = require('../model/User');
+const SessionController = require('./sessionController');
 const db = require('../model/db');
+const passport = require('passport');
 const {check, validationResult} = require('express-validator/check');
 
 const debug = require('debug')('SockRPG:controller:Page');
@@ -201,9 +203,14 @@ const postSignup = [
 		const user = {Username: req.body.username, Admin: false, Password: req.body.password};
 		
 		return User.addUser(user)
-		.then(() => {
-			// TODO: Tell the user about success, or just log them in?
-			res.redirect('/');
+		.then((ids) => User.getUser(ids[0])) //get it back out so we have the ID
+		.then((dbuser) => {
+			return req.login(dbuser, (err) => {
+				if (err) {
+					throw err;
+				}
+				res.redirect('/');
+			});
 		})
 		.catch((err) => {
 			// TODO: Obviously need to handle failures here with proper user friendly errors

@@ -559,7 +559,8 @@ describe('Page API controller', () => {
 				end: sandbox.stub().returns(fakeRes),
 				redirect: sandbox.stub().returns(fakeRes)
 			};
-			sandbox.stub(User, 'addUser').resolves(null);
+			sandbox.stub(User, 'addUser').resolves([0]);
+			sandbox.stub(User, 'getUser').resolves({});
 		});
 
 		afterEach( () => {
@@ -606,13 +607,16 @@ describe('Page API controller', () => {
 					username: 'TestUser',
 					password: 'FakePassword',
 					passwordconfirm: 'FakePassword'
-				}
+				},
+				login: sandbox.stub().yields()
 			});
 
 			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
+				expect(User.addUser).to.have.been.calledOnce;
+				expect(User.getUser).to.have.been.calledOnce;
+				expect(fakeReq.login).to.have.been.calledOnce;
 				expect(fakeRes.redirect).to.have.been.calledOnce;
 				expect(fakeRes.render).to.have.not.been.called;
-				expect(User.addUser).to.have.been.calledOnce;
 			});
 		});
 		
