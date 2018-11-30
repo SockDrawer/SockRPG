@@ -1,0 +1,15 @@
+<h2>Edit Profile:</h2>
+<form method="post">
+	{{#if errors}}
+	<ul>
+		{{#each errors}}
+		<li>{{this.msg}}</li>
+		{{/each}}
+	</ul>
+	{{/if}}
+	<input type="hidden" name="_csrf" value="{{csrfToken}}">
+	<label for="displayName">Display Name:</label><input type="text" name="displayName" value="{{data.displayName}}"/><br/>
+	<label for="password">Change Password:</label><input type="password" name="password" value=""/><br/>
+	<label for="password">Confirm Password:</label><input type="password" name="passwordconfirm" value=""/><br/>
+	<input type="submit" value="Sign up"/>
+</form>

@@ -220,13 +220,31 @@ const postSignup = [
 	}
 ];
 
+/**
+ * Get the edit profile page to hand to the view
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+  */
+function getProfileEdit(req, res) {
+
+	if (!req.user) {
+		return res.redirect('/login');
+	}
+	const data = req.user.serialize();
+	data.csrfToken = req.csrfToken();
+	res.render('profileEdit', data);
+	return Promise.resolve();
+}
+
 const controller = {
 	getHomePage: getHomePage,
 	getThreadView: getThreadView,
 	getBoardView: getBoardView,
 	getLoginView: getLoginView,
 	getSignupView: getSignupView,
-	postSignup: postSignup
+	postSignup: postSignup,
+	getProfileEdit: getProfileEdit
 };
 
 module.exports = controller;

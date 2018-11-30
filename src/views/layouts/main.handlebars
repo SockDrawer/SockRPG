@@ -45,7 +45,7 @@
 					<a class="navbar-brand" href="/">SockRPG Test Instance</a>
 				</div>
 				{{#if loggedIn}}
-				<p class="navbar-text navbar-right"><i class="material-icons">face</i> Welcome, {{user.Username}}. (<a href="/logout">Log out</a>)</p>
+				<p class="navbar-text navbar-right"><i class="material-icons">face</i> Welcome, <a href="/profileEdit">{{user.DisplayName}}</a>. (<a href="/logout">Log out</a>)</p>
 				{{else}}
 				<p class="navbar-text navbar-right"><i class="material-icons">face</i> You are not signed in. <a href="/signup">Sign up</a> or <a href="/login">Log In</a>?</p>
 				{{/if}}
