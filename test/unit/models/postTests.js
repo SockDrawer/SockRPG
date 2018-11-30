@@ -148,6 +148,7 @@ describe('Post model', () => {
 			.then((dbpost) => {
 				post = dbpost;
 				post.Body = `Awesome new Body ${Math.random()}`;
+				post.Thread = 2; //Moved post
 				return post.save();
 			})
 			.then(() => Post.getPostByID(ID))

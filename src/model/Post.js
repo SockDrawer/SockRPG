@@ -120,6 +120,7 @@ class Post {
 		.leftJoin('Users', 'Posts.Poster', 'Users.ID')
 		.where('Posts.Thread', threadID)
 		.select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster', 'Users.Username')
+		.orderBy('Posts.created_at', 'asc')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));
 		});

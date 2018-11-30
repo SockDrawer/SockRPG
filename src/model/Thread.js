@@ -50,12 +50,6 @@ class Thread {
 
 	async getThreadStatistics() {
 		const posts = await Post.getPostsInThread(this.data.ID);
-		posts.sort((a, b) => {
-			if (a.Created.isSame(b.Created)) {
-				return 0;
-			}
-			return a.Created.isBefore(b.Created) ? 1 : -1;
-		});
 
 		if (posts.length <= 0) {
 			return {
@@ -66,7 +60,7 @@ class Thread {
 			};
 		}
 
-		const lastPost = posts[0];
+		const lastPost = posts[posts.length - 1];
 		const user = await User.getUser(lastPost.Poster);
 
 		return {
