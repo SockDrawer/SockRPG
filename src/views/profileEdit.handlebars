@@ -7,6 +7,9 @@
 		{{/each}}
 	</ul>
 	{{/if}}
+	{{#if message}}
+	<span style="color: green">{{message}}</span><br/>
+	{{/if}}
 	<input type="hidden" name="_csrf" value="{{csrfToken}}">
 	<label for="displayName">Display Name:</label><input type="text" name="displayName" value="{{data.displayName}}"/><br/>
 	<label for="password">Change Password:</label><input type="password" name="password" value=""/><br/>

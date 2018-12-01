@@ -237,6 +237,56 @@ function getProfileEdit(req, res) {
 	return Promise.resolve();
 }
 
+/**
+ * Handle signup page post
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+ */
+const postProfileEdit = [
+	check('password').optional().isLength({min: 8}).withMessage('Password must be at least 8 characters.'),
+	check('passwordconfirm').custom((value, {req, _, __}) => {
+		if (req.body.password && value !== req.body.password) {
+			throw new Error();
+		}
+		return value;
+	}).withMessage('Passwords do not match.'),
+	
+	async (req, res) => {
+		const errors = validationResult(req);
+		
+		if (!req.user) {
+			return res.redirect('/login');
+		}
+	
+		// Render the page again with validation errors if any
+		if (!errors.isEmpty()) {
+			res.render('profileEdit', {csrfToken: req.csrfToken(), data: req.body, errors: errors.array()});
+			return null;
+		}
+		
+		const user = req.user;
+		if (req.body.password) {
+			//Change password
+			await user.changePassword(req.body.password);
+		}
+		
+		//Update other fields
+		user.DisplayName = req.body.DisplayName;
+		
+		return User.save()
+		.then(() => {
+			res.render('profileEdit', {csrfToken: req.csrfToken(), data: req.body, message: 'Success!'});
+		})
+		.catch((err) => {
+			// TODO: Obviously need to handle failures here with proper user friendly errors
+			res.status(500);
+			res.send({error: err.toString()});
+		});
+	}
+];
+
+
 const controller = {
 	getHomePage: getHomePage,
 	getThreadView: getThreadView,
