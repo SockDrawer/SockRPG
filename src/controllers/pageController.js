@@ -227,8 +227,6 @@ const postSignup = [
  * @returns {Promise} A promise that will resolve when the response has been sent.
   */
 function getProfileEdit(req, res) {
-
-
 	return new Promise((resolve, reject) => {
 		if (!req.user) {
 			res.redirect('/login');

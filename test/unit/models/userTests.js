@@ -184,6 +184,17 @@ describe('User model', () => {
 		return updatedUser.Username.should.equal(newUsername);
 	});
 	
+	it('should be able to change password', async () => {
+		const userId = (await User.addUser(testUserData))[0];
+		const user = await User.getUser(userId);
+		
+		const oldSecret = user.AuthSecret.toString();
+		
+		await user.changePassword('Password12345');
+		
+		return user.AuthSecret.should.not.equal(oldSecret);
+	});
+	
 	it('should be able to get a user by username', async () => {
 		await User.addUser(testUserData);
 		

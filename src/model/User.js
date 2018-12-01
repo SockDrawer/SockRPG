@@ -119,9 +119,10 @@ class User {
 	/**
 	 * Change password
 	 * @param {String} newPass the new password
+	* @returns {Promise} A Promise that is resolved when the password is changed
 	 */
 	changePassword(newPass) {
-		createAuthSecret(newPass)
+		return createAuthSecret(newPass)
 		.then((hash) => {
 			this.data.AuthSecret = hash;
 			return this.save();
