@@ -49,12 +49,16 @@ class User {
 		return this.data.Username;
 	}
 	
+	set Username(us) {
+		this.data.Username = us;
+	}
+	
 	get DisplayName() {
 		return this.data.DisplayName;
 	}
 	
-	set Username(us) {
-		this.data.Username = us;
+	set DisplayName(nm) {
+		this.data.DisplayName = nm;
 	}
 	
 	get Admin() {
@@ -116,7 +120,7 @@ class User {
 	 * Change password
 	 * @param {String} newPass the new password
 	 */
-	static changePassword(newPass) {
+	changePassword(newPass) {
 		createAuthSecret(newPass)
 		.then((hash) => {
 			this.data.AuthSecret = hash;

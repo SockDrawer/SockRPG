@@ -228,13 +228,24 @@ const postSignup = [
   */
 function getProfileEdit(req, res) {
 
-	if (!req.user) {
-		return res.redirect('/login');
-	}
-	const data = req.user.serialize();
-	data.csrfToken = req.csrfToken();
-	res.render('profileEdit', data);
-	return Promise.resolve();
+
+	return new Promise((resolve, reject) => {
+		if (!req.user) {
+			res.redirect('/login');
+			return resolve();
+		}
+		
+		const data = req.user.serialize();
+		data.csrfToken = req.csrfToken();
+		res.render('profileEdit', data);
+		return resolve();
+	}).catch((err) => {
+		// TODO: Obviously need to handle failures here with proper user friendly errors
+		debug(`Error Getting Profile Edit View: ${err.toString()}`);
+		res.status(500);
+		res.send({error: err.toString()});
+	});
+	
 }
 
 /**
@@ -245,7 +256,7 @@ function getProfileEdit(req, res) {
  */
 const postProfileEdit = [
 	check('password').optional().isLength({min: 8}).withMessage('Password must be at least 8 characters.'),
-	check('passwordconfirm').custom((value, {req, _, __}) => {
+	check('passwordconfirm').optional().custom((value, {req, _, __}) => {
 		if (req.body.password && value !== req.body.password) {
 			throw new Error();
 		}
@@ -274,7 +285,7 @@ const postProfileEdit = [
 		//Update other fields
 		user.DisplayName = req.body.DisplayName;
 		
-		return User.save()
+		return user.save()
 		.then(() => {
 			res.render('profileEdit', {csrfToken: req.csrfToken(), data: req.body, message: 'Success!'});
 		})
@@ -294,7 +305,8 @@ const controller = {
 	getLoginView: getLoginView,
 	getSignupView: getSignupView,
 	postSignup: postSignup,
-	getProfileEdit: getProfileEdit
+	getProfileEdit: getProfileEdit,
+	postProfileEdit: postProfileEdit
 };
 
 module.exports = controller;
