@@ -26,7 +26,11 @@ describe('Post model', () => {
 		})
 		.then(() => DB.initialise({
 			database: {
-				filename: ':memory:'
+				client: 'sqlite3',
+				connection: {
+					filename: ':memory:'
+				},
+				useNullAsDefault: true
 			}
 		})).then(() => DB.knex('Users').insert({
 			ID: 1,

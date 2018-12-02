@@ -42,22 +42,14 @@ describe('DB model', () => {
 	});
 
 	it('initialise should work', () => {
-		return Promise.resolve().then(() => DB.initialise({
-			database: {
-				filename: ':memory:'
-			}
-		}))
+		return Promise.resolve().then(() => DB.initialise())
 		.then(() => {
 			DB.isInitialised().should.equal(true);
 		});
 	});
 
 	it('teardown should work', () => {
-		return Promise.resolve().then(() => DB.initialise({
-			database: {
-				filename: ':memory:'
-			}
-		}))
+		return Promise.resolve().then(() => DB.initialise())
 		.then(() => {
 			DB.isInitialised().should.equal(true);
 		})
@@ -68,19 +60,11 @@ describe('DB model', () => {
 	});
 
 	it('redundant initialization should not error', () => {
-		return Promise.resolve().then(() => DB.initialise({
-			database: {
-				filename: ':memory:'
-			}
-		}))
+		return Promise.resolve().then(() => DB.initialise())
 		.then(() => {
 			DB.isInitialised().should.equal(true);
 		})
-		.then(() => DB.initialise({
-			database: {
-				filename: ':memory:'
-			}
-		}))
+		.then(() => DB.initialise())
 		.then(() => {
 			DB.isInitialised().should.equal(true);
 		});
@@ -98,7 +82,7 @@ describe('DB model', () => {
 			});
 		}))
 		.then(() => DB.initialise({
-			database: {
+			connection: {
 				filename: 'tmpfile.sqlite'
 			}
 		}))
@@ -110,7 +94,7 @@ describe('DB model', () => {
 			DB.isInitialised().should.equal(false);
 		})
 		.then(() => DB.initialise({
-			database: {
+			connection: {
 				filename: 'tmpfile.sqlite'
 			}
 		}))

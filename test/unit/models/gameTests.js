@@ -24,7 +24,11 @@ describe('Game model', () => {
 			})
 			.then(() => DB.initialise({
 				database: {
-					filename: ':memory:'
+					client: 'sqlite3',
+					connection: {
+						filename: ':memory:'
+					},
+					useNullAsDefault: true
 				}
 			}));
 	});
