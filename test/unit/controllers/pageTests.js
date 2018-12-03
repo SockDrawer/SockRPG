@@ -666,6 +666,94 @@ describe('Page API controller', () => {
 		
 	});
 	
+	describe('Profile view', () => {
+		let fakeRes, fakeUser;
+
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			
+			
+			fakeUser = new User({
+				ID: 5,
+				Username: 'someone',
+				AuthSecret: 'aToken'
+			});
+			
+			fakeRes = {
+				render: sandbox.stub().returns(fakeRes),
+				redirect: sandbox.stub().returns(fakeRes),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub().returns(fakeRes),
+				end: sandbox.stub().returns(fakeRes)
+			};
+			
+			sandbox.stub(User, 'getUser').resolves(fakeUser);
+		});
+
+		afterEach( () => {
+			sandbox.restore();
+		});
+
+		it('should exist', () => {
+			expect(page.getProfile).to.be.a('function');
+		});
+
+		it('should render the profile page', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
+			});
+		});
+		
+		it('should render the login page if not authenticated', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.redirect).to.have.been.calledOnceWith('/login');
+				expect(fakeRes.render).to.have.not.been.called;
+			});
+		});
+
+		it('should return 500 if an error is thrown', () => {
+			fakeRes.render.throws('Render kaboom!');
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(500);
+			});
+		});
+		
+		it('should return 400 if no user specified', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(400);
+			});
+		});
+	});
+	
 	describe('Profile edit view', () => {
 		let fakeRes, fakeUser;
 

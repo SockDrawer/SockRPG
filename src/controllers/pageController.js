@@ -221,6 +221,42 @@ const postSignup = [
 ];
 
 /**
+ * Get the profile page to hand to the view
+ * @param  {Request} req The Express request object
+ * @param  {Response} res The Express response object
+ * @returns {Promise} A promise that will resolve when the response has been sent.
+  */
+function getProfile(req, res) {
+	return new Promise((resolve, reject) => {
+		if (!req.user) {
+			res.redirect('/login');
+			return resolve();
+		}
+		
+		
+		if (!req.params.id) {
+			res.status(400).send({error: 'Missing ID'});
+			return Promise.resolve();
+		}
+		
+		return User.getUser(req.params.id)
+			.then((user) => {
+				if (!user) {
+					res.status(404).send({error: 'No such user'});
+					return Promise.resolve();
+				}
+				const data = user.serialize();
+				return res.render('profile', data);
+			});
+	}).catch((err) => {
+		// TODO: Obviously need to handle failures here with proper user friendly errors
+		debug(`Error Getting Profile View: ${err.toString()}`);
+		res.status(500);
+		res.send({error: err.toString()});
+	});
+}
+
+/**
  * Get the edit profile page to hand to the view
  * @param  {Request} req The Express request object
  * @param  {Response} res The Express response object
@@ -243,7 +279,6 @@ function getProfileEdit(req, res) {
 		res.status(500);
 		res.send({error: err.toString()});
 	});
-	
 }
 
 /**
@@ -303,6 +338,7 @@ const controller = {
 	getLoginView: getLoginView,
 	getSignupView: getSignupView,
 	postSignup: postSignup,
+	getProfile: getProfile,
 	getProfileEdit: getProfileEdit,
 	postProfileEdit: postProfileEdit
 };

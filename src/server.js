@@ -133,6 +133,9 @@ function setupExpress() {
 				.post(passport.authenticate('local', {successRedirect: '/', failureRedirect: '/login'})
 				);
 				
+			app.route('/profile/:id')
+				.get(cPage.getProfile);
+				
 			app.route('/profileEdit')
 				.get(cPage.getProfileEdit);
 				
