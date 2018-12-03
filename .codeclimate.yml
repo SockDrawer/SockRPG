@@ -1,0 +1,13 @@
+version: "2"         # required to adjust maintainability checks
+exclude_patterns:
+ - "**/node_modules/"
+ - "static/js/ckeditor/"
+ - "db/"
+ - "**/test/"
+checks:
+  similar-code:
+    config:
+      threshold: 200
+  identical-code:
+    config:
+      threshold: 100
