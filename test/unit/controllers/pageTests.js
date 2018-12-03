@@ -105,8 +105,8 @@ describe('Page API controller', () => {
 
 			const fakeReq = unauthenticatedFakeReq({});
 			return page.getHomePage(fakeReq, fakeRes)
-				.then(() => fakeRes.status.should.have.been.calledWith(500))
-				.then(() => fakeRes.send.should.have.been.calledWith({
+				.then(() => expect(fakeRes.status).to.have.been.calledWith(500))
+				.then(() => expect(fakeRes.send).to.have.been.calledWith({
 					error: errortext.toString()
 				}));
 		});
@@ -640,7 +640,7 @@ describe('Page API controller', () => {
 			});
 
 			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
-				fakeRes.status.should.have.been.calledWith(500);
+				expect(fakeRes.status).to.have.been.calledWith(500);
 				expect(fakeRes.render).to.have.not.been.called;
 				expect(fakeRes.redirect).to.have.not.been.called;
 			});
@@ -707,9 +707,7 @@ describe('Page API controller', () => {
 				}
 			});
 
-			return page.getProfile(fakeReq, fakeRes).then(() => {
-				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
-			});
+			return page.getProfile(fakeReq, fakeRes).then(() => expect(fakeRes.render).to.have.been.calledOnceWith('profile'));
 		});
 		
 		it('should render the login page if not authenticated', () => {
@@ -727,7 +725,7 @@ describe('Page API controller', () => {
 		});
 
 		it('should return 500 if an error is thrown', () => {
-			fakeRes.render.throws('Render kaboom!');
+			User.getUser.rejects('Big badda boom');
 			const fakeReq = authenticatedFakeReq({
 				user: fakeUser,
 				csrfToken: () => 'fakeCsrfToken',
@@ -750,6 +748,21 @@ describe('Page API controller', () => {
 
 			return page.getProfile(fakeReq, fakeRes).then(() => {
 				expect(fakeRes.status).to.have.been.calledOnceWith(400);
+			});
+		});
+		
+		it('should return 404 if invalid user specified', () => {
+			User.getUser.resolves(null);
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(404);
 			});
 		});
 	});
@@ -982,7 +995,7 @@ describe('Page API controller', () => {
 			});
 
 			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
-				fakeRes.status.should.have.been.calledWith(500);
+				expect(fakeRes.status).to.have.been.calledWith(500);
 				expect(fakeRes.render).to.have.not.been.called;
 				expect(fakeRes.redirect).to.have.not.been.called;
 			});

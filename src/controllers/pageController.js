@@ -227,33 +227,31 @@ const postSignup = [
  * @returns {Promise} A promise that will resolve when the response has been sent.
   */
 function getProfile(req, res) {
-	return new Promise((resolve, reject) => {
-		if (!req.user) {
-			res.redirect('/login');
-			return resolve();
-		}
+	if (!req.user) {
+		res.redirect('/login');
+		return Promise.resolve();
+	}
 		
 		
-		if (!req.params.id) {
-			res.status(400).send({error: 'Missing ID'});
-			return Promise.resolve();
-		}
+	if (!req.params.id) {
+		res.status(400).send({error: 'Missing ID'});
+		return Promise.resolve();
+	}
 		
-		return User.getUser(req.params.id)
-			.then((user) => {
-				if (!user) {
-					res.status(404).send({error: 'No such user'});
-					return Promise.resolve();
-				}
-				const data = user.serialize();
-				return res.render('profile', data);
-			});
-	}).catch((err) => {
-		// TODO: Obviously need to handle failures here with proper user friendly errors
-		debug(`Error Getting Profile View: ${err.toString()}`);
-		res.status(500);
-		res.send({error: err.toString()});
-	});
+	return User.getUser(req.params.id)
+		.then((user) => {
+			if (!user) {
+				res.status(404).send({error: 'No such user'});
+				return Promise.resolve();
+			}
+			const data = user.serialize();
+			return res.render('profile', data);
+		}).catch((err) => {
+			// TODO: Obviously need to handle failures here with proper user friendly errors
+			debug(`Error Getting Profile View: ${err.toString()}`);
+			res.status(500);
+			res.send({error: err.toString()});
+		});
 }
 
 /**
