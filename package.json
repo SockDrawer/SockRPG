@@ -87,7 +87,8 @@
       "**/node_modules/**",
       "static/**",
       "mockups/**",
-      "*.js"
+      "*.js",
+      "migrations/**"
     ],
     "per-file": true,
     "watermarks": {
