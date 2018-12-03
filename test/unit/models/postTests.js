@@ -31,6 +31,7 @@ describe('Post model', () => {
 		})).then(() => DB.knex('Users').insert({
 			ID: 1,
 			Username: 'test user',
+			DisplayName: 'test user',
 			Admin: false,
 			AuthSecret: 'bcrypt:$2b$10$rDDmPJKXM4Tkd9gzavJK8eSfKYLdgvRypWqLQPN8UaXyQzvcEdnZC'
 		})).then(() => DB.knex('Boards').insert({
