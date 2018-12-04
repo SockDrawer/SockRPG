@@ -4,6 +4,7 @@ exclude_patterns:
  - "static/js/ckeditor/"
  - "db/"
  - "**/test/"
+ - "migrations/**"
 checks:
   similar-code:
     config:
