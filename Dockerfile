@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:10
 
 WORKDIR /opt/app
 ENV NODE_ENV=production
