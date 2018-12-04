@@ -12,6 +12,20 @@ const bcrypt = require('bcrypt');
  * @license MIT
  * @author Yamikuronue
  */
+ 
+/**
+	* Make a auth secret
+	*
+	* @param {Object} password The new password to hash
+	*
+	* @returns {Promise} A Promise that is resolved with the auth secret
+ */
+function createAuthSecret(password) {
+	// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
+	const hashRounds = 10;
+	
+	return bcrypt.hash(password, hashRounds).then((hash) => `bcrypt:${hash}`);
+}
 
 class User {
 	constructor(row) {
@@ -20,6 +34,8 @@ class User {
 		this.data.Username = row.Username;
 		this.data.Admin = Boolean(row.Admin);
 		this.data.AuthSecret = row.AuthSecret;
+		this.data.DisplayName = row.DisplayName ? row.DisplayName : row.Username;
+		this.data.Avatar = row.Avatar;
 		
 		//Canonical link
 		this.Canonical = `/api/users/${this.data.ID}`;
@@ -35,6 +51,14 @@ class User {
 	
 	set Username(us) {
 		this.data.Username = us;
+	}
+	
+	get DisplayName() {
+		return this.data.DisplayName;
+	}
+	
+	set DisplayName(nm) {
+		this.data.DisplayName = nm;
 	}
 	
 	get Admin() {
@@ -69,27 +93,39 @@ class User {
 	*
 	* @param {Object} user The user to add
 	*
-	* @returns {Promise} A Promise that is resolved with the user added
+	* @returns {Promise} A Promise that is resolved with the user ID of the user added
 	*/
 	static addUser(user) {
-		// TODO: decide number of rounds in a better way than just hardcoding this. Probably some config that's auto-defaulted at install time?
-		const hashRounds = 10;
-		
 		// TODO: Various anti-abuse checks eventually should probably go here.
 		
 		if (user.Admin) {
 			// TODO: Validate whether this is a situation where the created user can be an admin.
 		}
 		
-		return bcrypt.hash(user.Password, hashRounds)
-		.then((hash) => {
+		return createAuthSecret(user.Password)
+		.then((secret) => {
 			// Create copy of the user object with an AuthSecret instead of Password.
 			const newUser = {
 				Username: user.Username,
 				Admin: user.Admin,
-				AuthSecret: `bcrypt:${hash}`
+				DisplayName: user.DisplayName,
+				Avatar: user.Avatar,
+				AuthSecret: secret
 			};
 			return Promise.resolve(DB.knex('Users').insert(newUser));
+		});
+	}
+	
+	/**
+	 * Change password
+	 * @param {String} newPass the new password
+	* @returns {Promise} A Promise that is resolved when the password is changed
+	 */
+	changePassword(newPass) {
+		return createAuthSecret(newPass)
+		.then((hash) => {
+			this.data.AuthSecret = hash;
+			return this.save();
 		});
 	}
 	
@@ -111,7 +147,7 @@ class User {
 	* @returns {Promise} A Promise that is resolved with the board requested
 	*/
 	static getUser(id) {
-		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'Admin', 'AuthSecret').then((rows) => {
+		return DB.knex('Users').where('ID', id).select('ID', 'Username', 'DisplayName', 'Avatar', 'Admin', 'AuthSecret').then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
 			}

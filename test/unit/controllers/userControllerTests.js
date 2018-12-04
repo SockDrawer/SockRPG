@@ -88,7 +88,8 @@ describe('User API controller', () => {
 				Admin: false,
 				Canonical: '/api/users/5',
 				ID: 5,
-				Username: 'joe'
+				Username: 'joe',
+				DisplayName: 'joe'
 			};
 			const user = new User({
 				ID: 5,
@@ -107,11 +108,41 @@ describe('User API controller', () => {
 				});
 		});
 		
+		it('should return only one user', () => {
+			const expected = {
+				Admin: false,
+				Canonical: '/api/users/5',
+				ID: 5,
+				Username: 'joe',
+				DisplayName: 'joe'
+			};
+			const user = new User({
+				ID: 5,
+				Username: 'joe'
+			});
+			const user2 = new User({
+				ID: 6,
+				Username: 'joe'
+			});
+			sandbox.stub(User, 'getUser').resolves([user, user2]);
+			const mockRequest = {
+				params: {
+					id: 5
+				}
+			};
+			return userControl.getUser(mockRequest, mockResponse)
+				.then(() => {
+					mockResponse.status.should.be.calledWith(200);
+					mockResponse.send.firstCall.args[0].should.deep.equal(expected);
+				});
+		});
+		
 		it('should be able to get by username', () => {
 			const expected = {
 				Admin: false,
 				Canonical: '/api/users/5',
 				ID: 5,
+				DisplayName: 'joe',
 				Username: 'joe'
 			};
 			const user = new User({

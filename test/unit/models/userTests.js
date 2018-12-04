@@ -41,6 +41,13 @@ describe('User model', () => {
 		Password: 'superDuperSecret'
 	};
 	
+	const testUserWithDisplay = {
+		Username: 'testPerson',
+		DisplayName: 'Test Person',
+		Admin: false,
+		Password: 'superDuperSecret'
+	};
+	
 	const testAdminUserData = {
 		Username: 'testAdmin',
 		Admin: true,
@@ -49,6 +56,18 @@ describe('User model', () => {
 	
 	it('should add a user', () => {
 		return User.addUser(testUserData).should.eventually.contain(1);
+	});
+	
+	it('should default display name to username', () => {
+		return User.addUser(testUserData)
+		.then((ids) => User.getUser(ids[0]))
+		.then((user) => user.DisplayName.should.equal('testPerson'));
+	});	
+	
+	it('should allow display names', () => {
+		return User.addUser(testUserWithDisplay)
+		.then((ids) => User.getUser(ids[0]))
+		.then((user) => user.DisplayName.should.equal('Test Person'));
 	});
 
 	it('should add an admin user', () => {
@@ -147,7 +166,7 @@ describe('User model', () => {
 		const userId = (await User.addUser(testUserData))[0];
 		const user = await User.getUser(userId);
 		
-		return user.serialize().should.have.all.keys('ID', 'Username', 'Admin', 'Canonical');
+		return user.serialize().should.have.all.keys('ID', 'Username', 'Admin', 'Avatar', 'Canonical', 'DisplayName');
 	});
 	
 	it('should be able to save', async () => {
@@ -163,6 +182,17 @@ describe('User model', () => {
 		const updatedUser = await User.getUser(userId);
 		
 		return updatedUser.Username.should.equal(newUsername);
+	});
+	
+	it('should be able to change password', async () => {
+		const userId = (await User.addUser(testUserData))[0];
+		const user = await User.getUser(userId);
+		
+		const oldSecret = user.AuthSecret.toString();
+		
+		await user.changePassword('Password12345');
+		
+		return user.AuthSecret.should.not.equal(oldSecret);
 	});
 	
 	it('should be able to get a user by username', async () => {

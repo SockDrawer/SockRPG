@@ -38,6 +38,8 @@ const db = {
 			['Users', (table) => {
 				table.increments('ID').primary();
 				table.string('Username').notNullable().unique();
+				table.string('DisplayName');
+				table.string('Avatar').defaultTo('');
 				table.boolean('Admin').notNullable().defaultTo(false);
 				table.string('AuthSecret').notNullable();
 			}],
