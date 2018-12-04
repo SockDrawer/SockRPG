@@ -25,7 +25,7 @@ class Post {
 		this.data.Body = rowData.Body;
 		this.data.Thread = rowData.Thread;
 		this.data.Poster = rowData.Poster;
-		this.Username = rowData.Username;
+		this.DisplayName = rowData.DisplayName;
 		this.data.created_at = rowData.created_at;
 		if (!this.data.created_at) {
 			this.data.created_at = new Date();
@@ -55,7 +55,7 @@ class Post {
 	}
 	
 	get PosterName() {
-		return this.Username;
+		return this.DisplayName;
 	}
 	
 	set Created(value) {
@@ -76,6 +76,7 @@ class Post {
 	set Poster(user) {
 		if (user instanceof User) {
 			this.data.Poster = user.ID;
+			this.data.DisplayName = user.DisplayName;
 		} else {
 			this.data.Poster = user;
 		}
@@ -85,7 +86,7 @@ class Post {
 		const serial = JSON.parse(JSON.stringify(this.data));
 		serial.Canonical = this.Canonical;
 		serial.Created = moment(this.data.created_at).format();
-		serial.Poster = this.Username;
+		serial.Poster = this.Poster;
 		return serial;
 	}
 
@@ -105,7 +106,7 @@ class Post {
 	static getPostByID(id) {
 		return DB.knex('Posts')
 		.leftJoin('Users', 'Posts.Poster', 'Users.ID')
-		.where('Posts.ID', id).select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster', 'Users.Username')
+		.where('Posts.ID', id).select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster', 'Users.DisplayName')
 		.then((rows) => {
 			if (!rows || rows.length <= 0) {
 				return null;
@@ -119,7 +120,7 @@ class Post {
 		return DB.knex('Posts')
 		.leftJoin('Users', 'Posts.Poster', 'Users.ID')
 		.where('Posts.Thread', threadID)
-		.select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster', 'Users.Username')
+		.select('Posts.ID', 'Body', 'Posts.Thread', 'Posts.created_at', 'Posts.Poster', 'Users.DisplayName')
 		.orderBy('Posts.created_at', 'asc')
 		.then((rows) => {
 			return rows.map((row) => new Post(row));

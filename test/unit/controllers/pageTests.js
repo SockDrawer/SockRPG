@@ -19,22 +19,44 @@ const User = require('../../../src/model/User');
 const unauthenticatedFakeReq = (tbl) => {
 	tbl.csrfToken = () => 12345;
 	tbl.isAuthenticated = () => false;
+	if (!tbl.body) {
+		tbl.body = {};
+	}
 	return tbl;
 };
 
 const authenticatedFakeReq = (tbl) => {
 	tbl.csrfToken = () => 12345;
 	tbl.isAuthenticated = () => true;
-	tbl.user = {
-		ID: 1,
-		Username: 'FakeUser',
-		Admin: false
-	};
+	if (!tbl.body) {
+		tbl.body = {};
+	}
+	if (!tbl.user) {
+		tbl.user = {
+			ID: 1,
+			Username: 'FakeUser',
+			Admin: false
+		};
+	}
 	return tbl;
 };
 
 describe('Page API controller', () => {
 	let sandbox, clock;
+	
+	const runHandlerList = async (handlerList, req, res) => {
+		for (const handler of handlerList) {
+			let nextCalled = false;
+			const next = () => {
+				nextCalled = true;
+			};
+			await handler(req, res, next);
+			
+			if (!nextCalled) {
+				break;
+			}
+		}
+	};
 
 	beforeEach(() => {
 		sandbox = Sinon.createSandbox();
@@ -83,8 +105,8 @@ describe('Page API controller', () => {
 
 			const fakeReq = unauthenticatedFakeReq({});
 			return page.getHomePage(fakeReq, fakeRes)
-				.then(() => fakeRes.status.should.have.been.calledWith(500))
-				.then(() => fakeRes.send.should.have.been.calledWith({
+				.then(() => expect(fakeRes.status).to.have.been.calledWith(500))
+				.then(() => expect(fakeRes.send).to.have.been.calledWith({
 					error: errortext.toString()
 				}));
 		});
@@ -559,7 +581,8 @@ describe('Page API controller', () => {
 				end: sandbox.stub().returns(fakeRes),
 				redirect: sandbox.stub().returns(fakeRes)
 			};
-			sandbox.stub(User, 'addUser').resolves(null);
+			sandbox.stub(User, 'addUser').resolves([0]);
+			sandbox.stub(User, 'getUser').resolves({});
 		});
 
 		afterEach( () => {
@@ -572,20 +595,6 @@ describe('Page API controller', () => {
 				expect(handler).to.be.a('function');
 			}
 		});
-		
-		const runHandlerList = async (handlerList, req, res) => {
-			for (const handler of page.postSignup) {
-				let nextCalled = false;
-				const next = () => {
-					nextCalled = true;
-				};
-				await handler(req, res, next);
-				
-				if (!nextCalled) {
-					break;
-				}
-			}
-		};
 		
 		it('should render the signup page if called without valid args', () => {
 			const fakeReq = unauthenticatedFakeReq({
@@ -606,13 +615,16 @@ describe('Page API controller', () => {
 					username: 'TestUser',
 					password: 'FakePassword',
 					passwordconfirm: 'FakePassword'
-				}
+				},
+				login: sandbox.stub().yields()
 			});
 
 			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
+				expect(User.addUser).to.have.been.calledOnce;
+				expect(User.getUser).to.have.been.calledOnce;
+				expect(fakeReq.login).to.have.been.calledOnce;
 				expect(fakeRes.redirect).to.have.been.calledOnce;
 				expect(fakeRes.render).to.have.not.been.called;
-				expect(User.addUser).to.have.been.calledOnce;
 			});
 		});
 		
@@ -628,7 +640,7 @@ describe('Page API controller', () => {
 			});
 
 			return runHandlerList(page.postSignup, fakeReq, fakeRes).then(() => {
-				fakeRes.status.should.have.been.calledWith(500);
+				expect(fakeRes.status).to.have.been.calledWith(500);
 				expect(fakeRes.render).to.have.not.been.called;
 				expect(fakeRes.redirect).to.have.not.been.called;
 			});
@@ -654,4 +666,342 @@ describe('Page API controller', () => {
 		
 	});
 	
+	describe('Profile view', () => {
+		let fakeRes, fakeUser;
+
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			
+			
+			fakeUser = new User({
+				ID: 5,
+				Username: 'someone',
+				AuthSecret: 'aToken'
+			});
+			
+			fakeRes = {
+				render: sandbox.stub().returns(fakeRes),
+				redirect: sandbox.stub().returns(fakeRes),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub().returns(fakeRes),
+				end: sandbox.stub().returns(fakeRes)
+			};
+			
+			sandbox.stub(User, 'getUser').resolves(fakeUser);
+		});
+
+		afterEach( () => {
+			sandbox.restore();
+		});
+
+		it('should exist', () => {
+			expect(page.getProfile).to.be.a('function');
+		});
+
+		it('should render the profile page', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => expect(fakeRes.render).to.have.been.calledOnceWith('profile'));
+		});
+		
+		it('should render the login page if not authenticated', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.redirect).to.have.been.calledOnceWith('/login');
+				expect(fakeRes.render).to.have.not.been.called;
+			});
+		});
+
+		it('should return 500 if an error is thrown', () => {
+			User.getUser.rejects('Big badda boom');
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(500);
+			});
+		});
+		
+		it('should return 400 if no user specified', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(400);
+			});
+		});
+		
+		it('should return 404 if invalid user specified', () => {
+			User.getUser.resolves(null);
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				params: {
+					id: 1
+				}
+			});
+
+			return page.getProfile(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(404);
+			});
+		});
+	});
+	
+	describe('Profile edit view', () => {
+		let fakeRes, fakeUser;
+
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			
+			
+			fakeUser = new User({
+				ID: 5,
+				Username: 'someone',
+				AuthSecret: 'aToken'
+			});
+			sandbox.stub(fakeUser, 'save').resolves({});
+			sandbox.stub(fakeUser, 'changePassword').resolves();
+			
+			fakeRes = {
+				render: sandbox.stub().returns(fakeRes),
+				redirect: sandbox.stub().returns(fakeRes),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub().returns(fakeRes),
+				end: sandbox.stub().returns(fakeRes)
+			};
+		});
+
+		afterEach( () => {
+			sandbox.restore();
+		});
+
+		it('should exist', () => {
+			expect(page.getProfileEdit).to.be.a('function');
+		});
+
+		it('should render the profile edit page', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return page.getProfileEdit(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
+			});
+		});
+		
+		it('should render the login page if not authenticated', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return page.getProfileEdit(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.redirect).to.have.been.calledOnceWith('/login');
+				expect(fakeRes.render).to.have.not.been.called;
+			});
+		});
+
+		it('should return 500 if an error is thrown', () => {
+			fakeRes.render.throws('Render kaboom!');
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return page.getProfileEdit(fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledOnceWith(500);
+			});
+		});
+	});
+	
+	
+	describe('Profile edit post', () => {
+		let fakeRes, fakeUser;
+
+		beforeEach(() => {
+			sandbox = Sinon.createSandbox();
+			
+			fakeUser = new User({
+				ID: 5,
+				Username: 'someone',
+				AuthSecret: 'aToken'
+			});
+			sandbox.stub(fakeUser, 'save').resolves({});
+			sandbox.stub(fakeUser, 'changePassword').resolves();
+			
+			fakeRes = {
+				render: sandbox.stub().returns(fakeRes),
+				status: sandbox.stub().returns(fakeRes),
+				send: sandbox.stub().returns(fakeRes),
+				end: sandbox.stub().returns(fakeRes),
+				redirect: sandbox.stub().returns(fakeRes)
+			};
+		});
+
+		afterEach( () => {
+			sandbox.restore();
+		});
+
+		it('should exist', () => {
+			expect(page.postProfileEdit).to.be.a('array');
+			for (const handler of page.postProfileEdit) {
+				expect(handler).to.be.a('function');
+			}
+		});
+		
+		it('should render the login page if not authenticated', () => {
+			const fakeReq = unauthenticatedFakeReq({
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.redirect).to.have.been.calledOnceWith('/login');
+				expect(fakeRes.render).to.have.not.been.called;
+			});
+		});
+		
+		it('should render the profile edit page if called without valid args', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken'
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
+				expect(fakeRes.redirect).to.have.not.been.called;
+			});
+		});
+		
+		it('should reject if passwords do not match', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					password: 'FakePassword',
+					passwordconfirm: 'WrongFakePassword'
+				}
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
+				expect(fakeUser.save).to.have.not.been.called;
+			});
+		});
+		
+				
+		it('should reject if password is too short', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					password: '123',
+					passwordconfirm: '123'
+				}
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
+				expect(fakeUser.save).to.have.not.been.called;
+			});
+		});
+		
+		it('should save and display the page again when changes are made', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					DisplayName: 'Some One',
+					Avatar: 'https://en.gravatar.com/userimage/4129996/721dae64cc7c9a0403f2280f4b2b6e64.png'
+				}
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
+				expect(fakeUser.save).to.have.been.calledOnce;
+				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
+				expect(fakeRes.redirect).to.have.not.been.called;
+			});
+		});
+		
+		it('should change the display name', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					DisplayName: 'Some One'
+				}
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => expect(fakeUser.DisplayName).to.equal('Some One'));
+		});
+		
+		it('should change the password', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					password: 'FakePassword',
+					passwordconfirm: 'FakePassword'
+				}
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
+				expect(fakeUser.changePassword).to.have.been.calledWith('FakePassword');
+				expect(fakeUser.save).to.have.been.calledOnce;
+				expect(fakeRes.render).to.have.been.calledOnceWith('profileEdit');
+				expect(fakeRes.redirect).to.have.not.been.called;
+			});
+		});
+		
+		it('should not change the password if none provided', () => {
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					DisplayName: 'Some One'
+				}
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => expect(fakeUser.changePassword).to.not.have.been.called);
+		});
+		
+		it('should give a 500 error if User.save fails', () => {
+			fakeUser.save.rejects();
+			const fakeReq = authenticatedFakeReq({
+				user: fakeUser,
+				csrfToken: () => 'fakeCsrfToken',
+				body: {
+					DisplayName: 'Some One'
+				}
+			});
+
+			return runHandlerList(page.postProfileEdit, fakeReq, fakeRes).then(() => {
+				expect(fakeRes.status).to.have.been.calledWith(500);
+				expect(fakeRes.render).to.have.not.been.called;
+				expect(fakeRes.redirect).to.have.not.been.called;
+			});
+		});
+	});
 });
+
+
+
