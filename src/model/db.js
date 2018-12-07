@@ -1,17 +1,7 @@
 'use strict';
 
-let knex = 'banana';
-
-const ensureKnexTables = async(knexdb, tables) => {
-	for (let i = 0; i < tables.length; i++) {
-		const [name, creator] = tables[i];
-
-		const exists = await knexdb.schema.hasTable(name);
-		if (!exists) {
-			await knexdb.schema.createTable(name, creator);
-		}
-	}
-};
+const merge = require('lodash.merge');
+let knex = null;
 
 const db = {
 	initialized: false,
@@ -20,58 +10,16 @@ const db = {
 		if (db.initialised) {
 			return Promise.resolve();
 		}
-
-		knex = require('knex')({
-			client: 'sqlite3',
-			connection: {
-				filename: config.database.filename
-			},
-			useNullAsDefault: true
-		});
-
-
-		const tables = [
-			['Games', (table) => {
-				table.increments('ID').primary();
-				table.string('gameDescription');
-			}],
-			['Users', (table) => {
-				table.increments('ID').primary();
-				table.string('Username').notNullable().unique();
-				table.string('DisplayName');
-				table.string('Avatar').defaultTo('');
-				table.boolean('Admin').notNullable().defaultTo(false);
-				table.string('AuthSecret').notNullable();
-			}],
-			['Boards', (table) => {
-				table.increments('ID').primary();
-				//This shouldn't be nullable, but we don't have users working yet
-				table.integer('Owner').references('Users.ID'); //.notNullable();
-				table.integer('ParentID').references('Boards.ID').nullable();
-				table.integer('GameID').references('Games.ID').nullable();
-				table.string('Name').notNullable();
-				table.boolean('Adult').defaultTo(false);
-				table.string('Description').notNullable().defaultTo('');
-			}],
-			['Threads', (table) => {
-				table.increments('ID').primary();
-				table.string('Title').notNullable();
-				table.integer('Board').references('Boards.ID').notNullable();
-			}],
-			['Posts', (table) => {
-				table.increments('ID').primary();
-				table.integer('Thread').references('Threads.ID').notNullable();
-				table.string('Body').notNullable();
-				table.integer('Poster').references('Users.ID');
-				table.timestamps(false, true);
-			}]
-		];
-
-		return ensureKnexTables(knex, tables)
-			.then(() => {
-				db.initialised = true;
-				return Promise.resolve(db.initialised);
-			});
+		
+		const environment = process.env.DB_ENVIRONMENT || 'development';
+		let connection = require('../../knexfile.js')[environment];
+		if (config && config.database) {
+			connection = merge(connection, config.database);
+		}
+		knex = require('knex')(connection);
+		await knex.migrate.latest();
+		db.initialised = true;
+		return db.initialised;
 	},
 
 	/**

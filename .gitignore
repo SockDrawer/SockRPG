@@ -34,7 +34,8 @@ errorShots
 .nyc_output
 
 #Dev Mode Database File.
-database.sqlite
+*.sqlite
+*.sqlite3
 
 #vscode workspace files
 .vscode

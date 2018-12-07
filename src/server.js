@@ -268,10 +268,10 @@ if (require.main === module) {
 
 	//TODO: Make this read from a file
 	setup({
-		database: {
-			engine: 'sqlite3',
-			filename: './db/database.sqlite'
-		},
+		// This will read from knexfile.js and select configuration based on the
+		// value of the environment variable `DB_ENVIRONMENT`
+		// If set it should be set to a valid knexfile configuration stanza
+		database: null,
 		http: {
 			// eslint-disable-next-line no-process-env
 			port: process.env.PORT || 9000

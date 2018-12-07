@@ -48,7 +48,11 @@ context('API server', function() {
 		return Promise.resolve()
 		.then(() => server.setup({
 			database: {
-				filename: ':memory:'
+				client: 'sqlite3',
+				connection: {
+					filename: ':memory:'
+				},
+				useNullAsDefault: true
 			},
 			http: {
 				port: 9000
