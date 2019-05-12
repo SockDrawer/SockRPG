@@ -31,7 +31,7 @@
     "express-handlebars": "^3.0.0",
     "express-session": "^1.15.1",
     "express-validator": "^5.2.0",
-    "knex": "^0.15.1",
+    "knex": "^0.16.7",
     "lodash.merge": "^4.6.1",
     "moment": "^2.22.2",
     "passport": "^0.4.0",
