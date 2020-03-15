@@ -24,7 +24,7 @@
     "async": "^2.0.1",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.17.1",
-    "cookie-parser": "^1.4.3",
+    "cookie-parser": "1.4.4",
     "csurf": "^1.9.0",
     "debug": "^4.0.0",
     "express": "^4.13.3",
